@@ -1,118 +1,106 @@
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import { Transition } from '@headlessui/react';
+import { Button, Form, Alert } from 'react-bootstrap';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
+import { PageProps } from '@/types';
 
 export default function UpdateProfileInformation({
-    mustVerifyEmail,
-    status,
-    className = '',
+  mustVerifyEmail,
+  status,
+  className = '',
 }: {
-    mustVerifyEmail: boolean;
-    status?: string;
-    className?: string;
+  mustVerifyEmail: boolean;
+  status?: string;
+  className?: string;
 }) {
-    const user = usePage().props.auth.user;
+  const user = usePage<PageProps>().props.auth.user;
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } =
-        useForm({
-            name: user.name,
-            email: user.email,
-        });
+  const { data, setData, patch, errors, processing, recentlySuccessful } =
+    useForm({
+      name: user.name,
+      email: user.email,
+    });
 
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault();
+  const submit: FormEventHandler = (e) => {
+    e.preventDefault();
+    patch(route('profile.update'));
+  };
 
-        patch(route('profile.update'));
-    };
+  return (
+    <section className={className}>
+      <header>
+        <h2 className="h5">Profile Information</h2>
+        <p className="small text-muted">
+          Update your account's profile information and email address.
+        </p>
+      </header>
 
-    return (
-        <section className={className}>
-            <header>
-                <h2 className="text-lg font-medium text-gray-900">
-                    Profile Information
-                </h2>
+      <Form onSubmit={submit} className="mt-4">
+        <Form.Group controlId="name">
+          <Form.Label>Name</Form.Label>
+          <Form.Control
+            type="text"
+            value={data.name}
+            onChange={(e) => setData('name', e.target.value)}
+            required
+            isInvalid={!!errors.name}
+            placeholder="Name"
+            autoComplete="name"
+          />
+          <Form.Control.Feedback type="invalid">
+            {errors.name}
+          </Form.Control.Feedback>
+        </Form.Group>
 
-                <p className="mt-1 text-sm text-gray-600">
-                    Update your account's profile information and email address.
-                </p>
-            </header>
+        <Form.Group controlId="email">
+          <Form.Label>Email</Form.Label>
+          <Form.Control
+            type="email"
+            value={data.email}
+            onChange={(e) => setData('email', e.target.value)}
+            required
+            isInvalid={!!errors.email}
+            placeholder="Email"
+            autoComplete="username"
+          />
+          <Form.Control.Feedback type="invalid">
+            {errors.email}
+          </Form.Control.Feedback>
+        </Form.Group>
 
-            <form onSubmit={submit} className="mt-6 space-y-6">
-                <div>
-                    <InputLabel htmlFor="name" value="Name" />
+        {mustVerifyEmail && user.email_verified_at === null && (
+          <div className="mt-2">
+            <p className="small text-muted">
+              Your email address is unverified.
+              <Link
+                href={route('verification.send')}
+                method="post"
+                as="button"
+                className="p-0 btn btn-link text-muted"
+              >
+                Click here to re-send the verification email.
+              </Link>
+            </p>
 
-                    <TextInput
-                        id="name"
-                        className="mt-1 block w-full"
-                        value={data.name}
-                        onChange={(e) => setData('name', e.target.value)}
-                        required
-                        isFocused
-                        autoComplete="name"
-                    />
+            {status === 'verification-link-sent' && (
+              <Alert variant="success" className="mt-2">
+                A new verification link has been sent to your email address.
+              </Alert>
+            )}
+          </div>
+        )}
 
-                    <InputError className="mt-2" message={errors.name} />
-                </div>
+        <div className="gap-3 mt-4 d-flex align-items-center">
+          <Button type="submit" variant="primary" disabled={processing}>
+            Save
+          </Button>
 
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
-                    <TextInput
-                        id="email"
-                        type="email"
-                        className="mt-1 block w-full"
-                        value={data.email}
-                        onChange={(e) => setData('email', e.target.value)}
-                        required
-                        autoComplete="username"
-                    />
-
-                    <InputError className="mt-2" message={errors.email} />
-                </div>
-
-                {mustVerifyEmail && user.email_verified_at === null && (
-                    <div>
-                        <p className="mt-2 text-sm text-gray-800">
-                            Your email address is unverified.
-                            <Link
-                                href={route('verification.send')}
-                                method="post"
-                                as="button"
-                                className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                            >
-                                Click here to re-send the verification email.
-                            </Link>
-                        </p>
-
-                        {status === 'verification-link-sent' && (
-                            <div className="mt-2 text-sm font-medium text-green-600">
-                                A new verification link has been sent to your
-                                email address.
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
-
-                    <Transition
-                        show={recentlySuccessful}
-                        enter="transition ease-in-out"
-                        enterFrom="opacity-0"
-                        leave="transition ease-in-out"
-                        leaveTo="opacity-0"
-                    >
-                        <p className="text-sm text-gray-600">
-                            Saved.
-                        </p>
-                    </Transition>
-                </div>
-            </form>
-        </section>
-    );
+          {recentlySuccessful && (
+            <Alert variant="success" className="mb-0">
+              Saved.
+            </Alert>
+          )}
+        </div>
+      </Form>
+    </section>
+  );
 }

@@ -1,56 +1,56 @@
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
+import { Form, Button } from 'react-bootstrap';
 
 export default function ConfirmPassword() {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        password: '',
+  const { data, setData, post, processing, errors, reset } = useForm({
+    password: '',
+  });
+
+  const submit: FormEventHandler = (e) => {
+    e.preventDefault();
+
+    post(route('password.confirm'), {
+      onFinish: () => reset('password'),
     });
+  };
 
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault();
+  return (
+    <GuestLayout>
+      <Head title="Confirm Password" />
 
-        post(route('password.confirm'), {
-            onFinish: () => reset('password'),
-        });
-    };
+      <div className="mb-4 text-center">
+        <h1 className="h4">Konfirmasi Kata Sandi</h1>
+        <p className="text-sm text-gray-600">
+          Ini adalah area yang aman dari aplikasi. Silakan konfirmasi kata sandi Anda sebelum melanjutkan.
+        </p>
+      </div>
 
-    return (
-        <GuestLayout>
-            <Head title="Confirm Password" />
+      <form onSubmit={submit}>
+        <Form.Floating className="mb-3">
+          <Form.Control
+            id="floatingPasswordCustom"
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={data.password}
+            autoComplete="current-password"
+            isInvalid={!!errors.password}
+            onChange={(e) => setData('password', e.target.value)}
+          />
+          <label htmlFor="floatingPasswordCustom">Password</label>
+          {errors.password && (
+            <div className="mt-2 invalid-feedback d-block">{errors.password}</div>
+          )}
+        </Form.Floating>
 
-            <div className="mb-4 text-sm text-gray-600">
-                This is a secure area of the application. Please confirm your
-                password before continuing.
-            </div>
-
-            <form onSubmit={submit}>
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        isFocused={true}
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4 flex items-center justify-end">
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Confirm
-                    </PrimaryButton>
-                </div>
-            </form>
-        </GuestLayout>
-    );
+        <div className="d-grid">
+          <Button type="submit" disabled={processing}>
+            Konfirmasi
+          </Button>
+        </div>
+      </form>
+    </GuestLayout>
+  );
 }

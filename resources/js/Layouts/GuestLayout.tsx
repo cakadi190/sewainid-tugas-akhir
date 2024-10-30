@@ -1,19 +1,24 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Link } from '@inertiajs/react';
 import { PropsWithChildren } from 'react';
+import { Container, Row, Col, Card } from 'react-bootstrap';
 
 export default function Guest({ children }: PropsWithChildren) {
-    return (
-        <div className="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0">
-            <div>
-                <Link href="/">
-                    <ApplicationLogo className="h-20 w-20 fill-current text-gray-500" />
-                </Link>
-            </div>
+  return (
+    <Container fluid className="min-vh-100 bg-light d-flex align-items-center">
+      <Row className="justify-content-center w-100">
+        <Col xs={12} sm={6} md={4} lg={3}>
+          <div className="mb-4 text-center">
+            <Link href="/">
+              <ApplicationLogo height={64} />
+            </Link>
+          </div>
 
-            <div className="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg">
-                {children}
-            </div>
-        </div>
-    );
+          <Card body>
+            {children}
+          </Card>
+        </Col>
+      </Row>
+    </Container>
+  );
 }

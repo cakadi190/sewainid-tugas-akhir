@@ -1,56 +1,70 @@
-import InputError from '@/Components/InputError';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, useForm } from '@inertiajs/react';
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
+import { Form, Button, Spinner } from 'react-bootstrap';
 
 export default function ForgotPassword({ status }: { status?: string }) {
-    const { data, setData, post, processing, errors } = useForm({
-        email: '',
-    });
+  const { data, setData, post, processing, errors } = useForm({
+    email: '',
+  });
 
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault();
+  const submit: FormEventHandler = (e) => {
+    e.preventDefault();
+    post(route('password.email'));
+  };
 
-        post(route('password.email'));
-    };
+  return (
+    <GuestLayout>
+      <Head title="Forgot Password" />
 
-    return (
-        <GuestLayout>
-            <Head title="Forgot Password" />
+      <div className="mb-4 text-center">
+        <h1 className="h4 fw-bold">Lupa Kata Sandi?</h1>
+        <p>
+          Tidak masalah. Cukup beri tahu kami alamat email Anda, dan
+          kami akan mengirimi Anda tautan reset kata sandi yang akan
+          memungkinkan Anda memilih yang baru.
+        </p>
+      </div>
 
-            <div className="mb-4 text-sm text-gray-600">
-                Forgot your password? No problem. Just let us know your email
-                address and we will email you a password reset link that will
-                allow you to choose a new one.
-            </div>
+      {status && (
+        <div className="mb-4 text-sm font-medium text-success">
+          {status}
+        </div>
+      )}
 
-            {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
-                    {status}
-                </div>
+      <form onSubmit={submit}>
+        <Form.Floating className="mb-3">
+          <Form.Control
+            id="floatingInputCustom"
+            type="email"
+            name="email"
+            placeholder="name@example.com"
+            value={data.email}
+            autoComplete="username"
+            isInvalid={!!errors.email}
+            onChange={(e) => setData('email', e.target.value)}
+          />
+          <label htmlFor="floatingInputCustom">Email address</label>
+          {errors.email && (
+            <div className="mt-2 invalid-feedback d-block">{errors.email}</div>
+          )}
+        </Form.Floating>
+
+        <div className="gap-2 d-grid">
+          <Button size='lg' className="gap-2 justify-content-center d-flex align-items-center" type="submit" disabled={processing}>
+            {processing ? <Spinner size='sm' /> : (
+              <>
+                <FontAwesomeIcon icon={faPaperPlane} />
+                <span>Kirimkan Tautannya</span>
+              </>
             )}
+          </Button>
 
-            <form onSubmit={submit}>
-                <TextInput
-                    id="email"
-                    type="email"
-                    name="email"
-                    value={data.email}
-                    className="mt-1 block w-full"
-                    isFocused={true}
-                    onChange={(e) => setData('email', e.target.value)}
-                />
-
-                <InputError message={errors.email} className="mt-2" />
-
-                <div className="mt-4 flex items-center justify-end">
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Email Password Reset Link
-                    </PrimaryButton>
-                </div>
-            </form>
-        </GuestLayout>
-    );
+          <Link className="btn btn-link" href="/login">Kembali</Link>
+        </div>
+      </form>
+    </GuestLayout>
+  );
 }
