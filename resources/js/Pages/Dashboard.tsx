@@ -1,26 +1,32 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
 
 export default function Dashboard() {
   return (
     <AuthenticatedLayout
-      header={
-        <h2 className="text-xl font-semibold leading-tight text-gray-800">
-          Dashboard
-        </h2>
-      }
+      // header={
+      //   <h2 className="mb-0 h4 text-dark">Dashboard</h2> // Use Bootstrap text classes
+      // }
     >
       <Head title="Dashboard" />
 
-      <div className="py-12">
-        <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-            <div className="p-6 text-gray-900">
-              You're logged in!
-            </div>
-          </div>
-        </div>
-      </div>
+      <Container className="py-5">
+        <Row className="justify-content-center">
+          <Col xs={12} md={8} lg={6}>
+            <Card className="shadow-sm">
+              <Card.Body className="text-dark">
+                You're logged in!
+
+                <Link method="post" href={route('logout')} as="button" type="button" className="btn btn-primary">Keluar</Link>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
     </AuthenticatedLayout>
   );
 }

@@ -11,12 +11,23 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->web(append: [
+        $sharedMiddleware = [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+        ];
+
+        // Core Main Middleware
+        $middleware->web(append: [
+            ...$sharedMiddleware
+        ])
+        ->api(append: [
+            ...$sharedMiddleware
         ]);
 
-        //
+        // Middleware Alias Registration
+        $middleware->alias([
+            'role' => \App\Http\Middleware\RoleMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

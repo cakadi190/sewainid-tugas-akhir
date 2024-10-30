@@ -1,11 +1,12 @@
 <?php
 
+use App\Enums\RoleUser;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -14,9 +15,17 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->enum('gender', User::genders()->toArray())->nullable();
+            $table->enum('role', User::roles()->toArray())->nullable()->default(RoleUser::USER);
+            $table->string('pbirth')->nullable();
+            $table->date('dbirth')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('avatar');
+            $table->string('nik')->unique()->nullable()->comment('Encrypted Data');
+            $table->string('kk')->nullable()->comment('Encrypted Data');
+            $table->string('sim')->nullable()->comment('Encrypted Data');
             $table->rememberToken();
             $table->timestamps();
         });

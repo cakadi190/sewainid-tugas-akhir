@@ -29,7 +29,7 @@ export default function Login({
 
   return (
     <GuestLayout>
-      <Head title="Log in" />
+      <Head title="Masuk" />
 
       {status && (
         <Alert variant='success'>
@@ -111,7 +111,7 @@ export default function Login({
 
           <SeparatorText label="Atau" />
 
-          <Link className="btn btn-link" href="/register">Daftar</Link>
+          <Link className="btn btn-link" href="/register">Mendaftar Akun Baru</Link>
         </div>
       </form>
     </GuestLayout>
