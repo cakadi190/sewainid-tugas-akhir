@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import {
   faBars,
   faTachometerAlt,
-  faCar,
   faUsers,
   faCalendarAlt,
   faMoneyBillWave,
@@ -15,7 +14,7 @@ import {
   faFileContract,
   faChevronDown,
   IconDefinition,
-  faCarTunnel
+  faCar
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, usePage } from '@inertiajs/react';
@@ -38,10 +37,10 @@ const SidebarStyle = styled.aside`
   left: 0;
   width: 24rem;
   height: 100vh;
-  padding: 1rem;
   overflow: hidden;
   overflow-y: auto;
   transition: all 0.3s ease;
+  z-index: 1030;
 
   @media (width <= 1400px) {
     width: 22rem;
@@ -63,9 +62,8 @@ const SidebarStyle = styled.aside`
 
 const InnerSidebar = styled.div`
   transition: all 0.3s ease;
-  min-height: calc(100svh - 3rem);
-  background: var(--bs-primary);
-  border-radius: var(--bs-border-radius-lg);
+  min-height: 100svh;
+  background: var(--bs-dark);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -306,7 +304,7 @@ export default function Sidebar() {
       label: 'Manajemen Mobil',
       type: 'menu',
       href: '#',
-      icon: faCarTunnel,
+      icon: faCar,
       child: [
         {
           label: 'Daftar Mobil',
@@ -319,12 +317,6 @@ export default function Sidebar() {
       ],
     },
     {
-      label: 'Pengemudi',
-      href: route('administrator.driver-data.index'),
-      type: 'menu',
-      icon: faCar,
-    },
-    {
       label: 'Manajemen Pengguna',
       type: 'menu',
       href: '#',
@@ -335,7 +327,11 @@ export default function Sidebar() {
           href: '#',
         },
         {
-          label: 'Staff',
+          label: 'Staff Keuangan',
+          href: '#',
+        },
+        {
+          label: 'Staff Pengemudi',
           href: '#',
         },
         {

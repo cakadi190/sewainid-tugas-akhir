@@ -50,3 +50,22 @@
 // Utilities
 @import "bootstrap/scss/utilities/api";
 // scss-docs-end import-stack
+
+// ------------ Font ------------------------- //
+/* JetBrains Mono */
+.font-jetbrains-mono,
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Poppins */
+.font-poppins,
+.font-heading {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Source Sans 3 */
+.font-source-sans-3,
+.font-sans {
+  font-family: 'Source Sans 3', sans-serif;
+}

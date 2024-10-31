@@ -1,6 +1,7 @@
 import { PropsWithChildren, ReactNode } from 'react';
 import Sidebar from './parts/Admin/Sidebar';
 import MainPage from './parts/Admin/MainPage';
+import Navbar from './parts/Admin/Navbar';
 
 type AuthenticatedProps = PropsWithChildren<{
   header?: ReactNode
@@ -24,8 +25,12 @@ export function AuthenticatedAdmin({
   return (
     <>
       <Sidebar />
+      <Navbar />
 
-      <MainPage>{children}</MainPage>
+      <MainPage>
+        {header}
+        {children}
+      </MainPage>
     </>
   );
 };

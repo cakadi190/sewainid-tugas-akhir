@@ -17,15 +17,15 @@ return new class extends Migration
             $table->timestamps();
 
             $table->string('name');
-            $table->string('brand');
-            $table->string('frame_number');
-            $table->string('license_plate');
+            $table->string('brand')->comment('Misal: Toyota, Suzuki, Honda, Mercy');
+            $table->string('frame_number')->unique();
+            $table->string('license_plate')->unique();
             $table->string('color');
-            $table->string('brand');
             $table->unsignedInteger('year_of_manufacture');
             $table->enum('model', CarData::getAllCarModels()->toArray());
             $table->enum('status', CarData::getAllCarStatuses()->toArray());
             $table->text('description')->nullable();
+            $table->softDeletes();
         });
     }
 

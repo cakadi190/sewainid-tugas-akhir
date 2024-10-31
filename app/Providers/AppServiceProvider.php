@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
     {
         RedirectIfAuthenticated::redirectUsing(function (Request $request) {
             $user = $request->user();
-            return route($user->getAttribute('role') !== 'user' ? 'administrator' : 'dashboard');
+            return route($user->getAttribute('role') !== 'user' ? 'administrator.home' : 'dashboard');
         });
 
         Vite::prefetch(concurrency: 3);

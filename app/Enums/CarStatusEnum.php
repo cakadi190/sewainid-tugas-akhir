@@ -42,6 +42,13 @@ enum CarStatusEnum: string
     case REPAIR = 'repair';
 
     /**
+     * The car has been missing and no longer available to used or been searched.
+     *
+     * @var string MISSING
+     */
+    case MISSING = 'missing';
+
+    /**
      * The car has been sold and is no longer available in the system.
      *
      * @var string SOLD
@@ -60,6 +67,7 @@ enum CarStatusEnum: string
             self::BORROWED => 'Sudah Disewakan',
             self::CRASH => 'Rusak',
             self::REPAIR => 'Direparasi',
+            self::MISSING => 'Hilang',
             self::SOLD => 'Terjual',
         };
     }
@@ -77,6 +85,7 @@ enum CarStatusEnum: string
             self::CRASH => 'danger',
             self::REPAIR => 'warning',
             self::SOLD => 'secondary',
+            self::MISSING => 'dark',
         };
     }
 }
