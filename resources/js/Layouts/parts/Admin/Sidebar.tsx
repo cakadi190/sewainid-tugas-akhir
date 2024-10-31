@@ -14,7 +14,8 @@ import {
   faFileContract,
   faChevronDown,
   IconDefinition,
-  faCar
+  faCar,
+  faBuilding
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, usePage } from '@inertiajs/react';
@@ -299,6 +300,7 @@ export default function Sidebar() {
       type: 'menu',
       icon: faTachometerAlt,
     },
+
     { label: 'Master Data', type: 'heading' },
     {
       label: 'Manajemen Mobil',
@@ -315,6 +317,12 @@ export default function Sidebar() {
           href: '#',
         },
       ],
+    },
+    {
+      label: 'Lokasi Garasi',
+      href: "#",
+      type: 'menu',
+      icon: faBuilding,
     },
     {
       label: 'Manajemen Pengguna',
