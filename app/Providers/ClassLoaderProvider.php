@@ -52,7 +52,6 @@ class ClassLoaderProvider extends ServiceProvider
     protected array $_classes = [
         \App\Interfaces\LicensePlateNumberGenerator::class  => \App\Helpers\LicensePlateNumberGenerator::class,
         \App\Interfaces\CrudHelper::class                   => \App\Helpers\CrudHelper::class,
-        \App\Interfaces\Datatables::class                   => \App\Helpers\Datatables::class,
         \App\Interfaces\SecurityHelper::class               => \App\Helpers\SecurityHelper::class,
         \App\Interfaces\SelectHelper::class                 => \App\Helpers\SelectHelper::class,
     ];

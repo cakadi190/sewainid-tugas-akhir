@@ -43,8 +43,13 @@
     "@fortawesome/free-brands-svg-icons": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@types/fslightbox-react": "^1.7.8",
     "bootstrap": "^5.3.3",
+    "fslightbox-react": "^1.7.6",
     "jquery": "^3.7.1",
-    "react-bootstrap": "^2.10.5"
+    "react-bootstrap": "^2.10.5",
+    "sweetalert2": "^11.14.4",
+    "sweetalert2-react-content": "^5.0.7",
+    "zustand": "^5.0.1"
   }
 }

@@ -2,91 +2,98 @@
 
 namespace App\Interfaces;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Query\Builder as QueryBuilder;
-
 interface Datatables
 {
     /**
-     * Membuat instance baru dari Datatables helper.
-     *
-     * @param Builder|Model|Relation|QueryBuilder $query Query yang akan diproses.
-     * @return self Instance dari Datatables helper.
+     * Create new instance of DataTable
+     * @param mixed $query
      */
-    public static function from(Builder|Model|Relation|QueryBuilder $query): self;
+    public function __construct($query);
 
     /**
-     * Menambahkan pencarian berdasarkan kolom yang ditentukan.
-     *
-     * @param array<string> $searchableColumns Array kolom yang dapat dicari.
-     * @return self Instance dari Datatables helper.
+     * Add a new column to the DataTable
+     * @param string $name
+     * @param callable $callback
+     * @return self
      */
-    public function withSearch(array $searchableColumns = ['title']): self;
+    public function addColumn(string $name, callable $callback): self;
 
     /**
-     * Menambahkan filter untuk data yang sudah dihapus (soft deleted).
-     *
-     * @return self Instance dari Datatables helper.
+     * Add multiple columns at once
+     * @param array $columns
+     * @return self
      */
-    public function withTrashed(): self;
+    public function addColumns(array $columns): self;
 
     /**
-     * Menambahkan kolom yang perlu diamankan datanya sebelum dibuka.
-     *
-     * @param array<string> $columns Array kolom yang akan diamankan.
-     * @param string $targetData Target kunci keamanan untuk kolom yang diamankan.
-     * @return self Instance dari Datatables helper.
+     * Edit an existing column
+     * @param string $name
+     * @param callable $callback
+     * @return self
      */
-    public function withSecuredColumn(array $columns = [], string $targetData): self;
+    public function editColumn(string $name, callable $callback): self;
 
     /**
-     * Set custom pagination amounts if they exist.
-     *
-     * @param array<int> $paginationAmount Value for custom pagination value.
-     * @return self Instance dari Datatables helper.
+     * Remove a column from the DataTable
+     * @param string $name
+     * @return self
      */
-    public function setPaginationAmount(array $paginationAmount = []): self;
+    public function removeColumn(string $name): self;
 
     /**
-     * Menambahkan pengurutan berdasarkan kolom.
-     *
-     * @return self Instance dari Datatables helper.
+     * Set columns to be displayed without escaping
+     * @param array $columns
+     * @return self
      */
-    public function withOrdering(): self;
+    public function rawColumns(array $columns): self;
 
     /**
-     * Menambahkan kolom tambahan ke respons.
-     *
-     * @param string $column Nama kolom tambahan.
-     * @param callable $callback Fungsi callback untuk menghasilkan nilai kolom.
-     * @return self Instance dari Datatables helper.
+     * Set the row ID
+     * @param string|callable $callback
+     * @return self
      */
-    public function addColumn(string $column, callable $callback): self;
+    public function setRowId($callback): self;
 
     /**
-     * Menandai kolom yang akan dirender sebagai HTML.
-     *
-     * @param string|array<string> $columns Nama kolom atau array kolom yang akan dirender sebagai HTML.
-     * @return self Instance dari Datatables helper.
+     * Set the row class
+     * @param string|callable $callback
+     * @return self
      */
-    public function renderAsHtml(string|array $columns): self;
+    public function setRowClass($callback): self;
 
     /**
-     * Format a column's data using a specified callback function.
-     *
-     * @param string $target The target column to be formatted.
-     * @param callable $callback The callback function to format the column's data.
-     * @return self Instance dari Datatables helper untuk chaining method.
+     * Set row attributes
+     * @param array|callable $callback
+     * @return self
      */
-    public function formatColumn(string $target, callable $callback): self;
+    public function setRowAttributes($callback): self;
 
     /**
-     * Membuat response JSON untuk datatables.
-     *
-     * @return JsonResponse Response JSON dengan format datatables.
+     * Set custom row data
+     * @param callable $callback
+     * @return self
      */
-    public function make(): JsonResponse;
+    public function setRowData(callable $callback): self;
+
+    /**
+     * Set items per page for pagination
+     * @param int $perPage
+     * @return self
+     */
+    public function setPerPage(int $perPage): self;
+
+    /**
+     * Set ordering column and direction
+     * @param string $column
+     * @param string $direction
+     * @return self
+     */
+    public function orderBy(string $column, string $direction = 'asc'): self;
+
+    /**
+     * Generate the DataTable response
+     * @param bool $raw
+     * @return array
+     */
+    public function make(bool $raw = false): array;
 }

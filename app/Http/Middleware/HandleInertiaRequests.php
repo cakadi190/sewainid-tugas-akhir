@@ -35,6 +35,13 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'alert' => [
+                'success' => session('success'),
+                'error' => session('error'),
+                'warning' => session('warning'),
+                'info' => session('info'),
+                'danger' => session('danger'),
+            ],
             'urlPath' => [
                 'path' => $request->path(),
                 'url' => $request->url(),

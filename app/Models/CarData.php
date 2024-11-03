@@ -2,11 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\WithTrashedRouteBinding;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\CarModelEnum;
 use App\Enums\CarStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Image\Enums\Fit;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * Car Data model
@@ -43,9 +48,36 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData withoutTrashed()
  * @mixin \Eloquent
  */
-class CarData extends Model
+class CarData extends Model implements HasMedia
 {
-    use SoftDeletes, HasFactory;
+    use SoftDeletes, HasFactory, InteractsWithMedia, WithTrashedRouteBinding;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'name',
+        'brand',
+        'frame_number',
+        'license_plate',
+        'color',
+        'year_of_manufacture',
+        'model',
+        'status',
+        'description',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'model' => CarModelEnum::class,
+        'status' => CarStatusEnum::class,
+    ];
 
     /**
      * Mengambil semua model mobil yang ada dalam CarModelEnum.
@@ -65,5 +97,13 @@ class CarData extends Model
     public static function getAllCarStatuses(): \Illuminate\Support\Collection
     {
         return collect(CarStatusEnum::cases())->pluck('value');
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this
+            ->addMediaConversion('preview')
+            ->fit(Fit::Contain, 300, 300)
+            ->nonQueued();
     }
 }

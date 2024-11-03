@@ -1,90 +1,99 @@
-import DataTable, { Column } from "@/Components/DataTable";
+import DataTable from "@/Components/DataTable";
 import { useDataTable } from "@/Hooks/useDatatables";
 import { AuthenticatedAdmin } from "@/Layouts/AuthenticatedLayout";
 import type Database from "@/types/database";
-import { Head, Link } from "@inertiajs/react";
-import { Breadcrumb, BreadcrumbItem } from "react-bootstrap";
+import { Head, Link, usePage } from "@inertiajs/react";
+import { Alert, Breadcrumb, BreadcrumbItem } from "react-bootstrap";
+import EditData from "./EditData";
+import DeleteData from "@/Components/crud/DeleteData";
+import RestoreData from "@/Components/crud/RestoreData";
+import ForceDeleteData from "@/Components/crud/ForceDeleteData";
+import CreateData from "./CreateData";
+import { PageProps } from "@/types";
+import AlertPage from "@/Components/AlertPage";
 
 export default function Index() {
   const { dataTableRef, refetch } = useDataTable();
+  const { props: { alert } } = usePage<PageProps>();
 
-  const columns: Column<Database['CarData']>[] = [
+  const columns = [
     {
-      label: 'Nama Mobil',
-      accessorKey: 'name',
+      data: 'name',
+      name: 'name',
+      title: 'Nama',
     },
     {
-      label: 'Merk / Vendor',
-      accessorKey: 'brand',
+      data: 'brand',
+      name: 'brand',
+      title: 'Brand / Merk',
     },
     {
-      label: 'Model',
-      accessorKey: 'model',
-      render(row, value) {
-        const CarModelEnum = {
-          mini_van: { label: 'Mini Van', color: 'primary' },
-          van: { label: 'Van', color: 'primary' },
-          city_car: { label: 'City Car', color: 'success' },
-          hatchback: { label: 'Hatchback', color: 'success' },
-          sedan: { label: 'Sedan', color: 'info' },
-          suv: { label: 'SUV', color: 'warning' },
-          mpv: { label: 'MPV', color: 'warning' },
-          pickup: { label: 'Pickup Truck', color: 'primary' },
-          luxury_car: { label: 'Luxury Car', color: 'danger' },
-        };
-
-        const model = CarModelEnum[value as keyof typeof CarModelEnum];
-        if (!model) return null;
-
-        return (
-          <span className={`badge bg-${model.color}`}>
-            {model.label}
-          </span>
-        );
-      }
+      data: 'license_plate',
+      name: 'license_plate',
+      title: 'Nomor Polisi',
+      render: (value: string) => (
+        <span className="font-mono">{value}</span>
+      )
     },
     {
-      label: 'Nomor Polisi',
-      accessorKey: 'license_plate',
-      render(row, value) {
-        return (<span className="font-mono">{value}</span>)
-      }
+      data: 'frame_number',
+      name: 'frame_number',
+      title: 'Nomor Rangka',
+      render: (value: string) => (
+        <span className="font-mono">{value}</span>
+      )
     },
     {
-      label: 'Nomor Rangka',
-      accessorKey: 'frame_number',
-      render(row, value) {
-        return (<span className="font-mono">{value}</span>)
-      }
+      data: 'model',
+      name: 'model',
+      title: 'Model Kendaraan',
+      render: (value: { label: string; color: string }) => (
+        <span className={`badge bg-${value.color}`}>{value.label}</span>
+      )
     },
     {
-      label: 'Status',
-      accessorKey: 'status',
-      render(row, value) {
-        // Mapping for CarStatusEnum in TypeScript
-        const CarStatusEnum = {
-          ready: { label: 'Siap Dipinjamkan', color: 'success' },
-          borrowed: { label: 'Sudah Disewakan', color: 'primary' },
-          crash: { label: 'Rusak', color: 'danger' },
-          repair: { label: 'Direparasi', color: 'warning' },
-          missing: { label: 'Hilang', color: 'dark' },
-          sold: { label: 'Terjual', color: 'secondary' },
-        };
-
-        const status = CarStatusEnum[value as keyof typeof CarStatusEnum];
-        if (!status) return null;
-
-        return (
-          <span className={`badge bg-${status.color}`}>
-            {status.label}
-          </span>
-        );
-      }
+      data: 'status',
+      name: 'status',
+      title: 'Model Kendaraan',
+      render: (value: { label: string; color: string }) => (
+        <span className={`badge bg-${value.color}`}>{value.label}</span>
+      )
     },
     {
-      label: 'Aksi',
+      data: 'id',
+      name: 'id',
+      title: 'Aksi',
       sortable: false,
-      accessorKey: 'id',
+      render(value: number, row: Database['CarData']) {
+        return (
+          <div className="gap-2 d-flex flex-nowrap">
+            {row.deleted_at ? (
+              <>
+                <RestoreData
+                  url={route('v1.admin.car-data.update', row.id)}
+                  onSuccess={refetch}
+                />
+                <ForceDeleteData
+                  onSuccess={refetch}
+                  url={route('v1.admin.car-data.destroy', row.id)}
+                />
+              </>
+            ) : (
+              <>
+                <EditData
+                  onSuccess={refetch}
+                  id={Number(value)}
+                />
+                <DeleteData
+                  withForceDeleteCheckbox
+                  url={route('v1.admin.car-data.destroy', row.id)}
+                  onSuccess={refetch}
+                />
+              </>
+            )}
+          </div>
+        )
+      }
     },
   ];
 
@@ -93,21 +102,25 @@ export default function Index() {
       header={
         <div className="d-flex justify-content-between">
           <div className="flex-column d-flex">
-            <h3 className="h4 fw-semibold">Data Mobil</h3>
+            <h3 className="h4 fw-semibold">Data Kendaraan</h3>
             <Breadcrumb className="m-0" bsPrefix="m-0 breadcrumb">
               <BreadcrumbItem linkAs={Link} href={route('administrator.home')}>Dasbor Beranda</BreadcrumbItem>
-              <BreadcrumbItem active>Data Mobil</BreadcrumbItem>
+              <BreadcrumbItem active>Data Kendaraan</BreadcrumbItem>
             </Breadcrumb>
           </div>
+
+          <CreateData onSuccess={refetch} />
         </div>
       }
     >
-      <Head title="Data Mobil" />
+      <Head title="Data Kendaraan" />
+
+      <AlertPage />
 
       <DataTable
-        className="mt-3"
         ref={dataTableRef}
-        withShowTrashedToggleData
+        withTrashToggle
+        className="mt-3"
         url={route('v1.admin.car-data.index')}
         columns={columns}
       />

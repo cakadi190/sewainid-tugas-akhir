@@ -2,21 +2,22 @@ import { PropsWithChildren } from "react";
 import styled from '@emotion/styled';
 import Footer from "./Footer";
 import { Container } from "react-bootstrap";
+import { useSidebar } from "@/Hooks/useSidebar";
 
-const MainPageStyled = styled.main`
-margin-left: 24rem;
+const MainPageStyled = styled.main<{ isToggled: boolean }>`
+margin-left: 20rem;
+width: calc(100% - 20rem);
 min-height: 100svh;
-width: calc(100% - 24rem);
 transition: all .2s;
 padding-top: 7.5rem;
 display: flex;
 flex-direction: column;
 overflow-x: hidden;
 
-@media (992px <= width <= 1400px) {
-  width: calc(100% - 22rem);
-  margin-left: 22rem;
-}
+${({ isToggled }) => !isToggled && `
+margin-left: 0;
+width: 100%;
+`}
 
 @media (width <= 992px) {
   width: 100%;
@@ -31,8 +32,10 @@ const MainPageInnerStyled = styled.div`
 margin-bottom: 1rem;`;
 
 export default function MainPage({ children }: PropsWithChildren) {
+  const { isOpen } = useSidebar();
+
   return (
-    <MainPageStyled>
+    <MainPageStyled isToggled={isOpen}>
       <MainPageInnerStyled>
         <Container fluid>
           {children}

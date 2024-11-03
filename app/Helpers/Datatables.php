@@ -2,276 +2,196 @@
 
 namespace App\Helpers;
 
-use App\Interfaces\Datatables as DatatablesInterface;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use App\Interfaces\Datatables as DataTableInterface;
+use Illuminate\Database\Eloquent\Model;
 
-/**
- * Class Datatables
- *
- * Helper untuk menangani pengambilan data dengan format datatables, termasuk
- * fitur pagination, pencarian, pemformatan kolom, pengurutan, dan pengamanan kolom.
- *
- * @package App\Helpers
- */
-class Datatables implements DatatablesInterface
+class Datatables implements DataTableInterface
 {
-    /**
-     * Query builder instance untuk pengambilan data.
-     *
-     * @var Builder|QueryBuilder
-     */
-    protected Builder|QueryBuilder $_query;
+    protected $query;
+    protected $columns = [];
+    protected $rawColumns = [];
+    protected $additionalColumns = [];
+    protected $columnAttributes = [];
+    protected $rowAttributes = [];
+    protected $rowClass = [];
+    protected $rowId = 'id';
+    protected $rowData = null;
+    protected $perPage = 10;
+    protected $orderColumn = 'id';
+    protected $orderDirection = 'desc';
 
-    /**
-     * Instance dari HTTP Request untuk akses parameter seperti pencarian dan pengurutan.
-     *
-     * @var Request
-     */
-    protected Request $_request;
-
-    /**
-     * Limitasi pagination kustom jika diperlukan.
-     *
-     * @var array|null
-     */
-    protected ?array $_paginationAmount = null;
-
-    /**
-     * Kumpulan custom callback untuk kolom tambahan.
-     *
-     * @var Collection<string, callable>
-     */
-    protected Collection $_columns;
-
-    /**
-     * Kumpulan nama kolom yang akan dirender sebagai HTML.
-     *
-     * @var Collection<int, string>
-     */
-    protected Collection $_htmlColumns;
-
-    /**
-     * Array untuk kolom yang diamankan sebelum ditampilkan.
-     *
-     * @var array
-     */
-    protected array $_securedColumn = [];
-
-    /**
-     * Target kunci keamanan untuk kolom terbatas.
-     *
-     * @var string
-     */
-    protected string $_securedTarget;
-
-    /**
-     * Kumpulan kolom yang diformat dengan callback.
-     *
-     * @var Collection<string, callable>
-     */
-    protected Collection $_formattedColumns;
-
-    /**
-     * Konstruktor untuk inisialisasi Collection dan Request.
-     */
-    public function __construct()
+    public function __construct($query)
     {
-        $this->_request = request();
-        $this->_columns = collect();
-        $this->_htmlColumns = collect();
-        $this->_formattedColumns = collect();
+        if ($query instanceof Model) {
+            $this->query = $query->newQuery();
+        } elseif ($query instanceof Builder) {
+            $this->query = $query;
+        } else {
+            throw new \InvalidArgumentException('Query must be an instance of Model or Builder');
+        }
     }
 
-    /**
-     * Membuat instance baru dari Datatables helper dengan query yang diberikan.
-     *
-     * @param Builder|Model|Relation|QueryBuilder $query Query yang akan diproses.
-     * @return self Instance dari Datatables helper.
-     */
-    public static function from(Builder|Model|Relation|QueryBuilder $query): self
+    public function addColumn(string $name, callable $callback): self
     {
-        $instance = new self();
-        $instance->_query = $query instanceof Model ? $query->newQuery() :
-            ($query instanceof Relation ? $query->getQuery() : $query);
-
-        return $instance;
+        $this->additionalColumns[$name] = $callback;
+        return $this;
     }
 
-    /**
-     * Menambahkan pencarian berdasarkan kolom yang ditentukan.
-     *
-     * @param array<string> $searchableColumns Array kolom yang dapat dicari.
-     * @return self Instance dari Datatables helper.
-     */
-    public function withSearch(array $searchableColumns = []): self
+    public function addColumns(array $columns): self
     {
-        if ($search = $this->_request->get('search')) {
-            $this->_query->where(fn(Builder $query): Collection => collect($searchableColumns)->each(
-                fn(string $column): mixed =>
-                $query->orWhere($column, 'like', "%{$search}%")
-            ));
+        foreach ($columns as $name => $callback) {
+            $this->addColumn($name, $callback);
         }
         return $this;
     }
 
-    /**
-     * Menambahkan kolom yang perlu diamankan datanya sebelum dibuka.
-     *
-     * @param array<string> $columns Array kolom yang akan diamankan.
-     * @param string $target Target kunci keamanan untuk kolom yang diamankan.
-     * @return self Instance dari Datatables helper.
-     */
-    public function withSecuredColumn(array $columns = [], string $target): self
+    public function editColumn(string $name, callable $callback): self
     {
-        $this->_securedTarget = $target;
-        $this->_securedColumn = $columns;
+        $this->columns[$name] = $callback;
         return $this;
     }
 
-    /**
-     * Menambahkan filter untuk data yang sudah dihapus (soft deleted).
-     *
-     * @return self Instance dari Datatables helper.
-     */
-    public function withTrashed(): self
+    public function removeColumn(string $name): self
     {
-        $this->_query->when(
-            $this->_request->get('showTrashed'),
-            fn(Builder $query, bool|int|string $showTrashed): mixed => isTruthy(value: $showTrashed) ?
-            $query->onlyTrashed() :
-            $query->whereNull('deleted_at')
-        );
+        unset($this->columns[$name]);
+        unset($this->additionalColumns[$name]);
         return $this;
     }
 
-    /**
-     * Set custom pagination amounts if they exist.
-     *
-     * @param array<int> $paginationAmount Value for custom pagination value.
-     * @return self Instance dari Datatables helper.
-     */
-    public function setPaginationAmount(array $paginationAmount = []): self
+    public function rawColumns(array $columns): self
     {
-        $this->_paginationAmount = $paginationAmount;
+        $this->rawColumns = array_merge($this->rawColumns, $columns);
         return $this;
     }
 
-    /**
-     * Menambahkan pengurutan berdasarkan kolom.
-     *
-     * @return self Instance dari Datatables helper.
-     */
-    public function withOrdering(): self
+    public function setRowId($callback): self
     {
-        $this->_query->when(
-            $this->_request->get('columnTarget') && $this->_request->get('columnDirection'),
-            fn(Builder $query): Builder => $query->orderBy(
-                $this->_request->get('columnTarget', 'id'),
-                $this->_request->get('columnDirection', 'asc')
-            )
-        );
+        $this->rowId = $callback;
         return $this;
     }
 
-    /**
-     * Menambahkan kolom tambahan ke respons.
-     *
-     * @param string $column Nama kolom tambahan.
-     * @param callable $callback Fungsi callback untuk menghasilkan nilai kolom.
-     * @return self Instance dari Datatables helper.
-     */
-    public function addColumn(string $column, callable $callback): self
+    public function setRowClass($callback): self
     {
-        $this->_columns->put($column, $callback);
+        $this->rowClass = $callback;
         return $this;
     }
 
-    /**
-     * Menambahkan kolom yang diformat dengan callback.
-     *
-     * @param string $column Nama kolom yang akan diformat.
-     * @param callable $callback Fungsi callback untuk memformat kolom.
-     * @return self Instance dari Datatables helper.
-     */
-    public function formatColumn(string $column, callable $callback): self
+    public function setRowAttributes($callback): self
     {
-        $this->_formattedColumns->put($column, $callback);
+        $this->rowAttributes = $callback;
         return $this;
     }
 
-    /**
-     * Menandai kolom yang akan dirender sebagai HTML.
-     *
-     * @param string|array<string> $columns Nama kolom atau array kolom yang akan dirender sebagai HTML.
-     * @return self Instance dari Datatables helper.
-     */
-    public function renderAsHtml(string|array $columns): self
+    public function setRowData(callable $callback): self
     {
-        $this->_htmlColumns = $this->_htmlColumns->merge(
-            collect(is_array($columns) ? $columns : [$columns])
-        );
+        $this->rowData = $callback;
         return $this;
     }
 
-    /**
-     * Membuat response JSON untuk datatables.
-     *
-     * @return JsonResponse Response JSON dengan format datatables.
-     */
-    public function make(): JsonResponse
+    public function setPerPage(int $perPage): self
     {
-        $perPage = SecurityHelper::getPerPage(
-            perPage: $this->_request->get('perPage', 10),
-            customPagination: $this->_paginationAmount
-        );
+        $this->perPage = $perPage;
+        return $this;
+    }
 
-        $paginatedData = $this->_query->paginate($perPage);
+    public function orderBy(string $column, string $direction = 'asc'): self
+    {
+        $this->orderColumn = $column;
+        $this->orderDirection = strtolower($direction);
+        return $this;
+    }
 
-        $data = collect($paginatedData->items())->map(function ($item) {
-            // Terapkan callback pada kolom yang diformat
-            $this->_formattedColumns->each(function ($callback, $column) use ($item) {
-                $item->$column = $callback($item);
-            });
+    public function make(bool $raw = false): array
+    {
+        // Get the total count
+        $total = $this->query->count();
 
-            // Terapkan callback untuk kolom tambahan
-            $this->_columns->each(function ($callback, $column) use ($item) {
-                $value = $callback($item);
-                $item->$column = $this->_htmlColumns->contains($column) ?
-                    $value :
-                    htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-            });
+        // Apply pagination
+        $page = request()->get('page', 1);
+        $offset = ($page - 1) * $this->perPage;
 
-            return $item;
-        });
+        // Apply ordering
+        $this->query->orderBy($this->orderColumn, $this->orderDirection);
 
-        return response()->json([
+        // Get paginated results
+        $results = $this->query->offset($offset)->limit($this->perPage)->get();
+
+        // Transform the data
+        $data = $this->processResults($results);
+
+        if ($raw) {
+            return $data;
+        }
+
+        return [
             'data' => $data,
-            'current_page' => $paginatedData->currentPage(),
-            'last_page' => $paginatedData->lastPage(),
-            'per_page' => $paginatedData->perPage(),
-            'total' => $paginatedData->total(),
-            'query' => returnConditionIfTrue(
-                app()->environment('local', 'development'),
-                $this->_query->toSql()
-            ),
-        ]);
+            'current_page' => (int) $page,
+            'last_page' => ceil($total / $this->perPage),
+            'per_page' => (int) $this->perPage,
+            'total' => $total,
+            'query' => $this->query->toSql()
+        ];
     }
 
-    /**
-     * Mask sensitive data for secured columns.
-     *
-     * @param mixed $data The data to be masked
-     * @return string The masked data
-     */
-    protected function maskSensitiveData($data): string
+    protected function processResults($results)
     {
-        return is_string($data) ? Str::mask($data, '*', 0, -4) : '****';
+        return $results->map(function ($item) {
+            $row = $this->processRow($item);
+
+            // Add row ID
+            // if (is_callable($this->rowId)) {
+            $row['DT_RowId'] = is_callable($this->rowId) ? call_user_func($this->rowId, $item) : $item->{$this->rowId};
+            // } else {
+                // $row['DT_RowId'] = $item->{$this->rowId};
+            // }
+
+            // Add row class
+            if ($this->rowClass) {
+                $row['DT_RowClass'] = is_callable($this->rowClass)
+                    ? call_user_func($this->rowClass, $item)
+                    : $this->rowClass;
+            }
+
+            // Add row attributes
+            if ($this->rowAttributes) {
+                $row['DT_RowAttr'] = is_callable($this->rowAttributes)
+                    ? call_user_func($this->rowAttributes, $item)
+                    : $this->rowAttributes;
+            }
+
+            // Add custom row data
+            if ($this->rowData) {
+                $row['DT_RowData'] = call_user_func($this->rowData, $item);
+            }
+
+            return $row;
+        })->toArray();
+    }
+
+    protected function processRow($item)
+    {
+        $row = $item->toArray();
+
+        // Process edited columns
+        foreach ($this->columns as $key => $callback) {
+            $row[$key] = $callback($item);
+        }
+
+        // Process additional columns
+        foreach ($this->additionalColumns as $key => $callback) {
+            $row[$key] = $callback($item);
+        }
+
+        // Process raw columns
+        foreach ($this->rawColumns as $key) {
+            if (isset($row[$key])) {
+                $row[$key] = ['raw' => $row[$key]];
+            }
+        }
+
+        return $row;
     }
 }

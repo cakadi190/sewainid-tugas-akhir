@@ -1,6 +1,6 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import styled from '@emotion/styled';
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import {
   faBars,
   faTachometerAlt,
@@ -21,6 +21,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, usePage } from '@inertiajs/react';
 import { Button } from 'react-bootstrap';
 import { PageProps } from '@/types';
+import { useSidebar } from '@/Hooks/useSidebar';
 
 // Types
 type MenuList = {
@@ -31,21 +32,29 @@ type MenuList = {
   child?: MenuList[];
 };
 
-const SidebarStyle = styled.aside`
+const SidebarStyle = styled.aside<{ isToggled: boolean }>`
   position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
-  width: 24rem;
+  width: 20rem;
   height: 100vh;
-  overflow: hidden;
   overflow-y: auto;
   transition: all 0.3s ease;
   z-index: 1030;
+  margin-left: -20rem;
 
-  @media (width <= 1400px) {
-    width: 22rem;
+  @media (width <= 992px) {
+    margin-left: 0;
   }
+
+  ${({ isToggled }) => isToggled && `
+    margin-left: 0;
+
+    @media (width <= 992px) {
+      margin-left: -20rem;
+    }
+  `}
 
   &::-webkit-scrollbar {
     width: 6px;
@@ -109,17 +118,20 @@ const MenuItem = styled.li`
   position: relative;
 `;
 
-const MenuLink = styled(Link)<{ $hassubmenu?: boolean; $isActive?: boolean }>`
+// Modify styled components to properly handle custom props
+const MenuLink = styled(Link, {
+  shouldForwardProp: (prop) => !['hasSubmenu', 'isActive'].includes(prop as string),
+})<{ hasSubmenu?: boolean; isActive?: boolean }>`
   padding: 0.75rem 1.5rem;
-  color: ${({ $isActive }) => ($isActive ? '#fff' : 'rgba(255, 255, 255, 0.8)')};
+  color: ${({ isActive }) => (isActive ? '#fff' : 'rgba(255, 255, 255, 0.8)')};
   text-decoration: none;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   transition: all 0.2s ease;
-  ${({ $hassubmenu }) => $hassubmenu && `justify-content: space-between;`}
-  ${({ $isActive }) =>
-    $isActive && `
+  ${({ hasSubmenu }) => hasSubmenu && `justify-content: space-between;`}
+  ${({ isActive }) =>
+    isActive && `
     background: rgba(var(--bs-white-rgb), .125);
   `}
 
@@ -139,19 +151,21 @@ const MenuIconWrapper = styled.span`
   }
 `;
 
-const SubmenuIcon = styled(FontAwesomeIcon)<{ $isopen: boolean }>`
+const SubmenuIcon = styled(FontAwesomeIcon, {
+  shouldForwardProp: (prop) => prop !== 'isOpen',
+})<{ isOpen: boolean }>`
   transition: transform 0.2s ease;
   opacity: 0.5;
   min-width: 1.25rem;
 
-  ${({ $isopen }) =>
-    $isopen &&
+  ${({ isOpen }) =>
+    isOpen &&
     `
     transform: rotate(180deg);
   `}
 `;
 
-const Submenu = styled.ul<{ $isopen: boolean }>`
+const Submenu = styled.ul<{ isOpen: boolean }>`
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease-out;
@@ -159,8 +173,8 @@ const Submenu = styled.ul<{ $isopen: boolean }>`
   list-style: none;
   padding: 0;
 
-  ${({ $isopen }) =>
-    $isopen &&
+  ${({ isOpen }) =>
+    isOpen &&
     `
     max-height: 500px;
     transition: max-height 0.5s ease-in;
@@ -169,10 +183,12 @@ const Submenu = styled.ul<{ $isopen: boolean }>`
 
 const SubmenuItem = styled.li``;
 
-const SubmenuLink = styled(Link)<{ $isActive?: boolean }>`
+const SubmenuLink = styled(Link, {
+  shouldForwardProp: (prop) => prop !== 'isActive',
+})<{ isActive?: boolean }>`
   padding: 0.5rem 1rem 0.5rem 3.5rem;
-  color: ${({ $isActive }) =>
-    $isActive ? '#fff' : 'rgba(255, 255, 255, 0.7)'};
+  color: ${({ isActive }) =>
+    isActive ? '#fff' : 'rgba(255, 255, 255, 0.7)'};
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -180,8 +196,8 @@ const SubmenuLink = styled(Link)<{ $isActive?: boolean }>`
   font-size: 0.9rem;
   transition: all 0.2s ease;
 
-  ${({ $isActive }) =>
-    $isActive && `
+  ${({ isActive }) =>
+    isActive && `
     background: rgba(var(--bs-white-rgb), .125);
   `}
 
@@ -213,11 +229,10 @@ const MenuItemComponent = ({
 }) => {
   const { activeMenu, setActiveMenu } = React.useContext(MenuContext);
   const { props } = usePage<PageProps>();
-  const isopen = activeMenu === menuId;
+  const isOpen = activeMenu === menuId;
   const isActive = menu.href === props.urlPath.url;
   const isAnySubActive = menu.child?.some(sub => sub.href === props.urlPath.url);
 
-  // Jika submenu aktif, buka parent menu
   React.useEffect(() => {
     if (isAnySubActive) {
       setActiveMenu(menuId);
@@ -228,12 +243,12 @@ const MenuItemComponent = ({
     <MenuItem>
       <MenuLink
         href={menu.href ?? '#'}
-        $hassubmenu={!!menu.child}
-        $isActive={isActive || isAnySubActive}
+        hasSubmenu={!!menu.child}
+        isActive={isActive || isAnySubActive}
         onClick={(e) => {
           if (menu.child) {
             e.preventDefault();
-            setActiveMenu(isopen ? null : menuId);
+            setActiveMenu(isOpen ? null : menuId);
           }
         }}
       >
@@ -242,16 +257,16 @@ const MenuItemComponent = ({
           {menu.label}
         </MenuIconWrapper>
         {menu.child && (
-          <SubmenuIcon icon={faChevronDown} size="sm" $isopen={isopen} />
+          <SubmenuIcon icon={faChevronDown} size="sm" isOpen={isOpen} />
         )}
       </MenuLink>
       {menu.child && (
-        <Submenu $isopen={isopen}>
+        <Submenu isOpen={isOpen}>
           {menu.child.map((subMenu, subIndex) => {
             const isSubActive = subMenu.href === props.urlPath.url;
             return (
               <SubmenuItem key={subIndex}>
-                <SubmenuLink href={subMenu.href ?? '#'} $isActive={isSubActive}>
+                <SubmenuLink href={subMenu.href ?? '#'} isActive={isSubActive}>
                   {subMenu.icon && (
                     <FontAwesomeIcon icon={subMenu.icon as IconDefinition} />
                   )}
@@ -266,12 +281,12 @@ const MenuItemComponent = ({
   );
 };
 
-const SidebarHeader = () => (
+const SidebarHeader: FC<{ toggle: () => void }> = ({ toggle }) => (
   <HeaderSidebar>
     <LogoLink href={'#'}>
       <ApplicationLogo fill="#fff" height={36} />
     </LogoLink>
-    <Button variant="link" className="p-0">
+    <Button variant="link" className="p-0" onClick={toggle}>
       <FontAwesomeIcon icon={faBars} size="lg" className="text-white" />
     </Button>
   </HeaderSidebar>
@@ -289,8 +304,10 @@ const MenuListComponent = ({ items }: { items: MenuList[] }) => (
   </MenusSidebar>
 );
 
+
 export default function Sidebar() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const { toggle, isOpen } = useSidebar();
 
   const menuList: MenuList[] = [
     { label: 'Dashboard', type: 'heading' },
@@ -303,20 +320,10 @@ export default function Sidebar() {
 
     { label: 'Master Data', type: 'heading' },
     {
-      label: 'Manajemen Mobil',
+      label: 'Manajemen Kendaraan',
       type: 'menu',
-      href: '#',
+      href: route('administrator.car-data.index'),
       icon: faCar,
-      child: [
-        {
-          label: 'Daftar Mobil',
-          href: route('administrator.car-data.index'),
-        },
-        {
-          label: 'Kategori Mobil',
-          href: '#',
-        },
-      ],
     },
     {
       label: 'Lokasi Garasi',
@@ -425,9 +432,9 @@ export default function Sidebar() {
 
   return (
     <MenuContext.Provider value={{ activeMenu, setActiveMenu }}>
-      <SidebarStyle id="sidebar" className="sidebar">
+      <SidebarStyle isToggled={isOpen} id="sidebar" className="sidebar">
         <InnerSidebar>
-          <SidebarHeader />
+          <SidebarHeader toggle={toggle} />
           <MenuListComponent items={menuList} />
         </InnerSidebar>
       </SidebarStyle>

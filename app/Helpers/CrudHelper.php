@@ -8,127 +8,80 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use App\Helpers\Datatables;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Spatie\MediaLibrary\HasMedia;
 
 /**
  * Class CrudHelper
  *
  * Helper untuk menjalankan operasi CRUD (Create, Read, Update, Delete)
- * dengan integrasi pada Eloquent Model dan sistem response JSON untuk datatables.
+ * dengan integrasi pada Eloquent Model.
  *
  * @package App\Helpers
  */
 class CrudHelper implements CrudInterface
 {
     /**
-     * Array of secured column names that require special handling.
+     * Create a new record in the model with optional file upload support.
      *
-     * @var ?array
+     * @param mixed $request The HTTP request with data for creation
+     * @param Model $model The model instance for data creation
+     * @param array|null $singleUploadTarget Keys for single file upload
+     * @param array|null $multipleUploadTarget Keys for multiple file upload
+     * @return RedirectResponse
      */
-    protected array $_securedColumn = [];
-
-    /**
-     * Array of columns to be used in search functionality.
-     *
-     * @var ?array
-     */
-    protected array $_searchColumn = [];
-
-    /**
-     * Security key for accessing secured columns.
-     *
-     * @var string
-     */
-    protected string $_securedTarget;
-
-    /**
-     * CrudHelper constructor.
-     *
-     * @param Datatables $_datatables Instance of Datatables helper for data management.
-     */
-    public function __construct(
-        private readonly Datatables $_datatables,
-    ) {
-        $this->_securedTarget = '';
-    }
-
-    /**
-     * Define searchable columns for data retrieval.
-     *
-     * @param array<string> $columns List of columns that should be searchable.
-     * @return self Fluent interface for chaining methods.
-     */
-    public function searchColumn(array $columns = []): self
-    {
-        $this->_searchColumn = $columns;
-        return $this;
-    }
-
-    /**
-     * Define secured columns that require access restrictions.
-     *
-     * @param array<string> $columns List of secured column names.
-     * @param string $target Security key to access the secured columns.
-     * @return self Fluent interface for chaining methods.
-     */
-    public function withSecuredColumn(?array $columns = [], string $target): self
-    {
-        $this->_securedColumn = $columns;
-        $this->_securedTarget = $target;
-        return $this;
-    }
-
-    /**
-     * Format a specified column with a callback.
-     *
-     * @param string $column Column name to be formatted.
-     * @param callable $callback Function to format the column.
-     * @return self Fluent interface for chaining methods.
-     */
-    public function formatColumn(string $column, callable $callback): self
-    {
-        $this->_datatables->formatColumn($column, $callback);
-        return $this;
-    }
-
-    /**
-     * Retrieve all data for a given model in JSON format, with support for pagination and filtering.
-     *
-     * @param Model $model The Eloquent model to retrieve data from.
-     * @param Request|null $request Optional request object with additional parameters.
-     * @return JsonResponse JSON response with data and pagination details.
-     * @throws \Exception If there is an error in data retrieval.
-     */
-    public function allData(Model $model, Request|null $request = null): JsonResponse
-    {
-        return $this->_datatables->from($model)
-            ->withTrashed()
-            ->withSecuredColumn($this->_securedColumn ?? [], $this->_securedTarget)
-            ->withSearch($this->_searchColumn)
-            ->withOrdering()
-            ->make();
-    }
-
-    /**
-     * Create a new record in the model.
-     *
-     * @param mixed $request The HTTP request with data for creation.
-     * @param Model $model The model instance for data creation.
-     * @return RedirectResponse Redirect response with success or error messages.
-     */
-    public function createData(mixed $request, Model $model): RedirectResponse
+    public function createData(mixed $request, Model $model, array|null $singleUploadTarget = [], array|null $multipleUploadTarget = []): RedirectResponse
     {
         try {
             $data = collect($request->validated());
-            $model->create($data->toArray());
 
-            return redirect()->back()->with('success', "Data berhasil ditambahkan!");
+            // Create the model with the processed data
+            $createdModel = $model->create($data->toArray());
+
+            // Handle file uploads with MediaLibrary if required
+            if ($singleUploadTarget || $multipleUploadTarget) {
+                // Ensure model implements HasMedia interface
+                if (!($model instanceof HasMedia)) {
+                    throw new \Exception('Model must implement HasMedia interface to use MediaLibrary');
+                }
+
+                $files = collect($request->allFiles());
+
+                if ($files->isNotEmpty()) {
+                    // Handle multiple file uploads
+                    $files->each(function ($file, $key) use ($createdModel, $multipleUploadTarget) {
+                        if (in_array($key, $multipleUploadTarget) && is_array($file)) {
+                            foreach ($file as $singleFile) {
+                                if ($singleFile->isValid()) {
+                                    $fileName = Str::uuid() . '.' . $singleFile->getClientOriginalExtension();
+                                    $createdModel->addMedia($singleFile)
+                                        ->usingFileName($fileName)
+                                        ->toMediaCollection($key);
+                                }
+                            }
+                        }
+                    });
+
+                    // Handle single file uploads
+                    $files->each(function ($file, $key) use ($createdModel, $singleUploadTarget) {
+                        if (in_array($key, $singleUploadTarget) && $file->isValid()) {
+                            $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
+                            $createdModel->addMedia($file)
+                                ->usingFileName($fileName)
+                                ->toMediaCollection($key);
+                        }
+                    });
+                }
+            }
+
+            return redirect()->back()->with('success', 'Data berhasil ditambahkan!');
         } catch (\Throwable $th) {
             Log::error($th);
 
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['error' => "Terjadi kesalahan saat menambahkan data. Silakan coba lagi!"]);
+                ->withErrors(['error' => 'Terjadi kesalahan saat menambahkan data. Silakan coba lagi!']);
         }
     }
 
@@ -137,25 +90,44 @@ class CrudHelper implements CrudInterface
      *
      * @param Model $model The model instance to retrieve data for.
      * @param Request|null $request Optional request object.
+     * @param array $singleUploadTarget Collection names for single upload targets.
+     * @param array|null $multipleUploadTarget Collection names for multiple upload targets.
      * @return JsonResponse JSON response with the single data entry.
      */
-    public function singleData(Model $model, Request|null $request = null): JsonResponse
+    public function singleData(Model $model, Request|null $request = null, array $singleUploadTarget = [], array|null $multipleUploadTarget = []): JsonResponse
     {
+        $data = ($model instanceof HasMedia) ? $model->toArray() : $model;
+
+        // Inject single upload target media directly into data
+        foreach ($singleUploadTarget as $target) {
+            $mediaItem = $model->getFirstMedia($target);
+            $data[$target] = $mediaItem->toArray();
+        }
+
+        // Inject multiple upload target media directly into data
+        foreach ($multipleUploadTarget as $target) {
+            $mediaItems = $model->getMedia($target);
+            $data[$target] = $mediaItems->toArray();
+        }
+
         return response()->json([
-            'data' => $model,
+            'data' => $data,
             'status' => 'success',
             'code' => 200,
+            'request' => returnConditionIfFalse(app()->environment('development'), $request->all())
         ]);
     }
 
     /**
-     * Update an existing data record for a given model.
+     * Update an existing data record for a given model with optional file upload support.
      *
      * @param mixed $request The HTTP request with data for update.
      * @param Model $model The model instance to be updated.
+     * @param array|null $singleUploadTarget Keys for single file upload
+     * @param array|null $multipleUploadTarget Keys for multiple file upload
      * @return RedirectResponse Redirect response with success or error messages.
      */
-    public function editData(mixed $request, Model $model): RedirectResponse
+    public function editData(mixed $request, Model $model, array|null $singleUploadTarget = [], array|null $multipleUploadTarget = []): RedirectResponse
     {
         try {
             if ($request->has('restore')) {
@@ -163,7 +135,44 @@ class CrudHelper implements CrudInterface
                 return redirect()->back()->with('success', "Data berhasil dipulihkan!");
             }
 
+            // Update model with validated data
             $model->update($request->validated());
+
+            // Handle file uploads with MediaLibrary if required
+            if ($singleUploadTarget || $multipleUploadTarget) {
+                if (!($model instanceof HasMedia)) {
+                    throw new \Exception('Model must implement HasMedia interface to use MediaLibrary');
+                }
+
+                $files = collect($request->allFiles());
+
+                if ($files->isNotEmpty()) {
+                    // Handle multiple file uploads
+                    $files->each(function ($file, $key) use ($model, $multipleUploadTarget) {
+                        if (in_array($key, $multipleUploadTarget) && is_array($file)) {
+                            foreach ($file as $singleFile) {
+                                if ($singleFile->isValid()) {
+                                    $fileName = Str::uuid() . '.' . $singleFile->getClientOriginalExtension();
+                                    $model->addMedia($singleFile)
+                                        ->usingFileName($fileName)
+                                        ->toMediaCollection($key);
+                                }
+                            }
+                        }
+                    });
+
+                    // Handle single file uploads
+                    $files->each(function ($file, $key) use ($model, $singleUploadTarget) {
+                        if (in_array($key, $singleUploadTarget) && $file->isValid()) {
+                            $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
+                            $model->addMedia($file)
+                                ->usingFileName($fileName)
+                                ->toMediaCollection($key);
+                        }
+                    });
+                }
+            }
+
             return redirect()->back()->with('success', "Data berhasil diperbarui!");
         } catch (\Throwable $th) {
             Log::error($th);

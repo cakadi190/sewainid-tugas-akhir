@@ -1,29 +1,14 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react'
+import { DataTableRef } from '@/Components/DataTable'
+import useDataTableStore from '@/Store/dataTableStore'
 
-import { DataTableRef } from '@/Components/Datatables';
+export const useDataTable = () => {
+  const dataTableRef = useRef<DataTableRef>(null)
+  const { setDataTableRef, refetch } = useDataTableStore()
 
-/**
- * Interface for the return type of useDataTable.
- */
-interface DataTableHook<T extends DataTableRef> {
-  dataTableRef: React.RefObject<{ refetch: () => void } | T>;
-  refetch: () => void;
+  useEffect(() => {
+    setDataTableRef(dataTableRef)
+  }, [setDataTableRef])
+
+  return { dataTableRef, refetch }
 }
-
-/**
- * A custom hook to manage the DataTable's data fetching logic.
- *
- * @returns {DataTableHook<T extends DataTableRef>} An object containing a refetch function to refresh data from the server.
- */
-export const useDataTable = <T extends DataTableRef>(): DataTableHook<T> => {
-  const dataTableRef = useRef<DataTableRef>(null);
-
-  /**
-   * Refetch the data from the DataTable component.
-   */
-  const refetch = () => {
-    dataTableRef.current?.refetch();
-  };
-
-  return { dataTableRef, refetch };
-};
