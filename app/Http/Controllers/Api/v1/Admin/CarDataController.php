@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\v1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreCarDataRequest;
-use App\Http\Requests\UpdateCarDataRequest;
+use App\Http\Requests\Admin\StoreCarDataRequest;
+use App\Http\Requests\Admin\UpdateCarDataRequest;
 use App\Interfaces\CrudHelper;
 use App\Models\CarData;
 use Illuminate\Http\JsonResponse;
