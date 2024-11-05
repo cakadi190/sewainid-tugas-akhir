@@ -55,11 +55,24 @@ export interface GarageData extends BaseModel {
   description: string;
 }
 
+export interface RepairShopData extends BaseModel {
+  id: number;
+  name: string;
+  address: string;
+  coordinate?: string;
+  phone: string;
+  opening_time: string;
+  closing_time: string;
+  is_active: boolean;
+  description: string;
+}
+
 // Main Database Interface
 export default interface Database {
   User: WithSoftDeletes<User>;
   CarData: WithSoftDeletes<CarData>;
   GarageData: WithSoftDeletes<GarageData>;
+  RepairShopData: WithSoftDeletes<RepairShopData>;
 }
 
 // Type helpers untuk mengakses model dengan soft delete

@@ -18,12 +18,12 @@ return new class extends Migration
             $table->string('name');
             $table->string('address');
             $table->string('coordinate');
-            $table->unsignedInteger('capacity')->default(0);
             $table->string('phone')->nullable();
             $table->time('opening_time')->nullable();
             $table->time('closing_time')->nullable();
             $table->boolean('is_active')->default(true);
             $table->text('description')->nullable();
+            $table->softDeletes();
         });
     }
 
