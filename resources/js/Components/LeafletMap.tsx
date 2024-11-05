@@ -29,7 +29,6 @@ const LeafletSingle: React.FC<GarageMapProps> = ({ position, name, address }) =>
       <MapContainer
         center={position}
         zoom={15}
-        scrollWheelZoom={false}
         style={{ height: '100%', width: '100%' }}
       >
         <TileLayer
