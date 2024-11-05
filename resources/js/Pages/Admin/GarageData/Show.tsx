@@ -6,7 +6,7 @@ import { useForm } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 import { Button, Col, Form, Modal, Row, Spinner } from "react-bootstrap";
 import { createPortal } from "react-dom";
-import LeafletSingle from "@/Components/LeafletMap";
+import { LeafletSingle } from "@/Components/LeafletMap";
 
 export default function Show({ id }: { id: number }) {
   const [showModal, setShowModal] = useState<boolean>(false);
