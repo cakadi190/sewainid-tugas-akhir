@@ -66,7 +66,7 @@ const RestoreModal: FC<{
   };
 
   return (
-    <Modal show={show} onHide={onClose} centered>
+    <Modal backdrop="static" keyboard={false} show={show} onHide={onClose} centered>
       <RestoreConfirmation
         isRestoring={isRestoring}
         onConfirm={handleRestore}

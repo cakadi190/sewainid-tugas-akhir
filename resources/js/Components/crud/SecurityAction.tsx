@@ -14,7 +14,7 @@ const ConfirmationModal: FC<{
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
 
   return (
-    <Modal show={isOpen} onHide={onClose} centered>
+    <Modal backdrop="static" keyboard={false} show={isOpen} onHide={onClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>Konfirmasikan Aksi</Modal.Title>
       </Modal.Header>

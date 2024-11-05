@@ -1,3 +1,4 @@
+import { renderSwalModal } from '@/Helpers/swal';
 import { PageProps } from '@/types';
 import { usePage } from '@inertiajs/react';
 import React, { useEffect } from 'react';
@@ -7,27 +8,29 @@ import withReactContent from 'sweetalert2-react-content';
 const AlertPage: React.FC<{ className?: string }> = ({ className }) => {
   const { props: { alert } } = usePage<PageProps>();
 
-  const MySwal = withReactContent(Swal);
+  type AlertTypes = {
+    title: string;
+    type: 'success' | 'info' | 'error' | 'warning';
+    message?: string;
+  }
 
   useEffect(() => {
-    const alertTypes = [
-      { type: 'error', message: alert?.danger || alert?.error },
-      { type: 'success', message: alert?.success },
-      { type: 'warning', message: alert?.warning },
-      { type: 'info', message: alert?.info },
+    const alertTypes: AlertTypes[] = [
+      { title: 'Galat!', type: 'error', message: alert?.danger || alert?.error },
+      { title: 'Berhasil!', type: 'success', message: alert?.success },
+      { title: 'Peringatan!', type: 'warning', message: alert?.warning },
+      { title: 'Informasi.', type: 'info', message: alert?.info },
     ];
 
-    alertTypes.forEach(({ type, message }) => {
+    alertTypes.forEach(({ type, message, title }) => {
       if (message) {
-        MySwal.fire({
-          icon: type as SweetAlertIcon,
-          title: type.charAt(0).toUpperCase() + type.slice(1), // Capitalizes the first letter of the type
+        renderSwalModal(type, {
+          title: title,
           text: message,
-          showConfirmButton: true,
         });
       }
     });
-  }, [alert, MySwal]);
+  }, [alert]);
 
   return <div className={className}></div>; // Empty div since alerts are shown via SweetAlert
 };

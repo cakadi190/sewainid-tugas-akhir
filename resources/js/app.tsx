@@ -1,5 +1,4 @@
 import '../css/app.scss';
-// import 'virtual:uno.css'
 import './bootstrap';
 
 import { createInertiaApp } from '@inertiajs/react';
@@ -17,7 +16,6 @@ createInertiaApp({
     ),
   setup({ el, App, props }) {
     const root = createRoot(el);
-
     root.render(<App {...props} />);
   },
   progress: {

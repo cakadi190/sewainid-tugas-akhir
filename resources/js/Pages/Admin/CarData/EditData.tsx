@@ -14,7 +14,7 @@ import withReactContent from "sweetalert2-react-content";
 import ImageGallery from "@/Components/ImageGallery";
 import { MediaLibrary } from "@/types/medialibrary";
 
-export default function EditData({ id, onSuccess: onSuccessAction }: { id: number; onSuccess: () => void }) {
+export default function EditData({ id, onSuccess: onSuccessAction }: { id: number; onSuccess?: () => void }) {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [galleryData, setGalleryData] = useState<MediaLibrary[] | null | undefined>(null);

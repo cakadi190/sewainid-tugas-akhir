@@ -43,6 +43,18 @@ class CarDataController extends Controller
      */
     public function show(CarData $carDatum): Response
     {
+        $carDatum->setAttribute('gallery', $carDatum->getMedia('gallery')->toArray());
+        // Convert model and status to structured arrays
+        $carDatum->setAttribute('modelEnum', [
+            'label' => $carDatum->getAttribute('model')->label(),
+            'color' => $carDatum->getAttribute('model')->color()
+        ]);
+
+        $carDatum->setAttribute('statusEnum', [
+            'label' => $carDatum->getAttribute('status')->label(),
+            'color' => $carDatum->getAttribute('status')->color()
+        ]);
+
         return Inertia::render('Admin/CarData/Show', compact('carDatum'));
     }
 }

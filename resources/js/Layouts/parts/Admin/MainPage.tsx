@@ -9,7 +9,7 @@ margin-left: 20rem;
 width: calc(100% - 20rem);
 min-height: 100svh;
 transition: all .2s;
-padding-top: 7.5rem;
+padding-top: 6.5rem;
 display: flex;
 flex-direction: column;
 overflow-x: hidden;

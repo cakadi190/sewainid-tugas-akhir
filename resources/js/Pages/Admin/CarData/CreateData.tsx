@@ -8,10 +8,11 @@ import { CarModelEnum, CarStatusEnum } from "@/types/enum";
 import { getCarModelLabel, getCarStatusLabel } from "@/Helpers/EnumHelper";
 import ImageUploader from "@/Components/Dropzone";
 import Database from "@/types/database";
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
 
 export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?: () => void }) {
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [errorForm, setErrorForm] = useState<{ error: string } | undefined | null>(null);
 
   const { data: formData, setData, post, processing, reset, errors, clearErrors } = useForm<Omit<Database['CarData'], 'deleted_at' | 'created_at' | 'id' | 'updated_at'> & { gallery: File[] }>({
     name: '',
@@ -43,11 +44,14 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
         onSuccessAction?.();
       },
       onError(error) {
-        console.group("Ada Kesalahan:");
-        console.log(error);
-        console.groupEnd();
-
-        setErrorForm(error as { error: string });
+        // Display error message using SweetAlert
+        withReactContent(Swal).fire({
+          title: 'Error!',
+          // @ts-ignore
+          text: error.response?.data?.error || 'Something went wrong!',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
       }
     });
   };
@@ -65,12 +69,6 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
             <Modal.Title as="h5">Tambah Data Baru</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {errorForm && (
-              <Alert variant="danger" dismissible>{errorForm.error}</Alert>
-            )}
-
-            {JSON.stringify(formData)}
-
             <form onSubmit={submitData}>
               <div className="mb-3 form-group">
                 <Form.Floating>

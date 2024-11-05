@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 Route::apiResource('car-data', \App\Http\Controllers\Api\v1\Admin\CarDataController::class);
+Route::apiResource('garage-data', \App\Http\Controllers\Api\v1\Admin\GarageDataController::class);
 
 Route::controller(\App\Http\Controllers\Api\v1\Admin\MediaLibraryController::class)
     ->prefix('medialibrary')->name('medialibary-handler.')->group(function () {

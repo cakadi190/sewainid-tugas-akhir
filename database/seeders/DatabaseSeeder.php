@@ -21,7 +21,5 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@sewamobil.com',
             'role' => RoleUser::ADMIN->value,
         ]);
-
-        $this->call(CarDataSeeder::class);
     }
 }

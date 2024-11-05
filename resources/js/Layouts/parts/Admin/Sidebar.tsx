@@ -15,7 +15,8 @@ import {
   faChevronDown,
   IconDefinition,
   faCar,
-  faBuilding
+  faBuilding,
+  faWrench
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, usePage } from '@inertiajs/react';
@@ -121,7 +122,7 @@ const MenuItem = styled.li`
 // Modify styled components to properly handle custom props
 const MenuLink = styled(Link, {
   shouldForwardProp: (prop) => !['hasSubmenu', 'isActive'].includes(prop as string),
-})<{ hasSubmenu?: boolean; isActive?: boolean }>`
+}) <{ hasSubmenu?: boolean; isActive?: boolean }>`
   padding: 0.75rem 1.5rem;
   color: ${({ isActive }) => (isActive ? '#fff' : 'rgba(255, 255, 255, 0.8)')};
   text-decoration: none;
@@ -153,7 +154,7 @@ const MenuIconWrapper = styled.span`
 
 const SubmenuIcon = styled(FontAwesomeIcon, {
   shouldForwardProp: (prop) => prop !== 'isOpen',
-})<{ isOpen: boolean }>`
+}) <{ isOpen: boolean }>`
   transition: transform 0.2s ease;
   opacity: 0.5;
   min-width: 1.25rem;
@@ -185,7 +186,7 @@ const SubmenuItem = styled.li``;
 
 const SubmenuLink = styled(Link, {
   shouldForwardProp: (prop) => prop !== 'isActive',
-})<{ isActive?: boolean }>`
+}) <{ isActive?: boolean }>`
   padding: 0.5rem 1rem 0.5rem 3.5rem;
   color: ${({ isActive }) =>
     isActive ? '#fff' : 'rgba(255, 255, 255, 0.7)'};
@@ -217,7 +218,7 @@ const MenuContext = React.createContext<{
   setActiveMenu: (menuId: string | null) => void;
 }>({
   activeMenu: null,
-  setActiveMenu: () => {},
+  setActiveMenu: () => { },
 });
 
 const MenuItemComponent = ({
@@ -320,16 +321,40 @@ export default function Sidebar() {
 
     { label: 'Master Data', type: 'heading' },
     {
-      label: 'Manajemen Kendaraan',
-      type: 'menu',
-      href: route('administrator.car-data.index'),
-      icon: faCar,
-    },
-    {
-      label: 'Lokasi Garasi',
-      href: "#",
+      label: 'Lokasi Pool / Garasi',
+      href: route('administrator.garage-data.index'),
       type: 'menu',
       icon: faBuilding,
+    },
+    {
+      label: 'Lokasi Bengkel',
+      href: route('administrator.repair-shop-data.index'),
+      type: 'menu',
+      icon: faWrench,
+    },
+    {
+      label: 'Manajemen Kendaraan',
+      type: 'menu',
+      href: '#',
+      icon: faCar,
+      child: [
+        {
+          label: 'Data Fitur Kendaraan',
+          href: route('administrator.car-feature-data.index'),
+        },
+        {
+          label: 'Data Kendaraan',
+          href: route('administrator.car-data.index'),
+        },
+        {
+          label: 'Penempatan Garasi',
+          href: '#',
+        },
+        {
+          label: 'Reparasi Kendaraan',
+          href: '#',
+        },
+      ]
     },
     {
       label: 'Manajemen Pengguna',

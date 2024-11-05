@@ -2,6 +2,7 @@ import { PropsWithChildren, ReactNode } from 'react';
 import Sidebar from './parts/Admin/Sidebar';
 import MainPage from './parts/Admin/MainPage';
 import Navbar from './parts/Admin/Navbar';
+import { Nav, NavDropdown } from 'react-bootstrap';
 
 type AuthenticatedProps = PropsWithChildren<{
   header?: ReactNode

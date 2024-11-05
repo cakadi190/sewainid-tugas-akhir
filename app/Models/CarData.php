@@ -6,7 +6,10 @@ use App\Traits\WithTrashedRouteBinding;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\CarModelEnum;
 use App\Enums\CarStatusEnum;
+use App\Enums\CarTransmissionEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
@@ -99,11 +102,35 @@ class CarData extends Model implements HasMedia
         return collect(CarStatusEnum::cases())->pluck('value');
     }
 
+    /**
+     * Mengambil semua jenis transmisi mobil yang ada dalam value: CarTransmissionEnum.
+     *
+     * @return \Illuminate\Support\Collection Koleksi dari semua jenis transmisi mobil.
+     */
+    public static function getAllCarTransmission(): \Illuminate\Support\Collection
+    {
+        return collect(value: CarTransmissionEnum::cases())->pluck('value');
+    }
+
     public function registerMediaConversions(?Media $media = null): void
     {
         $this
             ->addMediaConversion('preview')
             ->fit(Fit::Contain, 300, 300)
             ->nonQueued();
+    }
+
+    /**
+     * Get the features associated with the car.
+     *
+     * This defines a many-to-many relationship between CarData and CarFeatureData,
+     * using the 'car_data_feature' pivot table.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function features(): HasMany
+    {
+        return $this->hasMany(CarFeatureData::class)
+                    ->withTimestamps();
     }
 }

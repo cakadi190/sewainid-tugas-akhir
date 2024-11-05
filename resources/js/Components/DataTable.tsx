@@ -7,11 +7,12 @@ import {
   Button,
   Spinner,
   Row,
-  Col
+  Col,
+  Alert
 } from 'react-bootstrap';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleDoubleLeft, faAngleDoubleRight, faArrowDown, faArrowUp, faChevronLeft, faChevronRight, faList, faSync, faTrash, faUpDown, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDoubleLeft, faAngleDoubleRight, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faList, faSort, faSync, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { twMerge } from 'tailwind-merge';
 
 // Definisi interface untuk tipe data
@@ -304,82 +305,79 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
   // Render ikon pengurutan
   const renderSortIcon = (columnName: string) => {
     return (
-      <FontAwesomeIcon icon={sortColumn !== columnName ? faUpDown : (
-        sortDirection === 'asc' ? faArrowUp : faArrowDown
-      )} />
+      // <FontAwesomeIcon icon={sortColumn !== columnName ? faUpDown : (
+      //   sortDirection === 'asc' ? faArrowUp : faArrowDown
+      // )} />
+      <div className="d-flex flex-column">
+        <FontAwesomeIcon className={sortColumn === columnName && sortDirection !== 'asc' ? 'opacity-50' : ''} style={{ width: '.5rem', height: '.5rem' }} icon={faChevronUp} />
+        <FontAwesomeIcon className={sortColumn === columnName && sortDirection !== 'desc' ? 'opacity-50' : ''} style={{ width: '.5rem', height: '.5rem' }} icon={faChevronDown} />
+      </div>
     )
   };
 
   // Render komponen utama
   return (
     <div className={twMerge("custom-datatable", className)}>
-      <Row className="mb-3 datatable-header d-flex justify-content-between align-items-center">
-        <Col md="4" className="d-flex align-items-center">
-          <Form.Select
-            className="me-2"
-            style={{ width: '100px' }}
-            value={pageLength}
-            onChange={(e) => handlePageLengthChange(Number(e.target.value))}
-          >
-            <option value={10}>10</option>
-            <option value={25}>25</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
-          </Form.Select>
-          <span className="d-lg-inline-flex d-none d-md-none">senarai per halaman</span>
-        </Col>
-        <Col md="3" className="gap-3 d-flex align-items-center">
-          {filterComponent}
+      {error && (
+        <Alert dismissible variant="danger">
+          {error}
+        </Alert>
+      )}
 
-          {withTrashToggle && (
-            <div className="gap-2 align-items-center d-flex">
-              <FontAwesomeIcon icon={faList} />
-              <Form.Check
-                type="switch"
-                id="trash-toggle"
-                aria-label="Toggle Trash"
-                className="pe-0"
-                checked={includeTrashed}
-                onChange={handleTrashToggle}
-              />
-              <FontAwesomeIcon className="ms-n2" icon={faTrash} />
-            </div>
-          )}
+      <div className="overflow-hidden border rounded-3">
+        <div className="p-2 border-bottom">
+          <Row className="gy-2 datatable-header d-flex justify-content-between align-items-center">
+            <Col md="3" className="d-flex align-items-center">
+              <InputGroup>
+                <Form.Select
+                  value={pageLength}
+                  onChange={(e) => handlePageLengthChange(Number(e.target.value))}
+                >
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </Form.Select>
+                <InputGroup.Text>Senarai</InputGroup.Text>
+                <Form.Control
+                  type="text"
+                  placeholder="Search..."
+                  value={searchText}
+                  onChange={handleSearch}
+                />
+                {searchText && (
+                  <Button onClick={() => setSearchText('')}>
+                    <FontAwesomeIcon icon={faXmark} />
+                  </Button>
+                )}
+              </InputGroup>
+            </Col>
+            <Col md="3" className="gap-2 justify-content-center justify-content-lg-end d-flex align-items-center">
+              {filterComponent}
 
-          <InputGroup>
-            <Form.Control
-              type="text"
-              placeholder="Search..."
-              value={searchText}
-              onChange={handleSearch}
-            />
-            {searchText && (
-              <Button onClick={() => setSearchText('')}>
-                <FontAwesomeIcon icon={faXmark} />
+              {withTrashToggle && (
+                <Form.Check
+                  type="switch"
+                  id="trash-toggle"
+                  aria-label="Toggle Trash"
+                  checked={includeTrashed}
+                  onChange={handleTrashToggle}
+                  label="Keranjang Sampah"
+                />
+              )}
+
+              <Button className="rounded-2" onClick={fetchData} size="sm" disabled={loading}>
+                <FontAwesomeIcon icon={faSync} spin={loading} />
               </Button>
-            )}
-          </InputGroup>
-
-          <Button onClick={fetchData} disabled={loading}>
-            {loading ? <Spinner size="sm" /> : <FontAwesomeIcon icon={faSync} />}
-          </Button>
-        </Col>
-      </Row>
-
-      {
-        error && (
-          <div className="alert alert-danger" role="alert">
-            {error}
-          </div>
-        )
-      }
-
-      <div className="table-responsive">
-        <Table striped bordered hover className="mb-3">
+            </Col>
+          </Row>
+        </div>
+        <Table borderless responsive className="mb-0">
           <thead>
             <tr>
               {columns.map((column, index) => (
                 <th
+                  className="text-nowrap border-bottom bg-light"
                   key={index}
                   onClick={() => handleSort(column.data)}
                   style={{
@@ -387,7 +385,7 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
                     userSelect: 'none'
                   }}
                 >
-                  <div className="gap-2 d-flex">
+                  <div className="gap-2 align-items-center d-flex">
                     <span>{column.title}{' '}</span>
                     {column.sortable !== false && (
                       <span>{renderSortIcon(column.data)}</span>
@@ -400,7 +398,7 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={columns.length} className="text-center">
+                <td colSpan={columns.length} className="text-center text-nowrap">
                   <Spinner animation="border" role="status">
                     <span className="visually-hidden">Loading...</span>
                   </Spinner>
@@ -408,7 +406,7 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
               </tr>
             ) : data.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="text-center">
+                <td colSpan={columns.length} className="text-center text-nowrap">
                   {error ? 'Error loading data' : 'No data available'}
                 </td>
               </tr>
@@ -416,7 +414,7 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
               data.map((row, rowIndex) => (
                 <tr key={rowIndex}>
                   {columns.map((column, colIndex) => (
-                    <td key={colIndex}>
+                    <td key={colIndex} className="text-nowrap">
                       {column.render
                         ? column.render(row[column.data], row)
                         : row[column.data] ?? ''}
@@ -427,14 +425,14 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
             )}
           </tbody>
         </Table>
-      </div>
 
-      <div className="gap-2 datatable-footer flex-column flex-lg-row d-flex justify-content-between align-items-center">
-        <div>
-          Menampilkan {Math.min((currentPage - 1) * pageLength + 1, totalRecords)} ke{' '}
-          {Math.min(currentPage * pageLength, totalRecords)} dari {totalRecords} senarai
+        <div className="gap-2 px-3 pt-3 pb-3 border-top datatable-footer flex-column flex-lg-row d-flex justify-content-between align-items-center">
+          <div>
+            Menampilkan {Math.min((currentPage - 1) * pageLength + 1, totalRecords)} ke{' '}
+            {Math.min(currentPage * pageLength, totalRecords)} dari {totalRecords} senarai
+          </div>
+          {renderPagination()}
         </div>
-        {renderPagination()}
       </div>
     </div >
   );

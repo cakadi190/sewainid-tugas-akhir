@@ -31,8 +31,6 @@ class CarDataController extends Controller
             $query = $this->_carData->onlyTrashed();
         }
 
-        // dd($query, $request->boolean('withTrashed'));
-
         return DataTables::of($query)
             ->addColumn('model', function (CarData $model) {
                 return [
@@ -58,7 +56,7 @@ class CarDataController extends Controller
      */
     public function store(StoreCarDataRequest $request)
     {
-        return $this->_crudHelper->createData($request, $this->_carData, null, ['gallery']);
+        return $this->_crudHelper->createData($request, $this->_carData, [], ['gallery']);
     }
 
     /**

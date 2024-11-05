@@ -50,7 +50,7 @@ const ForceDeleteModal: FC<{
 
   const handleDelete = () => {
     setIsDeleting(true);
-    router.delete(url, {
+    router.delete(`${url}?forceDelete=true`, {
       onFinish: () => {
         setIsDeleting(false);
         onClose();
@@ -64,7 +64,7 @@ const ForceDeleteModal: FC<{
   };
 
   return (
-    <Modal show={show} onHide={onClose} centered>
+    <Modal backdrop="static" keyboard={false} show={show} onHide={onClose} centered>
       <ForceDeleteConfirmation
         isDeleting={isDeleting}
         onConfirm={handleDelete}

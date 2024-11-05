@@ -139,7 +139,7 @@ const DeleteModal: FC<{
   };
 
   return (
-    <Modal show={show} onHide={onClose} centered>
+    <Modal backdrop="static" keyboard={false} show={show} onHide={onClose} centered>
       <DeleteConfirmation
         withForceDeleteCheckbox={withForceDeleteCheckbox}
         isDeleting={isDeleting}

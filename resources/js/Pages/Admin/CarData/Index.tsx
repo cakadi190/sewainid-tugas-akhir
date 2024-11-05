@@ -1,20 +1,18 @@
 import DataTable from "@/Components/DataTable";
 import { useDataTable } from "@/Hooks/useDatatables";
 import { AuthenticatedAdmin } from "@/Layouts/AuthenticatedLayout";
+import { Breadcrumb, BreadcrumbItem } from "react-bootstrap";
+import { Head, Link } from "@inertiajs/react";
 import type Database from "@/types/database";
-import { Head, Link, usePage } from "@inertiajs/react";
-import { Alert, Breadcrumb, BreadcrumbItem } from "react-bootstrap";
 import EditData from "./EditData";
 import DeleteData from "@/Components/crud/DeleteData";
 import RestoreData from "@/Components/crud/RestoreData";
 import ForceDeleteData from "@/Components/crud/ForceDeleteData";
 import CreateData from "./CreateData";
-import { PageProps } from "@/types";
 import AlertPage from "@/Components/AlertPage";
 
 export default function Index() {
   const { dataTableRef, refetch } = useDataTable();
-  const { props: { alert } } = usePage<PageProps>();
 
   const columns = [
     {
@@ -54,7 +52,7 @@ export default function Index() {
     {
       data: 'status',
       name: 'status',
-      title: 'Model Kendaraan',
+      title: 'Status Kendaraan',
       render: (value: { label: string; color: string }) => (
         <span className={`badge bg-${value.color}`}>{value.label}</span>
       )
