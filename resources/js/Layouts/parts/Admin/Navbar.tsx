@@ -16,16 +16,14 @@ const NavbarWrapperStyle = styled(Navbar, {
 }) <{ isToggled: boolean; }>`
   position: fixed;
   min-height: 64px;
-  top: .25rem !important;
   margin-right: 1rem;
-  background: var(--bs-body-bg);
+  background: rgba(var(--bs-body-bg-rgb), .75);
+  backdrop-filter: blur(1rem);
   z-index: 1020;
-  border-bottom: 1px solid var(--bs-border-color);
   width: calc(100% - 20rem);
   left: 20rem;
-  padding-top: 1.5rem;
+  padding-top: 1.75rem;
   padding-bottom: 1.5rem;
-  top: 0;
   transition: all .2s;
   right: 0;
 

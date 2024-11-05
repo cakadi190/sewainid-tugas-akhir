@@ -23,6 +23,8 @@ import { Link, usePage } from '@inertiajs/react';
 import { Button } from 'react-bootstrap';
 import { PageProps } from '@/types';
 import { useSidebar } from '@/Hooks/useSidebar';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import 'react-perfect-scrollbar/dist/css/styles.css';
 
 // Types
 type MenuList = {
@@ -44,7 +46,8 @@ const SidebarStyle = styled.aside<{ isToggled: boolean }>`
   transition: all 0.3s ease;
   z-index: 1030;
   margin-left: -20rem;
-  background-color: #f8f9fa;
+  background: linear-gradient(45deg, rgba(var(--bs-body-bg-rgb), .5) 75%, rgba(var(--bs-primary-rgb), .125) 100%);
+  backdrop-filter: blur(1rem);
   border-right: 1px solid var(--bs-border-color);
 
   @media (width <= 992px) {
@@ -75,8 +78,8 @@ const SidebarStyle = styled.aside<{ isToggled: boolean }>`
 
 const InnerSidebar = styled.div`
   transition: all 0.3s ease;
+  overflow: hidden;
   min-height: 100svh;
-  background: #ffffff; // Light background color
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -87,7 +90,6 @@ const InnerSidebar = styled.div`
 const HeaderSidebar = styled.div`
   display: flex;
   padding: 1.5rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1); // Light border color
 `;
 
 const LogoLink = styled(Link)`
@@ -460,11 +462,13 @@ export default function Sidebar() {
   return (
     <MenuContext.Provider value={{ activeMenu, setActiveMenu }}>
       <SidebarStyle isToggled={isOpen} id="sidebar" className="sidebar">
-        <InnerSidebar>
-          <SidebarHeader toggle={toggle} />
-          <MenuListComponent items={menuList} />
-        </InnerSidebar>
+        <PerfectScrollbar>
+          <InnerSidebar>
+            <SidebarHeader toggle={toggle} />
+            <MenuListComponent items={menuList} />
+          </InnerSidebar>
+        </PerfectScrollbar>
       </SidebarStyle>
-    </MenuContext.Provider>
+    </MenuContext.Provider >
   );
 }

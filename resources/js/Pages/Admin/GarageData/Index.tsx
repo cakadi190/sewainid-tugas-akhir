@@ -80,7 +80,7 @@ export default function Index() {
       header={
         <div className="d-flex justify-content-between">
           <div className="flex-column d-flex">
-            <h3 className="h4 fw-semibold">Data Kendaraan</h3>
+            <h3 className="h4 fw-semibold">Data Garasi</h3>
             <Breadcrumb className="m-0" bsPrefix="m-0 breadcrumb">
               <BreadcrumbItem linkAs={Link} href={route('administrator.home')}>Dasbor Beranda</BreadcrumbItem>
               <BreadcrumbItem active>Data Garasi</BreadcrumbItem>

@@ -12,7 +12,7 @@ import {
 } from 'react-bootstrap';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleDoubleLeft, faAngleDoubleRight, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faList, faSort, faSync, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDoubleLeft, faAngleDoubleRight, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faSync, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { twMerge } from 'tailwind-merge';
 
 // Definisi interface untuk tipe data
@@ -372,7 +372,7 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
             </Col>
           </Row>
         </div>
-        <Table borderless responsive className="mb-0">
+        <Table hover responsive className="mb-0">
           <thead>
             <tr>
               {columns.map((column, index) => (
@@ -426,7 +426,7 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
           </tbody>
         </Table>
 
-        <div className="gap-2 px-3 pt-3 pb-3 border-top datatable-footer flex-column flex-lg-row d-flex justify-content-between align-items-center">
+        <div className="gap-2 px-3 pt-3 pb-3 datatable-footer flex-column flex-lg-row d-flex justify-content-between align-items-center">
           <div>
             Menampilkan {Math.min((currentPage - 1) * pageLength + 1, totalRecords)} ke{' '}
             {Math.min(currentPage * pageLength, totalRecords)} dari {totalRecords} senarai
