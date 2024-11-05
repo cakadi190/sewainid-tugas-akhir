@@ -1,14 +1,14 @@
-import LogoutConfirmationModal from '@/Components/Modal/LogoutModal';
 import { windowIsWidthGreaterThan } from '@/Helpers/windowBreakpoint';
 import { useSidebar } from '@/Hooks/useSidebar';
-import useWindowSize from '@/Hooks/useWindowSize';
 import { PageProps } from '@/types';
-import styled from '@emotion/styled';
 import { faBarsStaggered, faClock, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import { FC, useEffect, useState } from 'react';
-import { Navbar, Nav, Container, NavItem, Dropdown, NavDropdown } from 'react-bootstrap';
+import { Navbar, Nav, Container, NavItem, NavDropdown } from 'react-bootstrap';
+import useWindowSize from '@/Hooks/useWindowSize';
+import LogoutConfirmationModal from '@/Components/Modal/LogoutModal';
+import styled from '@emotion/styled';
 import Gravatar from 'react-gravatar';
 
 const NavbarWrapperStyle = styled(Navbar, {
@@ -20,7 +20,7 @@ const NavbarWrapperStyle = styled(Navbar, {
   margin-right: 1rem;
   background: var(--bs-body-bg);
   z-index: 1020;
-  border-bottom: 1px solid var(--bs-light);
+  border-bottom: 1px solid var(--bs-border-color);
   width: calc(100% - 20rem);
   left: 20rem;
   padding-top: 1.5rem;

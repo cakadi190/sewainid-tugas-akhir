@@ -44,6 +44,8 @@ const SidebarStyle = styled.aside<{ isToggled: boolean }>`
   transition: all 0.3s ease;
   z-index: 1030;
   margin-left: -20rem;
+  background-color: #f8f9fa;
+  border-right: 1px solid var(--bs-border-color);
 
   @media (width <= 992px) {
     margin-left: 0;
@@ -66,7 +68,7 @@ const SidebarStyle = styled.aside<{ isToggled: boolean }>`
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.2);
     border-radius: 3px;
   }
 `;
@@ -74,7 +76,7 @@ const SidebarStyle = styled.aside<{ isToggled: boolean }>`
 const InnerSidebar = styled.div`
   transition: all 0.3s ease;
   min-height: 100svh;
-  background: var(--bs-dark);
+  background: #ffffff; // Light background color
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -85,7 +87,7 @@ const InnerSidebar = styled.div`
 const HeaderSidebar = styled.div`
   display: flex;
   padding: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1); // Light border color
 `;
 
 const LogoLink = styled(Link)`
@@ -105,10 +107,10 @@ const MenuHeading = styled.li`
   text-transform: uppercase;
   font-size: 0.75rem;
   letter-spacing: 0.05em;
-  opacity: 0.6;
+  opacity: 0.8;
   padding: 1rem 1.5rem 0.5rem;
   display: flex;
-  color: #fff;
+  color: #333; // Dark text color
 
   &:not(:first-of-type) {
     margin-top: 0.5rem;
@@ -124,7 +126,7 @@ const MenuLink = styled(Link, {
   shouldForwardProp: (prop) => !['hasSubmenu', 'isActive'].includes(prop as string),
 }) <{ hasSubmenu?: boolean; isActive?: boolean }>`
   padding: 0.75rem 1.5rem;
-  color: ${({ isActive }) => (isActive ? '#fff' : 'rgba(255, 255, 255, 0.8)')};
+  color: ${({ isActive }) => (isActive ? '#333' : 'rgba(0, 0, 0, 0.7)')}; // Darker text color when active
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -133,12 +135,12 @@ const MenuLink = styled(Link, {
   ${({ hasSubmenu }) => hasSubmenu && `justify-content: space-between;`}
   ${({ isActive }) =>
     isActive && `
-    background: rgba(var(--bs-white-rgb), .125);
+    background: rgba(0, 0, 0, 0.1); // Light highlight when active
   `}
 
   &:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.1);
+    color: #333;
+    background: rgba(0, 0, 0, 0.05); // Light hover background
   }
 `;
 
@@ -170,7 +172,7 @@ const Submenu = styled.ul<{ isOpen: boolean }>`
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease-out;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(240, 240, 240, 0.5); // Light submenu background
   list-style: none;
   padding: 0;
 
@@ -189,7 +191,7 @@ const SubmenuLink = styled(Link, {
 }) <{ isActive?: boolean }>`
   padding: 0.5rem 1rem 0.5rem 3.5rem;
   color: ${({ isActive }) =>
-    isActive ? '#fff' : 'rgba(255, 255, 255, 0.7)'};
+    isActive ? '#333' : 'rgba(0, 0, 0, 0.7)'}; // Dark text color for submenu
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -199,12 +201,12 @@ const SubmenuLink = styled(Link, {
 
   ${({ isActive }) =>
     isActive && `
-    background: rgba(var(--bs-white-rgb), .125);
+    background: rgba(0, 0, 0, 0.1); // Light highlight when active
   `}
 
   &:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.1);
+    color: #333;
+    background: rgba(0, 0, 0, 0.05); // Light hover background
   }
 
   svg {
@@ -285,10 +287,10 @@ const MenuItemComponent = ({
 const SidebarHeader: FC<{ toggle: () => void }> = ({ toggle }) => (
   <HeaderSidebar>
     <LogoLink href={'#'}>
-      <ApplicationLogo fill="#fff" height={36} />
+      <ApplicationLogo fill="#000" height={36} />
     </LogoLink>
     <Button variant="link" className="p-0" onClick={toggle}>
-      <FontAwesomeIcon icon={faBars} size="lg" className="text-white" />
+      <FontAwesomeIcon icon={faBars} size="lg" />
     </Button>
   </HeaderSidebar>
 );

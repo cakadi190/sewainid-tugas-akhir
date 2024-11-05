@@ -108,14 +108,15 @@ export default function Register() {
             <Form.Select
               id="gender"
               name="gender"
+              value={data.gender}
               autoComplete="gender"
               isInvalid={!!errors.gender}
               onChange={(e) => setData('gender', e.target.value)}
               required
             >
-              <option disabled selected>Pilih Salah Satu</option>
-              <option selected={data.gender === 'male'} value="male">Pria</option>
-              <option selected={data.gender === 'female'} value="female">Wanita</option>
+              <option value="">Pilih Salah Satu</option>
+              <option value="male">Pria</option>
+              <option value="female">Wanita</option>
             </Form.Select>
             <label htmlFor="gender">Jenis Kelamin</label>
             {errors.gender && (
@@ -240,7 +241,7 @@ export default function Register() {
               value={data.password_confirmation}
               placeholder="Konfirmasi Kata Sandi"
               autoComplete="new-password"
-              isInvalid={!!errors.password_confirmation}
+              isInvalid={!!errors.password_confirmation || data.password_confirmation !== data.password}
               onChange={(e) => setData('password_confirmation', e.target.value)}
               required
             />
@@ -248,7 +249,7 @@ export default function Register() {
             {errors.password_confirmation && (
               <div className="mt-2 invalid-feedback d-block">{errors.password_confirmation}</div>
             )}
-            {data.password_confirmation !== data.password && (
+            {data.password_confirmation !== data.password && data.password_confirmation && (
               <div className="mt-2 invalid-feedback d-block">Kata sandi anda tidak cocok!</div>
             )}
           </Form.Floating>
