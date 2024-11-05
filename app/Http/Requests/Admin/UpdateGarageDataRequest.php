@@ -22,8 +22,6 @@ class UpdateGarageDataRequest extends FormRequest
      */
     public function rules(): array
     {
-        \Log::info('Car ID:', [$this->route('car_datum')]);
-
         if ($this->has('restore') && $this->boolean('restore')) {
             return [
                 'restore' => 'required',

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateRepairShopDataRequest extends FormRequest
 {
@@ -24,8 +25,17 @@ class UpdateRepairShopDataRequest extends FormRequest
      */
     public function rules(): array
     {
+        if ($this->has('restore') && $this->boolean('restore')) {
+            return [
+                'restore' => 'required',
+            ];
+        }
+
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => [
+                'required', 'string', 'max:255',
+                Rule::unique('repair_shop_data')->ignore($this->route('repair_shop_datum')),
+            ],
             'address' => ['required', 'string'],
             'coordinate' => ['required', 'string'],
             'phone' => ['nullable', 'string'],
