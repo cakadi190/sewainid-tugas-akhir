@@ -29,7 +29,7 @@ class UpdateCarDataRequest extends FormRequest
         }
 
         return [
-            'name' => 'required|string|max:255',
+            'car_name' => 'required|string|max:255',
             'brand' => 'required|string|max:255',
             'frame_number' => [
                 'required',
@@ -60,7 +60,7 @@ class UpdateCarDataRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'The name of the car is required.',
+            'car_name.required' => 'The name of the car is required.',
             'brand.required' => 'Please specify the car brand, e.g., Toyota, Suzuki.',
             'frame_number.required' => 'The frame number is mandatory.',
             'frame_number.unique' => 'The frame number must be unique. This one is already in use.',

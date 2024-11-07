@@ -18,7 +18,7 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
 
   const { post, data: formData, setData, processing, reset, errors, clearErrors } = useForm<Omit<Database['RepairShopData'], 'deleted_at' | 'created_at' | 'id' | 'updated_at'> & { _method: string }>({
     _method: 'put',
-    name: '',
+    repair_shop_name: '',
     address: '',
     coordinate: '',
     phone: '',
@@ -67,7 +67,7 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
 
         setData({
           _method: 'put',
-          name: data.name,
+          repair_shop_name: data.repair_shop_name,
           address: data.address,
           coordinate: data.coordinate,
           phone: data.phone,
@@ -104,13 +104,13 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
                   <Form.Control
                     type="text"
                     placeholder="Nama"
-                    value={formData.name}
-                    onChange={(e) => setData("name", e.target.value)}
-                    isInvalid={!!errors.name}
+                    value={formData.repair_shop_name}
+                    onChange={(e) => setData("repair_shop_name", e.target.value)}
+                    isInvalid={!!errors.repair_shop_name}
                   />
                   <Form.Label>Nama</Form.Label>
                   <Form.Text>Untuk identifikasi garasinya biar mudah dicari.</Form.Text>
-                  <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{errors.repair_shop_name}</Form.Control.Feedback>
                 </Form.Floating>
               </div>
 

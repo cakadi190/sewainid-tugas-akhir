@@ -11,15 +11,17 @@ import ForceDeleteData from "@/Components/crud/ForceDeleteData";
 import CreateData from "./CreateData";
 import AlertPage from "@/Components/AlertPage";
 import Show from "./Show";
+import { parseAntiXss } from "@/Helpers/string";
 
 export default function Index() {
   const { dataTableRef, refetch } = useDataTable();
 
   const columns = [
     {
-      data: 'name',
-      name: 'name',
+      data: 'repair_shop_name',
+      name: 'repair_shop_name',
       title: 'Nama Bengkel',
+      render: (value: string) => <span dangerouslySetInnerHTML={{ __html: parseAntiXss(value) }} />,
     },
     {
       data: 'address',

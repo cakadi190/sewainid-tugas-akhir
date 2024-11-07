@@ -61,7 +61,7 @@ class CarData extends Model implements HasMedia
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'car_name',
         'brand',
         'frame_number',
         'license_plate',

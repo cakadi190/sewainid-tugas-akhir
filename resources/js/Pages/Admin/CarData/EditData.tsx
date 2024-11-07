@@ -23,7 +23,7 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
   const onClose = () => setShowModal(false);
 
   const { post, data: formData, setData, processing, reset, errors, clearErrors } = useForm<Omit<Database['CarData'], 'deleted_at' | 'created_at' | 'id' | 'updated_at'> & { gallery: File[]; _method: string }>({
-    name: '',
+    car_name: '',
     _method: 'put',
     brand: '',
     frame_number: '',
@@ -77,7 +77,7 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
 
         setData({
           _method: 'PUT',
-          name: data.name,
+          car_name: data.car_name,
           brand: data.brand,
           frame_number: data.frame_number,
           license_plate: data.license_plate,
@@ -116,12 +116,12 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
                   <Form.Control
                     type="text"
                     placeholder="Nama"
-                    value={formData.name}
-                    onChange={(e) => setData("name", e.target.value)}
-                    isInvalid={!!errors.name}
+                    value={formData.car_name}
+                    onChange={(e) => setData("car_name", e.target.value)}
+                    isInvalid={!!errors.car_name}
                   />
                   <Form.Label>Nama</Form.Label>
-                  <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{errors.car_name}</Form.Control.Feedback>
                 </Form.Floating>
               </div>
 

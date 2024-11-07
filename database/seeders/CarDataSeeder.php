@@ -15,7 +15,7 @@ class CarDataSeeder extends Seeder
     {
         $carDataEntries = [
             [
-                'name' => 'Hilux',
+                'car_name' => 'Hilux',
                 'brand' => 'Toyota',
                 'color' => 'White Rose',
                 'year_of_manufacture' => 2019,
@@ -23,7 +23,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Toyota Hilux 2019 model, White Rose color.',
             ],
             [
-                'name' => 'Avanza',
+                'car_name' => 'Avanza',
                 'brand' => 'Toyota',
                 'color' => 'Crimson',
                 'year_of_manufacture' => 2015,
@@ -31,7 +31,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Toyota Avanza 2015 model, Crimson color.',
             ],
             [
-                'name' => 'Innova V2.0',
+                'car_name' => 'Innova V2.0',
                 'brand' => 'Toyota',
                 'color' => 'Red Rose',
                 'year_of_manufacture' => 2022,
@@ -39,7 +39,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Toyota Innova Reborn V2.0 2022 model, Red Rose color.',
             ],
             [
-                'name' => 'Civic',
+                'car_name' => 'Civic',
                 'brand' => 'Honda',
                 'color' => 'Silver',
                 'year_of_manufacture' => 2020,
@@ -47,7 +47,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Honda Civic 2020 model, Silver color.',
             ],
             [
-                'name' => 'Accord',
+                'car_name' => 'Accord',
                 'brand' => 'Honda',
                 'color' => 'Black',
                 'year_of_manufacture' => 2021,
@@ -55,7 +55,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Honda Accord 2021 model, Black color.',
             ],
             [
-                'name' => 'Fortuner',
+                'car_name' => 'Fortuner',
                 'brand' => 'Toyota',
                 'color' => 'Dark Grey',
                 'year_of_manufacture' => 2018,
@@ -63,7 +63,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Toyota Fortuner 2018 model, Dark Grey color.',
             ],
             [
-                'name' => 'Pajero',
+                'car_name' => 'Pajero',
                 'brand' => 'Mitsubishi',
                 'color' => 'White',
                 'year_of_manufacture' => 2020,
@@ -71,7 +71,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Mitsubishi Pajero 2020 model, White color.',
             ],
             [
-                'name' => 'Xpander',
+                'car_name' => 'Xpander',
                 'brand' => 'Mitsubishi',
                 'color' => 'Blue',
                 'year_of_manufacture' => 2019,
@@ -79,7 +79,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Mitsubishi Xpander 2019 model, Blue color.',
             ],
             [
-                'name' => 'Kijang Innova',
+                'car_name' => 'Kijang Innova',
                 'brand' => 'Toyota',
                 'color' => 'Champagne',
                 'year_of_manufacture' => 2017,
@@ -87,7 +87,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Toyota Kijang Innova 2017 model, Champagne color.',
             ],
             [
-                'name' => 'Terios',
+                'car_name' => 'Terios',
                 'brand' => 'Daihatsu',
                 'color' => 'Green',
                 'year_of_manufacture' => 2022,
@@ -95,7 +95,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Daihatsu Terios 2022 model, Green color.',
             ],
             [
-                'name' => 'Calya',
+                'car_name' => 'Calya',
                 'brand' => 'Daihatsu',
                 'color' => 'Orange',
                 'year_of_manufacture' => 2020,
@@ -103,7 +103,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Daihatsu Calya 2020 model, Orange color.',
             ],
             [
-                'name' => 'Raize',
+                'car_name' => 'Raize',
                 'brand' => 'Toyota',
                 'color' => 'Red',
                 'year_of_manufacture' => 2023,
@@ -111,7 +111,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Toyota Raize 2023 model, Red color.',
             ],
             [
-                'name' => 'Swift',
+                'car_name' => 'Swift',
                 'brand' => 'Suzuki',
                 'color' => 'Pink',
                 'year_of_manufacture' => 2021,
@@ -119,7 +119,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Suzuki Swift 2021 model, Pink color.',
             ],
             [
-                'name' => 'Ertiga',
+                'car_name' => 'Ertiga',
                 'brand' => 'Suzuki',
                 'color' => 'Grey',
                 'year_of_manufacture' => 2020,
@@ -127,7 +127,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Suzuki Ertiga 2020 model, Grey color.',
             ],
             [
-                'name' => 'Sienta',
+                'car_name' => 'Sienta',
                 'brand' => 'Toyota',
                 'color' => 'Yellow',
                 'year_of_manufacture' => 2019,
@@ -135,7 +135,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Toyota Sienta 2019 model, Yellow color.',
             ],
             [
-                'name' => 'Brio',
+                'car_name' => 'Brio',
                 'brand' => 'Honda',
                 'color' => 'Light Blue',
                 'year_of_manufacture' => 2022,
@@ -143,7 +143,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Honda Brio 2022 model, Light Blue color.',
             ],
             [
-                'name' => 'Camry',
+                'car_name' => 'Camry',
                 'brand' => 'Toyota',
                 'color' => 'Dark Blue',
                 'year_of_manufacture' => 2021,
@@ -151,7 +151,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Toyota Camry 2021 model, Dark Blue color.',
             ],
             [
-                'name' => 'Grand Livina',
+                'car_name' => 'Grand Livina',
                 'brand' => 'Nissan',
                 'color' => 'Silver',
                 'year_of_manufacture' => 2019,
@@ -159,7 +159,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Nissan Grand Livina 2019 model, Silver color.',
             ],
             [
-                'name' => 'Livina',
+                'car_name' => 'Livina',
                 'brand' => 'Nissan',
                 'color' => 'White',
                 'year_of_manufacture' => 2020,
@@ -167,7 +167,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Nissan Livina 2020 model, White color.',
             ],
             [
-                'name' => 'All New Sienta',
+                'car_name' => 'All New Sienta',
                 'brand' => 'Toyota',
                 'color' => 'Red',
                 'year_of_manufacture' => 2022,
@@ -175,7 +175,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Toyota All New Sienta 2022 model, Red color.',
             ],
             [
-                'name' => 'B3000',
+                'car_name' => 'B3000',
                 'brand' => 'Mazda',
                 'color' => 'Blue',
                 'year_of_manufacture' => 2020,
@@ -183,7 +183,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Mazda B3000 2020 model, Blue color.',
             ],
             [
-                'name' => 'L300',
+                'car_name' => 'L300',
                 'brand' => 'Mitsubishi',
                 'color' => 'Black',
                 'year_of_manufacture' => 2005,
@@ -191,7 +191,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Mitsubishi L300 2005 model, Black color.',
             ],
             [
-                'name' => 'Carry 1.5',
+                'car_name' => 'Carry 1.5',
                 'brand' => 'Suzuki',
                 'color' => 'White',
                 'year_of_manufacture' => 2021,
@@ -199,7 +199,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Suzuki Carry 1.5 2021 model, White color.',
             ],
             [
-                'name' => 'Pajero Sport',
+                'car_name' => 'Pajero Sport',
                 'brand' => 'Mitsubishi',
                 'color' => 'Grey',
                 'year_of_manufacture' => 2023,
@@ -207,7 +207,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Mitsubishi Pajero Sport 2023 model, Grey color.',
             ],
             [
-                'name' => 'DFSK Glory 560',
+                'car_name' => 'DFSK Glory 560',
                 'brand' => 'DFSK',
                 'color' => 'Black',
                 'year_of_manufacture' => 2022,
@@ -215,7 +215,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'DFSK Glory 560 2022 model, Black color.',
             ],
             [
-                'name' => 'DFSK Gelora',
+                'car_name' => 'DFSK Gelora',
                 'brand' => 'DFSK',
                 'color' => 'White',
                 'year_of_manufacture' => 2024,
@@ -223,7 +223,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'DFSK Glory 560 2024 model, White color.',
             ],
             [
-                'name' => 'DFSK Gelora E',
+                'car_name' => 'DFSK Gelora E',
                 'brand' => 'DFSK',
                 'color' => 'Gelora Electric',
                 'year_of_manufacture' => 2024,
@@ -231,7 +231,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'DFSK Glory 560 2024 model, White Gelora Electric color.',
             ],
             [
-                'name' => 'Wuling Cortez',
+                'car_name' => 'Wuling Cortez',
                 'brand' => 'Wuling',
                 'color' => 'Silver',
                 'year_of_manufacture' => 2021,
@@ -239,7 +239,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Wuling Cortez 2021 model, Silver color.',
             ],
             [
-                'name' => 'Wuling Almaz',
+                'car_name' => 'Wuling Almaz',
                 'brand' => 'Wuling',
                 'color' => 'Red',
                 'year_of_manufacture' => 2022,
@@ -247,7 +247,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Wuling Almaz 2022 model, Red color.',
             ],
             [
-                'name' => 'Nissan Juke',
+                'car_name' => 'Nissan Juke',
                 'brand' => 'Nissan',
                 'color' => 'Yellow',
                 'year_of_manufacture' => 2023,
@@ -255,7 +255,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Nissan Juke 2023 model, Yellow color.',
             ],
             [
-                'name' => 'Kia Seltos',
+                'car_name' => 'Kia Seltos',
                 'brand' => 'Kia',
                 'color' => 'Green',
                 'year_of_manufacture' => 2021,
@@ -263,7 +263,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Kia Seltos 2021 model, Green color.',
             ],
             [
-                'name' => 'Mitsubishi Outlander',
+                'car_name' => 'Mitsubishi Outlander',
                 'brand' => 'Mitsubishi',
                 'color' => 'Brown',
                 'year_of_manufacture' => 2020,
@@ -271,7 +271,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Mitsubishi Outlander 2020 model, Brown color.',
             ],
             [
-                'name' => 'Honda HR-V',
+                'car_name' => 'Honda HR-V',
                 'brand' => 'Honda',
                 'color' => 'Grey',
                 'year_of_manufacture' => 2021,
@@ -279,7 +279,7 @@ class CarDataSeeder extends Seeder
                 'description' => 'Honda HR-V 2021 model, Grey color.',
             ],
             [
-                'name' => 'Mazda CX-5',
+                'car_name' => 'Mazda CX-5',
                 'brand' => 'Mazda',
                 'color' => 'White',
                 'year_of_manufacture' => 2022,

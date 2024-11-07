@@ -5,10 +5,15 @@ namespace App\Http\Requests\Admin;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * UpdateGarageDataRequest digunakan untuk validasi data saat mengupdate data garasi.
+ */
 class UpdateGarageDataRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * Menentukan apakah pengguna diizinkan untuk membuat permintaan ini.
+     *
+     * @return bool
      */
     public function authorize(): bool
     {
@@ -16,7 +21,7 @@ class UpdateGarageDataRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
+     * Mendapatkan aturan validasi yang berlaku untuk permintaan ini.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
@@ -29,8 +34,7 @@ class UpdateGarageDataRequest extends FormRequest
         }
 
         return [
-            // 'name' => "required|string|max:255|unique:garage_data,name,{$garageId}",
-            'name' => [
+            'garage_name' => [
                 "required", "string", "max:255",
                 Rule::unique('garage_data')->ignore($this->route('garage_datum')),
             ],
@@ -46,15 +50,15 @@ class UpdateGarageDataRequest extends FormRequest
     }
 
     /**
-     * Get custom messages for validator errors.
+     * Mendapatkan pesan kustom untuk kesalahan validasi.
      *
      * @return array<string, string>
      */
     public function messages(): array
     {
         return [
-            'name.required' => 'Nama wajib diisi.',
-            'name.unique' => 'Nama ini sudah terdaftar.',
+            'garage_name.required' => 'Nama garasi wajib diisi.',
+            'garage_name.unique' => 'Nama garasi ini sudah terdaftar.',
             'address.required' => 'Alamat wajib diisi.',
             'coordinate.required' => 'Koordinat wajib diisi.',
             'capacity.required' => 'Kapasitas wajib diisi.',

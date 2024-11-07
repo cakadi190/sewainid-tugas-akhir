@@ -38,13 +38,6 @@ class RepairShopDataController extends Controller
                     'color' => $model->is_active ? 'primary' : 'secondary',
                 ];
             })
-            ->addColumn('operation_hours', function (RepairShopData $model) {
-                return [
-                    'opening' => $model->opening_time,
-                    'closing' => $model->closing_time,
-                ];
-            })
-            ->orderColumn('name', '-name $1')
             ->setRowId(function (RepairShopData $model) {
                 return $model->id;
             })

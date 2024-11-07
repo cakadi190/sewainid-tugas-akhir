@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            $table->string('name');
+            $table->string('repair_shop_name');
             $table->string('address');
             $table->string('coordinate');
             $table->string('phone')->nullable();

@@ -18,7 +18,7 @@ class GarageData extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'garage_name',
         'address',
         'coordinate',
         'capacity',

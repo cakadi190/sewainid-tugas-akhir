@@ -18,7 +18,7 @@ class RepairShopData extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'repair_shop_name',
         'address',
         'coordinate',
         'phone',

@@ -24,7 +24,7 @@ class StoreGarageDataRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255|unique:garage_data,name',
+            'garage_name' => 'required|string|max:255|unique:garage_data,name',
             'address' => 'required|string|max:255',
             'coordinate' => 'required|string|max:100',
             'capacity' => 'required|integer|min:0',
@@ -44,8 +44,8 @@ class StoreGarageDataRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required' => 'Nama wajib diisi.',
-            'name.unique' => 'Nama ini sudah terdaftar.',
+            'garage_name.required' => 'Nama wajib diisi.',
+            'garage_name.unique' => 'Nama ini sudah terdaftar.',
             'address.required' => 'Alamat wajib diisi.',
             'coordinate.required' => 'Koordinat wajib diisi.',
             'capacity.required' => 'Kapasitas wajib diisi.',

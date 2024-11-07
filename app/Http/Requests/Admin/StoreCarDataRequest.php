@@ -27,7 +27,7 @@ class StoreCarDataRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255',
+            'car_name' => 'required|string|max:255',
             'brand' => 'required|string|max:255',
             'frame_number' => 'required|string|max:255|unique:car_data,frame_number',
             'license_plate' => 'required|string|max:20|unique:car_data,license_plate',
@@ -49,7 +49,7 @@ class StoreCarDataRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required' => 'Nama wajib diisi.',
+            'car_name.required' => 'Nama wajib diisi.',
             'brand.required' => 'Brand wajib diisi.',
             'frame_number.required' => 'Nomor rangka wajib diisi.',
             'frame_number.unique' => 'Nomor rangka ini sudah terdaftar.',

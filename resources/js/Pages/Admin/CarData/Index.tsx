@@ -3,6 +3,7 @@ import { useDataTable } from "@/Hooks/useDatatables";
 import { AuthenticatedAdmin } from "@/Layouts/AuthenticatedLayout";
 import { Breadcrumb, BreadcrumbItem } from "react-bootstrap";
 import { Head, Link } from "@inertiajs/react";
+import { parseAntiXss } from "@/Helpers/string";
 import type Database from "@/types/database";
 import EditData from "./EditData";
 import DeleteData from "@/Components/crud/DeleteData";
@@ -16,9 +17,10 @@ export default function Index() {
 
   const columns = [
     {
-      data: 'name',
-      name: 'name',
+      data: 'car_name',
+      name: 'car_name',
       title: 'Nama',
+      render: (value: string) => <span dangerouslySetInnerHTML={{ __html: parseAntiXss(value) }} />,
     },
     {
       data: 'brand',

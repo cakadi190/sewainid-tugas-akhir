@@ -36,6 +36,10 @@ class GarageDataController extends Controller
                 'label' => $model->getAttribute('is_active') ? 'Aktif' : 'Tidak Aktif',
                 'color' => $model->getAttribute('is_active') ? 'primary' : 'secondary',
             ])
+            ->orderColumn('name', '-name $1')
+            ->setRowId(function (GarageData $model) {
+                return $model->id;
+            })
             ->make(true); // Return JSON response
     }
 

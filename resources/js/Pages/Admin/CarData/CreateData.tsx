@@ -15,7 +15,7 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const { data: formData, setData, post, processing, reset, errors, clearErrors } = useForm<Omit<Database['CarData'], 'deleted_at' | 'created_at' | 'id' | 'updated_at'> & { gallery: File[] }>({
-    name: '',
+    car_name: '',
     brand: '',
     frame_number: '',
     license_plate: '',
@@ -75,12 +75,12 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
                   <Form.Control
                     type="text"
                     placeholder="Nama"
-                    value={formData.name}
+                    value={formData.car_name}
                     onChange={(e) => setData("name", e.target.value)}
-                    isInvalid={!!errors.name}
+                    isInvalid={!!errors.car_name}
                   />
                   <Form.Label>Nama</Form.Label>
-                  <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{errors.car_name}</Form.Control.Feedback>
                 </Form.Floating>
               </div>
 

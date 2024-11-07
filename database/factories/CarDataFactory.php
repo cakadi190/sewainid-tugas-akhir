@@ -24,7 +24,7 @@ class CarDataFactory extends Factory
         $frameNumber = IndonesianVinGenerator::generateVin();
 
         return [
-            'name' => $this->faker->word,
+            'car_name' => $this->faker->word,
             'brand' => $this->faker->word,
             'frame_number' => $frameNumber,
             'license_plate' => $carLicensePlateGenerator->generateLicensePlate('Jawa Timur'),

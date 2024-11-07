@@ -165,6 +165,9 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
 
       const fetchUrl = `${url}${includeTrashed ? '?withTrashed=true' : ''}`;
 
+      // Menggunakan name property untuk sorting
+      const sortColumnDef = columns.find(col => col.data === sortColumn);
+      const sortColumnName = sortColumnDef?.name || sortColumnDef?.data;
       const sortColumnIndex = columns.findIndex(col => col.data === sortColumn);
 
       const params: QueryParams = {
@@ -181,9 +184,9 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
             dir: sortDirection
           }
         ],
-        columns: columns.map(column => ({
+        columns: columns.map((column, index) => ({
           data: column.data,
-          name: column.name,
+          name: column.name || column.data,
           searchable: column.searchable !== false,
           orderable: column.sortable !== false,
           search: {

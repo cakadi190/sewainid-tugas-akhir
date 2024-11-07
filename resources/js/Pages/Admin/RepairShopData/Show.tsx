@@ -17,7 +17,7 @@ export default function Show({ id }: { id: number }) {
   const onClose = () => setShowModal(false);
 
   const { data: formData, setData, processing, reset, errors, clearErrors } = useForm<Omit<Database['RepairShopData'], 'deleted_at' | 'created_at' | 'id' | 'updated_at'>>({
-    name: '',
+    repair_shop_name: '',
     address: '',
     coordinate: '',
     phone: '',
@@ -49,7 +49,7 @@ export default function Show({ id }: { id: number }) {
         onOpen();
 
         setData({
-          name: data.name,
+          repair_shop_name: data.repair_shop_name,
           address: data.address,
           coordinate: data.coordinate,
           phone: data.phone,
@@ -92,13 +92,13 @@ export default function Show({ id }: { id: number }) {
                     type="text"
                     placeholder="Nama"
                     readOnly
-                    value={formData.name}
-                    onChange={(e) => setData("name", e.target.value)}
-                    isInvalid={!!errors.name}
+                    value={formData.repair_shop_name}
+                    onChange={(e) => setData("repair_shop_name", e.target.value)}
+                    isInvalid={!!errors.repair_shop_name}
                   />
                   <Form.Label>Nama</Form.Label>
                   <Form.Text>Untuk identifikasi garasinya biar mudah dicari.</Form.Text>
-                  <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{errors.repair_shop_name}</Form.Control.Feedback>
                 </Form.Floating>
               </div>
 
@@ -118,7 +118,7 @@ export default function Show({ id }: { id: number }) {
 
                 <LeafletSingle
                   position={position}
-                  name={formData.name}
+                  name={formData.repair_shop_name}
                   address={formData.address}
                 />
               </div>
@@ -185,7 +185,7 @@ export default function Show({ id }: { id: number }) {
                     as="textarea"
                     placeholder="Deskripsi"
                     readOnly
-                    value={formData.description}
+                    value={String(formData.description)}
                     onChange={(e) => setData("description", e.target.value)}
                     style={{ height: '100px' }}
                     isInvalid={!!errors.description}

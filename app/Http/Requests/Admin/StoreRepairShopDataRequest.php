@@ -24,7 +24,7 @@ class StoreRepairShopDataRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'repair_shop_name' => ['required', 'string', 'max:255'],
             'address' => ['required', 'string'],
             'coordinate' => ['required', 'string'],
             'phone' => ['nullable', 'string'],
@@ -43,9 +43,9 @@ class StoreRepairShopDataRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'The repair shop name is required.',
-            'name.string' => 'The repair shop name must be a string.',
-            'name.max' => 'The repair shop name may not be greater than 255 characters.',
+            'repair_shop_name.required' => 'The repair shop name is required.',
+            'repair_shop_name.string' => 'The repair shop name must be a string.',
+            'repair_shop_name.max' => 'The repair shop name may not be greater than 255 characters.',
             'address.required' => 'The address is required.',
             'coordinate.required' => 'The coordinate is required.',
             'opening_time.date_format' => 'The opening time must be in the format HH:MM.',

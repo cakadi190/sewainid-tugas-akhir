@@ -31,7 +31,7 @@ export interface User extends BaseModel {
 
 export interface CarData extends BaseModel {
   id: number;
-  name: string;
+  car_name: string;
   brand: string;
   frame_number: string;
   license_plate: string;
@@ -44,7 +44,7 @@ export interface CarData extends BaseModel {
 
 export interface GarageData extends BaseModel {
   id: number;
-  name: string;
+  garage_name: string;
   address: string;
   coordinate?: string;
   capacity: number;
@@ -57,7 +57,7 @@ export interface GarageData extends BaseModel {
 
 export interface RepairShopData extends BaseModel {
   id: number;
-  name: string;
+  repair_shop_name: string;
   address: string;
   coordinate?: string;
   phone: string;

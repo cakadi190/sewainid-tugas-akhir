@@ -1,5 +1,5 @@
 /**
- * Mengekstrak path dari string URL yang diberikan.
+ * Mengoptimalkan ekstraksi path dari string URL yang diberikan.
  *
  * @param {string} urlString - URL lengkap yang akan diekstrak path-nya
  * @returns {string | null} Path dari URL (contoh: "/dashboard"), atau null jika URL tidak valid
@@ -9,15 +9,13 @@ export const extractPath = (urlString: string): string | null => {
     const url = new URL(urlString);
     return url.pathname;
   } catch (error) {
-    /* eslint-disable no-console */
     console.log(error);
     return null;
-    /* eslint-enable no-console */
   }
 };
 
 /**
- * Memeriksa apakah path target cocok dengan path URL saat ini.
+ * Mengoptimalkan perbandingan path target dengan path URL saat ini.
  *
  * @param {string} urlTarget - Path target yang akan dibandingkan (contoh: "/dashboard")
  * @param {string} current - URL lengkap saat ini yang akan dibandingkan
@@ -29,7 +27,7 @@ export const isSameUrl = (urlTarget: string, current: string): boolean => {
 };
 
 /**
- * Menggabungkan URL dasar aplikasi dengan path yang diberikan.
+ * Mengoptimalkan penggabungan URL dasar aplikasi dengan path yang diberikan.
  *
  * @param {string} [path] - Path opsional yang akan digabungkan dengan URL dasar
  * @returns {string} URL lengkap hasil penggabungan URL dasar dengan path
@@ -50,7 +48,7 @@ interface GeneratorOptions {
 }
 
 /**
- * Menghasilkan string acak berdasarkan opsi yang ditentukan
+ * Mengoptimalkan pembuatan string acak berdasarkan opsi yang ditentukan.
  *
  * @param {number} length - Panjang string yang akan dihasilkan
  * @param {GeneratorOptions} options - Opsi konfigurasi untuk pembuatan string
@@ -84,7 +82,7 @@ const generateString = (length: number, options: GeneratorOptions = {}): string 
 };
 
 /**
- * Menghasilkan angka acak dalam rentang yang ditentukan
+ * Mengoptimalkan pembuatan angka acak dalam rentang yang ditentukan.
  *
  * @param {number} min - Nilai minimum (inklusif)
  * @param {number} max - Nilai maksimum (inklusif)
@@ -112,7 +110,7 @@ const generateNumber = (
 };
 
 /**
- * Menghasilkan string alfanumerik acak
+ * Mengoptimalkan pembuatan string alfanumerik acak.
  *
  * @param {number} length - Panjang string alfanumerik
  * @param {boolean} [lettersOnly=false] - Apakah hanya menyertakan huruf (tanpa angka)
@@ -127,9 +125,21 @@ const generateAlphanumeric = (length: number, lettersOnly: boolean = false): str
   });
 };
 
+/**
+ * Fungsi untuk menolak tag yang berpotensi xss
+ *
+ * @param {string} input - String yang akan diuji
+ * @returns {string} String yang telah diuji
+ */
+const parseAntiXss = (input: string): string => {
+  const cleanInput = input.replace(/<script>|<\/script>/gi, '');
+  return cleanInput;
+};
+
 export {
   generateString,
   generateNumber,
   generateAlphanumeric,
-  type GeneratorOptions
+  type GeneratorOptions,
+  parseAntiXss
 };

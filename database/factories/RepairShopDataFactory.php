@@ -17,7 +17,8 @@ class RepairShopDataFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'repair_shop_name' => $this->faker->word,
+            // Tambahkan atribut lainnya
         ];
     }
 }
