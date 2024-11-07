@@ -1,6 +1,7 @@
 import { Button, Form, Alert } from 'react-bootstrap';
 import { useForm } from '@inertiajs/react';
 import { FormEventHandler, useRef } from 'react';
+import { FloatingLabel } from 'react-bootstrap';
 
 export default function UpdatePasswordForm({
   className = '',
@@ -54,8 +55,7 @@ export default function UpdatePasswordForm({
       </header>
 
       <Form onSubmit={updatePassword} className="mt-4">
-        <Form.Group controlId="current_password">
-          <Form.Label>Current Password</Form.Label>
+        <FloatingLabel className="mb-3" controlId="current_password" label="Current Password">
           <Form.Control
             type="password"
             ref={currentPasswordInput}
@@ -68,10 +68,9 @@ export default function UpdatePasswordForm({
           <Form.Control.Feedback type="invalid">
             {errors.current_password}
           </Form.Control.Feedback>
-        </Form.Group>
+        </FloatingLabel>
 
-        <Form.Group controlId="password">
-          <Form.Label>New Password</Form.Label>
+        <FloatingLabel className="mb-3" controlId="password" label="New Password">
           <Form.Control
             type="password"
             ref={passwordInput}
@@ -84,10 +83,9 @@ export default function UpdatePasswordForm({
           <Form.Control.Feedback type="invalid">
             {errors.password}
           </Form.Control.Feedback>
-        </Form.Group>
+        </FloatingLabel>
 
-        <Form.Group controlId="password_confirmation">
-          <Form.Label>Confirm Password</Form.Label>
+        <FloatingLabel className="mb-3" controlId="password_confirmation" label="Confirm Password">
           <Form.Control
             type="password"
             value={data.password_confirmation}
@@ -99,7 +97,7 @@ export default function UpdatePasswordForm({
           <Form.Control.Feedback type="invalid">
             {errors.password_confirmation}
           </Form.Control.Feedback>
-        </Form.Group>
+        </FloatingLabel>
 
         <div className="gap-3 d-flex align-items-center">
           <Button type="submit" variant="primary" disabled={processing}>

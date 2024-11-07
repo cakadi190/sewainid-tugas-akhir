@@ -1,4 +1,4 @@
-import { Button, Form, Modal } from 'react-bootstrap';
+import { Button, Form, Modal, FormFloating } from 'react-bootstrap';
 import { useForm } from '@inertiajs/react';
 import { FormEventHandler, useRef, useState } from 'react';
 
@@ -44,31 +44,29 @@ export default function DeleteUserForm({
   };
 
   return (
-    <section className={`mb-4 ${className}`}>
+    <section className={`${className}`}>
       <header>
-        <h2 className="h5">Delete Account</h2>
+        <h2 className="h5">Hapus Akun</h2>
         <p className="small text-muted">
-          Once your account is deleted, all of its resources and data
-          will be permanently deleted. Before deleting your account,
-          please download any data or information that you wish to
-          retain.
+          Setelah akun Anda dihapus, semua sumber daya dan data
+          akan dihapus secara permanen. Sebelum menghapus akun Anda,
+          silakan unduh data atau informasi yang Anda ingin simpan.
         </p>
       </header>
 
       <Button variant="danger" onClick={confirmUserDeletion}>
-        Delete Account
+        Hapus Akun
       </Button>
 
       <Modal show={confirmingUserDeletion} onHide={closeModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm Deletion</Modal.Title>
+          <Modal.Title>Konfirmasi Penghapusan</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
-            Are you sure you want to delete your account? Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm.
+            Apakah Anda yakin ingin menghapus akun Anda? Setelah akun Anda dihapus, semua sumber daya dan data akan dihapus secara permanen. Silakan masukkan kata sandi Anda untuk mengonfirmasi.
           </p>
-          <Form.Group>
-            <Form.Label htmlFor="password">Password</Form.Label>
+          <FormFloating className="mb-3">
             <Form.Control
               id="password"
               type="password"
@@ -76,19 +74,20 @@ export default function DeleteUserForm({
               onChange={(e) => setData('password', e.target.value)}
               ref={passwordInput}
               isInvalid={!!errors.password}
-              placeholder="Password"
+              placeholder="Kata Sandi"
             />
             <Form.Control.Feedback type="invalid">
               {errors.password}
             </Form.Control.Feedback>
-          </Form.Group>
+            <Form.Label>Kata Sandi</Form.Label>
+          </FormFloating>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={closeModal}>
-            Cancel
+            Batal
           </Button>
           <Button variant="danger" onClick={deleteUser} disabled={processing}>
-            Delete Account
+            Hapus Akun
           </Button>
         </Modal.Footer>
       </Modal>
