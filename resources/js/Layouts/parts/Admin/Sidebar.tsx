@@ -128,7 +128,7 @@ const MenuLink = styled(Link, {
   shouldForwardProp: (prop) => !['hasSubmenu', 'isActive'].includes(prop as string),
 }) <{ hasSubmenu?: boolean; isActive?: boolean }>`
   padding: 0.75rem 1.5rem;
-  color: ${({ isActive }) => (isActive ? 'rgba(var(--bs-primary-rgb), 1)' : 'rgba(var(--bs-dark-rgb), 0.7)')}; // Darker text color when active
+  color: ${({ isActive }) => (isActive ? 'rgba(var(--bs-primary-rgb), 1)' : 'rgba(var(--bs-dark-rgb), 0.7)')};
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -137,12 +137,12 @@ const MenuLink = styled(Link, {
   ${({ hasSubmenu }) => hasSubmenu && `justify-content: space-between;`}
   ${({ isActive }) =>
     isActive && `
-    background: rgba(var(--bs-primary-rgb), 0.1); // Light highlight when active
+    background: rgba(var(--bs-primary-rgb), 0.05);
   `}
 
   &:hover {
-    color: rgba(var(--bs-primary-rgb), 0.7);
-    background: rgba(var(--bs-primary-rgb), 0.05); // Light hover background
+    background: ${({ isActive }) => isActive ? `rgba(var(--bs-primary-rgb), 0.1)` : `rgba(var(--bs-dark-rgb), 0.05)`};
+    color: ${({ isActive }) => isActive ? `rgba(var(--bs-primary-rgb), 1)` : `rgba(var(--bs-dark-rgb), 0.7)`};
   }
 `;
 
@@ -214,11 +214,11 @@ const SubmenuLink = styled(Link, {
 
   ${({ isActive }) =>
     isActive && `
-    color: rgba(var(--bs-primary-rgb), 1);
-    background: rgba(var(--bs-primary-rgb), 0.05);
+    color: rgba(var(--bs-dark-rgb), 1);
+    background: rgba(var(--bs-dark-rgb), 0.05);
 
     &:before {
-      background: rgba(var(--bs-primary-rgb), 0.125);
+      background: rgba(var(--bs-dark-rgb), 0.25);
       left: 1.875rem;
       width: 6px;
       height: 6px;
@@ -226,8 +226,8 @@ const SubmenuLink = styled(Link, {
   `}
 
   &:hover {
-    color: rgba(var(--bs-primary-rgb), 0.75);
-    background: rgba(var(--bs-primary-rgb), 0.05);
+    background: ${({ isActive }) => isActive ? `rgba(var(--bs-dark-rgb), 0.1)` : `rgba(var(--bs-dark-rgb), 0.05)`};
+    color: ${({ isActive }) => isActive ? `rgba(var(--bs-dark-rgb), 1)` : `rgba(var(--bs-dark-rgb), 0.7)`};
   }
 
   svg {
