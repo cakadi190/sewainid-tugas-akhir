@@ -14,20 +14,6 @@ import 'leaflet/dist/leaflet.css';
 L.Icon.Default.imagePath = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/';
 
 /**
- * Konfigurasi default icon untuk marker peta
- * @constant {L.Icon}
- */
-const defaultIcon = L.icon({
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
-
-/**
  * Tipe data untuk posisi koordinat
  * @typedef {number[] | [number, number]} PositionType
  */
@@ -65,11 +51,17 @@ interface SingleLocation {
  * @property {PositionType} position - Koordinat lokasi
  * @property {string|number} [height='400px'] - Tinggi peta
  * @property {string|number} [width='100%'] - Lebar peta
+ * @property {string} [iconUrl='https://...'] - URL untuk icon marker
+ * @property {string} [iconRetinaUrl='https://...'] - URL untuk icon marker retina
+ * @property {string} [shadowUrl='https://...'] - URL untuk shadow marker
  */
 interface LeafletSingleProps extends Omit<SingleLocation, 'position'> {
   position: PositionType;
   height?: string | number;
   width?: string | number;
+  iconUrl?: string;
+  iconRetinaUrl?: string;
+  shadowUrl?: string;
 }
 
 /**
@@ -80,6 +72,9 @@ interface LeafletSingleProps extends Omit<SingleLocation, 'position'> {
  * @property {string|number} [width='100%'] - Lebar peta
  * @property {number} [initialZoom=12] - Level zoom awal
  * @property {boolean} [showAllMarkers=true] - Menampilkan semua marker dalam viewport
+ * @property {string} [iconUrl='https://...'] - URL untuk icon marker
+ * @property {string} [iconRetinaUrl='https://...'] - URL untuk icon marker retina
+ * @property {string} [shadowUrl='https://...'] - URL untuk shadow marker
  */
 interface MultiLeafletMapProps {
   locations: SingleLocation[];
@@ -87,6 +82,9 @@ interface MultiLeafletMapProps {
   width?: string | number;
   initialZoom?: number;
   showAllMarkers?: boolean;
+  iconUrl?: string;
+  iconRetinaUrl?: string;
+  shadowUrl?: string;
 }
 
 /**
@@ -100,9 +98,21 @@ export const LeafletSingle: React.FC<LeafletSingleProps> = ({
   name,
   address,
   height = '400px',
-  width = '100%'
+  width = '100%',
+  iconUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  iconRetinaUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  shadowUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png'
 }) => {
   const validPosition = ensurePosition(position);
+  const customIcon = L.icon({
+    iconUrl,
+    iconRetinaUrl,
+    shadowUrl,
+    iconSize: [48, 48],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
 
   return (
     <div style={{ height, width }} className="overflow-hidden rounded-lg shadow-md">
@@ -115,11 +125,11 @@ export const LeafletSingle: React.FC<LeafletSingleProps> = ({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={validPosition} icon={defaultIcon}>
+        <Marker position={validPosition} icon={customIcon}>
           <Popup>
             <div className="p-2">
-              <h3 className="mb-1 text-lg font-bold">{name}</h3>
-              <p className="text-gray-600">{address}</p>
+              <h3 className="mb-0 text-lg font-bold h6">{name}</h3>
+              <p className="m-0 mt-2 text-gray-600">{address}</p>
             </div>
           </Popup>
         </Marker>
@@ -139,7 +149,10 @@ export const MultiLeafletMapPin: React.FC<MultiLeafletMapProps> = ({
   height = '400px',
   width = '100%',
   initialZoom = 12,
-  showAllMarkers = true
+  showAllMarkers = true,
+  iconUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  iconRetinaUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  shadowUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png'
 }) => {
   const center = useMemo(() => {
     if (locations.length === 0) return [0, 0] as [number, number];
@@ -162,6 +175,16 @@ export const MultiLeafletMapPin: React.FC<MultiLeafletMapProps> = ({
     return bounds;
   }, [locations, showAllMarkers]);
 
+  const customIcon = L.icon({
+    iconUrl,
+    iconRetinaUrl,
+    shadowUrl,
+    iconSize: [25, 41], // Ukuran icon
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41] // Ukuran shadow
+  });
+
   return (
     <div style={{ height, width }} className="overflow-hidden rounded-lg shadow-md">
       <MapContainer
@@ -176,18 +199,18 @@ export const MultiLeafletMapPin: React.FC<MultiLeafletMapProps> = ({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {locations.map((location, index) => {
-          const validPosition = ensurePosition(location.position);
+        {locations.map(({ name, address, position }, index) => {
+          const validPosition = ensurePosition(position);
           return (
             <Marker
-              key={`${location.name}-${index}`}
+              key={`${name}-${index}`}
               position={validPosition}
-              icon={defaultIcon}
+              icon={customIcon}
             >
               <Popup>
                 <div className="p-2">
-                  <h3 className="mb-1 text-lg font-bold">{location.name}</h3>
-                  <p className="text-gray-600">{location.address}</p>
+                  <h3 className="mb-0 text-lg font-bold h6">{name}</h3>
+                  <p className="m-0 mt-2 text-gray-600">{address}</p>
                 </div>
               </Popup>
             </Marker>

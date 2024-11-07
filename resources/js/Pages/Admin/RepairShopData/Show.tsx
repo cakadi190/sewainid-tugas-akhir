@@ -1,5 +1,6 @@
 import axios from "axios";
 import Database from "@/types/database";
+import CarRepairIcon from '@/Assets/Icon/maintenance.png';
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "@inertiajs/react";
@@ -120,6 +121,9 @@ export default function Show({ id }: { id: number }) {
                   position={position}
                   name={formData.repair_shop_name}
                   address={formData.address}
+                  iconUrl={CarRepairIcon}
+                  iconRetinaUrl={CarRepairIcon}
+                  shadowUrl=""
                 />
               </div>
 

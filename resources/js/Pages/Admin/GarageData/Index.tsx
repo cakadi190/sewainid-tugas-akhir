@@ -32,7 +32,7 @@ export default function Index() {
       title: 'Status',
       render({ color, label }: { label: string; color: string }) {
         return (
-          <Badge color={color}>{label}</Badge>
+          <Badge bg={color}>{label}</Badge>
         )
       }
     },

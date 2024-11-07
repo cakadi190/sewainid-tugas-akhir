@@ -12,7 +12,7 @@ import {
 } from 'react-bootstrap';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleDoubleLeft, faAngleDoubleRight, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faSync, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDoubleLeft, faAngleDoubleRight, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faList, faSearch, faSync, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { twMerge } from 'tailwind-merge';
 
 /**
@@ -374,8 +374,11 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
       <div className="overflow-hidden border rounded-3">
         <div className="p-2 border-bottom">
           <Row className="gy-2 datatable-header d-flex justify-content-between align-items-center">
-            <Col md="3" className="d-flex align-items-center">
+            <Col xl="6" xxl="4" className="d-flex align-items-center">
               <InputGroup>
+                <InputGroup.Text>
+                  <FontAwesomeIcon icon={faList} />
+                </InputGroup.Text>
                 <Form.Select
                   value={pageLength}
                   onChange={(e) => handlePageLengthChange(Number(e.target.value))}
@@ -385,7 +388,9 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
                   <option value={50}>50</option>
                   <option value={100}>100</option>
                 </Form.Select>
-                <InputGroup.Text>Senarai</InputGroup.Text>
+                <InputGroup.Text>
+                  <FontAwesomeIcon icon={faSearch} />
+                </InputGroup.Text>
                 <Form.Control
                   type="text"
                   placeholder="Search..."
@@ -399,7 +404,7 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
                 )}
               </InputGroup>
             </Col>
-            <Col md="3" className="gap-2 justify-content-center justify-content-lg-end d-flex align-items-center">
+            <Col xl="6" xxl="4" className="gap-2 justify-content-center justify-content-xl-end d-flex align-items-center">
               {filterComponent}
 
               {withTrashToggle && (

@@ -33,8 +33,9 @@ export default function Index() {
       name: 'status',
       title: 'Status',
       render({ color, label }: { label: string; color: string }) {
+        // console.log({ color, label })
         return (
-          <Badge color={color}>{label}</Badge>
+          <Badge bg={color}>{label}</Badge>
         )
       }
     },
