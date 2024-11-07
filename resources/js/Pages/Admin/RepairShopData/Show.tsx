@@ -71,7 +71,7 @@ export default function Show({ id }: { id: number }) {
   return (
     <>
       <Button
-        variant="info"
+        variant="primary"
         style={{ height: '32px', width: '32px' }}
         className="d-flex justify-content-center align-items-center"
         size="sm"

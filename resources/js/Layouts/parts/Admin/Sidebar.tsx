@@ -71,7 +71,7 @@ const SidebarStyle = styled.aside<{ isToggled: boolean }>`
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(var(--bs-dark-rgb), 0.2);
     border-radius: 3px;
   }
 `;
@@ -83,8 +83,8 @@ const InnerSidebar = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(var(--bs-dark-rgb), 0.1),
+    0 2px 4px -1px rgba(var(--bs-dark-rgb), 0.06);
 `;
 
 const HeaderSidebar = styled.div`
@@ -112,7 +112,7 @@ const MenuHeading = styled.li`
   opacity: 0.8;
   padding: 1rem 1.5rem 0.5rem;
   display: flex;
-  color: #333; // Dark text color
+  color: var(--bs-dark);
 
   &:not(:first-of-type) {
     margin-top: 0.5rem;
@@ -128,7 +128,7 @@ const MenuLink = styled(Link, {
   shouldForwardProp: (prop) => !['hasSubmenu', 'isActive'].includes(prop as string),
 }) <{ hasSubmenu?: boolean; isActive?: boolean }>`
   padding: 0.75rem 1.5rem;
-  color: ${({ isActive }) => (isActive ? '#333' : 'rgba(0, 0, 0, 0.7)')}; // Darker text color when active
+  color: ${({ isActive }) => (isActive ? 'rgba(var(--bs-primary-rgb), 1)' : 'rgba(var(--bs-dark-rgb), 0.7)')}; // Darker text color when active
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -137,12 +137,12 @@ const MenuLink = styled(Link, {
   ${({ hasSubmenu }) => hasSubmenu && `justify-content: space-between;`}
   ${({ isActive }) =>
     isActive && `
-    background: rgba(0, 0, 0, 0.1); // Light highlight when active
+    background: rgba(var(--bs-primary-rgb), 0.1); // Light highlight when active
   `}
 
   &:hover {
-    color: #333;
-    background: rgba(0, 0, 0, 0.05); // Light hover background
+    color: rgba(var(--bs-primary-rgb), 0.7);
+    background: rgba(var(--bs-primary-rgb), 0.05); // Light hover background
   }
 `;
 
@@ -174,7 +174,6 @@ const Submenu = styled.ul<{ isOpen: boolean }>`
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease-out;
-  background: rgba(240, 240, 240, 0.5); // Light submenu background
   list-style: none;
   padding: 0;
 
@@ -192,23 +191,43 @@ const SubmenuLink = styled(Link, {
   shouldForwardProp: (prop) => prop !== 'isActive',
 }) <{ isActive?: boolean }>`
   padding: 0.5rem 1rem 0.5rem 3.5rem;
-  color: ${({ isActive }) =>
-    isActive ? '#333' : 'rgba(0, 0, 0, 0.7)'}; // Dark text color for submenu
+  color: rgba(var(--bs-dark-rgb), 0.5);
   text-decoration: none;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   font-size: 0.9rem;
   transition: all 0.2s ease;
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    left: 1.875rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0.25rem;
+    height: 0.25rem;
+    background: rgba(var(--bs-dark-rgb), 0.125);
+    border-radius: 50%;
+  }
 
   ${({ isActive }) =>
     isActive && `
-    background: rgba(0, 0, 0, 0.1); // Light highlight when active
+    color: rgba(var(--bs-primary-rgb), 1);
+    background: rgba(var(--bs-primary-rgb), 0.05);
+
+    &:before {
+      background: rgba(var(--bs-primary-rgb), 0.125);
+      left: 1.875rem;
+      width: 6px;
+      height: 6px;
+    }
   `}
 
   &:hover {
-    color: #333;
-    background: rgba(0, 0, 0, 0.05); // Light hover background
+    color: rgba(var(--bs-primary-rgb), 0.75);
+    background: rgba(var(--bs-primary-rgb), 0.05);
   }
 
   svg {

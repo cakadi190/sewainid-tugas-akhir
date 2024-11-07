@@ -17,8 +17,8 @@ export default function Index() {
 
   const columns = [
     {
-      data: 'name',
-      name: 'name',
+      data: 'garage_name',
+      name: 'garage_name',
       title: 'Nama Garasi',
     },
     {

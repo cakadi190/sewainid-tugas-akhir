@@ -12,7 +12,7 @@ export default function CreateGarageData({ onSuccess: onSuccessAction }: { onSuc
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const { data: formData, setData, post, processing, reset, errors, clearErrors } = useForm<Omit<Database['GarageData'], 'deleted_at' | 'created_at' | 'id' | 'updated_at'>>({
-    name: '',
+    garage_name: '',
     address: '',
     coordinate: '',
     capacity: 0,
@@ -70,13 +70,13 @@ export default function CreateGarageData({ onSuccess: onSuccessAction }: { onSuc
                   <Form.Control
                     type="text"
                     placeholder="Nama"
-                    value={formData.name}
-                    onChange={(e) => setData("name", e.target.value)}
-                    isInvalid={!!errors.name}
+                    value={formData.garage_name}
+                    onChange={(e) => setData("garage_name", e.target.value)}
+                    isInvalid={!!errors.garage_name}
                   />
                   <Form.Label>Nama</Form.Label>
                   <Form.Text>Untuk identifikasi garasinya biar mudah dicari.</Form.Text>
-                  <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{errors.garage_name}</Form.Control.Feedback>
                 </Form.Floating>
               </div>
 

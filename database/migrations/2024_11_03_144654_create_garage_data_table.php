@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->timestamps();
 
-            $table->string('name')->unique();
+            $table->string('garage_name')->unique();
             $table->string('address');
             $table->string('coordinate');
             $table->unsignedInteger('capacity')->default(0);
@@ -23,6 +23,7 @@ return new class extends Migration {
             $table->time('closing_time')->nullable();
             $table->boolean('is_active')->default(true);
             $table->text('description')->nullable();
+            $table->softDeletes();
         });
     }
 

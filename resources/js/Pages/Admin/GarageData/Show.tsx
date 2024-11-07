@@ -1,5 +1,6 @@
 import axios from "axios";
 import Database from "@/types/database";
+import GarageIcon from "@/Assets/Icon/garage.png";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "@inertiajs/react";
@@ -17,7 +18,7 @@ export default function Show({ id }: { id: number }) {
   const onClose = () => setShowModal(false);
 
   const { data: formData, setData, processing, reset, errors, clearErrors } = useForm<Omit<Database['GarageData'], 'deleted_at' | 'created_at' | 'id' | 'updated_at'>>({
-    name: '',
+    garage_name: '',
     address: '',
     coordinate: '',
     capacity: 0,
@@ -50,7 +51,7 @@ export default function Show({ id }: { id: number }) {
         onOpen();
 
         setData({
-          name: data.name,
+          garage_name: data.garage_name,
           address: data.address,
           coordinate: data.coordinate,
           capacity: data.capacity,
@@ -72,7 +73,7 @@ export default function Show({ id }: { id: number }) {
   return (
     <>
       <Button
-        variant="info"
+        variant="primary"
         style={{ height: '32px', width: '32px' }}
         className="d-flex justify-content-center align-items-center"
         size="sm"
@@ -94,13 +95,13 @@ export default function Show({ id }: { id: number }) {
                     type="text"
                     placeholder="Nama"
                     readOnly
-                    value={formData.name}
-                    onChange={(e) => setData("name", e.target.value)}
-                    isInvalid={!!errors.name}
+                    value={formData.garage_name}
+                    onChange={(e) => setData("garage_name", e.target.value)}
+                    isInvalid={!!errors.garage_name}
                   />
                   <Form.Label>Nama</Form.Label>
                   <Form.Text>Untuk identifikasi garasinya biar mudah dicari.</Form.Text>
-                  <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{errors.garage_name}</Form.Control.Feedback>
                 </Form.Floating>
               </div>
 
@@ -119,8 +120,11 @@ export default function Show({ id }: { id: number }) {
                 </Form.Floating>
 
                 <LeafletSingle
+                  iconUrl={GarageIcon}
+                  iconRetinaUrl={GarageIcon}
+                  shadowUrl=""
                   position={position}
-                  name={formData.name}
+                  name={formData.garage_name}
                   address={formData.address}
                 />
               </div>
