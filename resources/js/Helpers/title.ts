@@ -1,21 +1,20 @@
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 /**
- * Generates a page title by appending the application name.
+ * Fungsi untuk menghasilkan judul halaman dengan menambahkan nama aplikasi
  *
- * This function takes a `title` string and appends the application name to it,
- * using the `VITE_APP_NAME` environment variable from `import.meta.env`.
- * If the environment variable is not set, it defaults to "Laravel".
- * If no `title` is provided, the function returns the application name alone.
+ * @param {string} title - Judul halaman yang akan digabungkan dengan nama aplikasi
+ * @returns {string} Mengembalikan string berupa gabungan judul dan nama aplikasi yang dipisahkan dengan bullet (•)
  *
- * @param {string} title - The title of the page. Can be an empty string.
- * @returns {string} - The concatenated title and app name, or just the app name if the title is empty.
+ * @description
+ * Fungsi ini mengambil nama aplikasi dari environment variable VITE_APP_NAME.
+ * Jika environment variable tidak ditemukan, maka akan menggunakan default value 'Laravel'.
+ * Jika parameter title kosong, maka hanya akan mengembalikan nama aplikasi saja.
+ * Jika parameter title ada isinya, maka akan mengembalikan format: [title] • [nama_aplikasi]
  *
- * Example:
- * ```ts
- * generateTitle('Home');  // returns 'Home - MyAppName'
- * generateTitle('');      // returns 'MyAppName'
- * ```
+ * @example
+ * generateTitle('Dashboard') // returns "Dashboard • MyApp"
+ * generateTitle('') // returns "MyApp"
  */
 export const generateTitle = (title: string): string =>
   title ? `${title} • ${appName}` : appName;

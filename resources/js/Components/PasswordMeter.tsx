@@ -4,7 +4,11 @@ import styled from '@emotion/styled';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
-const TeksKekuatan = styled.div<{ strength: number }>`
+/**
+ * Styled component for displaying password strength text
+ * Color changes based on password strength level
+ */
+const StrengthText = styled.div<{ strength: number }>`
   color: ${(props) => {
     if (props.strength === 0) return 'var(--bs-danger)';
     if (props.strength === 1) return 'var(--bs-yellow)';
@@ -15,7 +19,13 @@ const TeksKekuatan = styled.div<{ strength: number }>`
   margin-left: 10px;
 `;
 
-const BatangProgresKekuatanSandi: React.FC<{ strength: number }> = ({ strength }) => {
+/**
+ * Component to display password strength progress bar
+ * @param {Object} props - Component props
+ * @param {number} props.strength - Password strength level (0-3)
+ * @returns {JSX.Element} Progress bar with color based on strength
+ */
+const PasswordStrengthBar: React.FC<{ strength: number }> = ({ strength }) => {
   return (
     <ProgressBar
       className="flex-grow-1"
@@ -25,7 +35,16 @@ const BatangProgresKekuatanSandi: React.FC<{ strength: number }> = ({ strength }
   );
 };
 
-const PopoverKekuatanSandi: React.FC<{ strength: number; show: boolean; target: React.RefObject<SVGSVGElement>; setShow: (show: boolean) => void }> = ({ strength, show, target, setShow }) => {
+/**
+ * Component to display password strength details in a popover
+ * @param {Object} props - Component props
+ * @param {number} props.strength - Password strength level (0-3)
+ * @param {boolean} props.show - Whether to show the popover
+ * @param {React.RefObject<SVGSVGElement>} props.target - Reference to the trigger element
+ * @param {Function} props.setShow - Function to toggle popover visibility
+ * @returns {JSX.Element} Icon with popover showing strength details
+ */
+const PasswordStrengthPopover: React.FC<{ strength: number; show: boolean; target: React.RefObject<SVGSVGElement>; setShow: (show: boolean) => void }> = ({ strength, show, target, setShow }) => {
   return (
     <>
       <FontAwesomeIcon
@@ -36,11 +55,11 @@ const PopoverKekuatanSandi: React.FC<{ strength: number; show: boolean; target: 
       />
       <Overlay target={target.current} show={show} placement="bottom">
         <Popover id="popover-basic">
-          <Popover.Header as="h3">Detail Kekuatan Sandi</Popover.Header>
+          <Popover.Header as="h3">Password Strength Details</Popover.Header>
           <Popover.Body>
-            {strength === 0 && <div>Sangat Lemah: <strong>Kurang dari 6 karakter</strong>.</div>}
-            {strength === 1 && <div>Lemah: <strong>Setidaknya 7 karakter</strong>, namun kurang kompleks.</div>}
-            {strength === 2 && <div>Moderat: <strong>Mengandung huruf dan angka</strong>, namun bisa lebih kuat.</div>}
+            {strength === 0 && <div>Very Weak: <strong>Less than 6 characters</strong>.</div>}
+            {strength === 1 && <div>Weak: <strong>At least 7 characters</strong>, but not complex enough.</div>}
+            {strength === 2 && <div>Moderate: <strong>Contains letters and numbers</strong>, but could be stronger.</div>}
           </Popover.Body>
         </Popover>
       </Overlay>
@@ -48,11 +67,22 @@ const PopoverKekuatanSandi: React.FC<{ strength: number; show: boolean; target: 
   );
 };
 
-const PengukurSandi: React.FC<{ password: string }> = ({ password }) => {
+/**
+ * Main component for measuring and displaying password strength
+ * @param {Object} props - Component props
+ * @param {string} props.password - Password string to evaluate
+ * @returns {JSX.Element} Password strength meter with progress bar and details
+ */
+const PasswordMeter: React.FC<{ password: string }> = ({ password }) => {
   const [show, setShow] = useState(false);
   const target = useRef(null);
 
-  const hitungKekuatan = (password: string) => {
+  /**
+   * Calculate password strength based on various criteria
+   * @param {string} password - Password to evaluate
+   * @returns {number} Strength level from 0-3
+   */
+  const calculateStrength = (password: string) => {
     let strength = 0;
     if (password.length > 6) strength++;
     if (password.match(/[A-Z]/)) strength++;
@@ -61,19 +91,19 @@ const PengukurSandi: React.FC<{ password: string }> = ({ password }) => {
     return strength;
   };
 
-  const strength = hitungKekuatan(password);
+  const strength = calculateStrength(password);
 
   return (
     <div className="gap-2 mt-3 d-flex align-items-center w-100">
-      <BatangProgresKekuatanSandi strength={strength} />
-      <TeksKekuatan strength={strength}>
-        {strength === 0 ? 'Sangat Lemah' : strength === 1 ? 'Lemah' : strength === 2 ? 'Moderat' : 'Kuat'}
-      </TeksKekuatan>
+      <PasswordStrengthBar strength={strength} />
+      <StrengthText strength={strength}>
+        {strength === 0 ? 'Very Weak' : strength === 1 ? 'Weak' : strength === 2 ? 'Moderate' : 'Strong'}
+      </StrengthText>
       {strength < 3 && (
-        <PopoverKekuatanSandi strength={strength} show={show} target={target} setShow={setShow} />
+        <PasswordStrengthPopover strength={strength} show={show} target={target} setShow={setShow} />
       )}
     </div>
   );
 };
 
-export default PengukurSandi;
+export default PasswordMeter;

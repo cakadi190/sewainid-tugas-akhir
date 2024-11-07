@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Komponen untuk menangani penghapusan data secara paksa (force delete)
+ * @module ForceDeleteData
+ */
+
 import { FC, useState } from 'react';
 import { Button, Modal, Spinner } from 'react-bootstrap';
 import { router } from '@inertiajs/react';
@@ -5,14 +10,27 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
+/**
+ * Komponen Button yang telah di-style dengan emotion
+ * @component
+ */
 const ButtonComponent = styled(Button)`
-width: fit-content;
-margin: 0;
+  width: fit-content;
+  margin: 0;
 
-@media (width <= 992px) {
-  width: 100%;
-}`
+  @media (width <= 992px) {
+    width: 100%;
+  }
+`
 
+/**
+ * Komponen untuk menampilkan konfirmasi penghapusan
+ * @component
+ * @param {Object} props - Props komponen
+ * @param {boolean} props.isDeleting - Status proses penghapusan
+ * @param {Function} props.onConfirm - Handler ketika konfirmasi diterima
+ * @param {Function} props.onCancel - Handler ketika konfirmasi dibatalkan
+ */
 const ForceDeleteConfirmation: FC<{
   isDeleting: boolean;
   onConfirm: () => void;
@@ -39,6 +57,16 @@ const ForceDeleteConfirmation: FC<{
   </>
 );
 
+/**
+ * Komponen modal untuk proses penghapusan paksa
+ * @component
+ * @param {Object} props - Props komponen
+ * @param {boolean} props.show - Status tampilan modal
+ * @param {string} props.url - URL endpoint untuk penghapusan
+ * @param {Function} props.onClose - Handler ketika modal ditutup
+ * @param {Function} [props.onSuccess] - Handler opsional ketika penghapusan berhasil
+ * @param {Function} [props.onError] - Handler opsional ketika penghapusan gagal
+ */
 const ForceDeleteModal: FC<{
   show: boolean;
   url: string;
@@ -74,6 +102,14 @@ const ForceDeleteModal: FC<{
   );
 };
 
+/**
+ * Komponen utama untuk menangani penghapusan data secara paksa
+ * @component
+ * @param {Object} props - Props komponen
+ * @param {string} props.url - URL endpoint untuk penghapusan
+ * @param {Function} [props.onSuccess] - Handler opsional ketika penghapusan berhasil
+ * @param {Function} [props.onError] - Handler opsional ketika penghapusan gagal
+ */
 const ForceDeleteData: FC<{
   url: string;
   onSuccess?: () => void;

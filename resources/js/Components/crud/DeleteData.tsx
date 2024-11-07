@@ -7,7 +7,12 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
 /**
- * A custom hook that manages a URL with query parameters.
+ * Hook kustom untuk mengelola URL dengan parameter query
+ *
+ * @param {string} baseUrl - URL dasar yang akan ditambahkan parameter
+ * @returns {object} Object berisi fullUrl dan fungsi updateParam
+ * @property {string} fullUrl - URL lengkap dengan parameter query
+ * @property {function} updateParam - Fungsi untuk memperbarui parameter
  */
 const useUrlWithParams = (baseUrl: string) => {
   const [params, setParams] = useState<Record<string, string | boolean>>({});
@@ -38,7 +43,15 @@ margin: 0;
 }`
 
 /**
- * DeleteConfirmation component - A confirmation dialog for delete actions.
+ * Komponen konfirmasi penghapusan data
+ *
+ * @param {object} props - Props komponen
+ * @param {boolean} props.isDeleting - Status proses penghapusan
+ * @param {boolean} props.withForceDeleteCheckbox - Opsi untuk menampilkan checkbox force delete
+ * @param {function} props.onConfirm - Handler ketika konfirmasi ditekan
+ * @param {function} props.onCancel - Handler ketika pembatalan ditekan
+ * @param {function} props.forceDeleteAction - Handler untuk checkbox force delete
+ * @returns {JSX.Element} Elemen konfirmasi penghapusan
  */
 const DeleteConfirmation: FC<{
   isDeleting: boolean;
@@ -105,7 +118,16 @@ const DeleteConfirmation: FC<{
   );
 
 /**
- * DeleteModal component - A modal dialog for delete confirmations.
+ * Komponen modal untuk konfirmasi penghapusan
+ *
+ * @param {object} props - Props komponen
+ * @param {boolean} props.show - Status tampilan modal
+ * @param {string} props.url - URL endpoint untuk penghapusan
+ * @param {function} props.onClose - Handler ketika modal ditutup
+ * @param {boolean} props.withForceDeleteCheckbox - Opsi untuk menampilkan checkbox force delete
+ * @param {function} props.onSuccess - Handler ketika penghapusan berhasil
+ * @param {function} props.onError - Handler ketika penghapusan gagal
+ * @returns {JSX.Element} Modal konfirmasi penghapusan
  */
 const DeleteModal: FC<{
   show: boolean;
@@ -152,7 +174,14 @@ const DeleteModal: FC<{
 };
 
 /**
- * DeleteData component - A button that triggers the delete modal.
+ * Komponen utama untuk menghapus data
+ *
+ * @param {object} props - Props komponen
+ * @param {string} props.url - URL endpoint untuk penghapusan
+ * @param {function} props.onSuccess - Handler ketika penghapusan berhasil
+ * @param {function} props.onError - Handler ketika penghapusan gagal
+ * @param {boolean} props.withForceDeleteCheckbox - Opsi untuk menampilkan checkbox force delete
+ * @returns {JSX.Element} Tombol dan modal untuk penghapusan data
  */
 const DeleteData: FC<{
   url: string;

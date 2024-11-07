@@ -1,11 +1,25 @@
-// src/helpers/AlertHelper.ts
+/**
+ * Modul untuk menampilkan berbagai jenis alert menggunakan SweetAlert2
+ *
+ * @module AlertHelper
+ * @requires sweetalert2
+ * @requires sweetalert2-react-content
+ */
+
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
-// Inisialisasi dengan React Content
 const MySwal = withReactContent(Swal);
 
-// Tipe untuk berbagai opsi alert
+/**
+ * Interface untuk opsi konfigurasi alert
+ *
+ * @interface AlertOptions
+ * @property {string} title - Judul alert yang akan ditampilkan
+ * @property {string} [text] - Teks deskripsi alert (opsional)
+ * @property {string} [confirmButtonText] - Teks untuk tombol konfirmasi (default: 'OK')
+ * @property {string} [cancelButtonText] - Teks untuk tombol batal (default: 'No')
+ */
 type AlertOptions = {
   title: string;
   text?: string;
@@ -13,7 +27,12 @@ type AlertOptions = {
   cancelButtonText?: string;
 };
 
-// Fungsi untuk alert sukses
+/**
+ * Menampilkan alert sukses dengan ikon dan styling yang sesuai
+ *
+ * @param {AlertOptions} options - Opsi konfigurasi alert
+ * @returns {Promise} Promise dari SweetAlert2
+ */
 export const showSuccessAlert = (options: AlertOptions) => {
   return MySwal.fire({
     icon: 'success',
@@ -22,12 +41,17 @@ export const showSuccessAlert = (options: AlertOptions) => {
     confirmButtonText: options.confirmButtonText || 'OK',
     buttonsStyling: false,
     customClass: {
-      confirmButton: 'btn btn-success', // Menggunakan Bootstrap 5 class untuk tombol
+      confirmButton: 'btn btn-success',
     },
   });
 };
 
-// Fungsi untuk alert info
+/**
+ * Menampilkan alert informasi dengan ikon dan styling yang sesuai
+ *
+ * @param {AlertOptions} options - Opsi konfigurasi alert
+ * @returns {Promise} Promise dari SweetAlert2
+ */
 export const showInfoAlert = (options: AlertOptions) => {
   return MySwal.fire({
     icon: 'info',
@@ -36,12 +60,17 @@ export const showInfoAlert = (options: AlertOptions) => {
     confirmButtonText: options.confirmButtonText || 'OK',
     buttonsStyling: false,
     customClass: {
-      confirmButton: 'btn btn-info', // Menggunakan Bootstrap 5 class untuk tombol
+      confirmButton: 'btn btn-info',
     },
   });
 };
 
-// Fungsi untuk alert peringatan
+/**
+ * Menampilkan alert peringatan dengan ikon dan styling yang sesuai
+ *
+ * @param {AlertOptions} options - Opsi konfigurasi alert
+ * @returns {Promise} Promise dari SweetAlert2
+ */
 export const showWarningAlert = (options: AlertOptions) => {
   return MySwal.fire({
     icon: 'warning',
@@ -55,7 +84,12 @@ export const showWarningAlert = (options: AlertOptions) => {
   });
 };
 
-// Fungsi untuk alert kesalahan
+/**
+ * Menampilkan alert kesalahan dengan ikon dan styling yang sesuai
+ *
+ * @param {AlertOptions} options - Opsi konfigurasi alert
+ * @returns {Promise} Promise dari SweetAlert2
+ */
 export const showErrorAlert = (options: AlertOptions) => {
   return MySwal.fire({
     icon: 'error',
@@ -69,7 +103,12 @@ export const showErrorAlert = (options: AlertOptions) => {
   });
 };
 
-// Fungsi untuk alert konfirmasi
+/**
+ * Menampilkan alert konfirmasi dengan dua tombol pilihan
+ *
+ * @param {AlertOptions} options - Opsi konfigurasi alert
+ * @returns {Promise} Promise dari SweetAlert2
+ */
 export const showConfirmAlert = (options: AlertOptions) => {
   return MySwal.fire({
     icon: 'question',
@@ -87,7 +126,13 @@ export const showConfirmAlert = (options: AlertOptions) => {
   });
 };
 
-// Fungsi untuk alert yang dinamis
+/**
+ * Fungsi utilitas untuk menampilkan alert berdasarkan tipe yang diberikan
+ *
+ * @param {'success' | 'info' | 'error' | 'warning'} type - Tipe alert yang akan ditampilkan
+ * @param {AlertOptions} options - Opsi konfigurasi alert
+ * @returns {Promise} Promise dari SweetAlert2
+ */
 export const renderSwalModal = (type: 'success' | 'info' | 'error' | 'warning', options: AlertOptions) => {
   const alertRender = {
     success: () => showSuccessAlert(options),

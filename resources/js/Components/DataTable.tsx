@@ -15,7 +15,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDoubleLeft, faAngleDoubleRight, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faSync, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { twMerge } from 'tailwind-merge';
 
-// Definisi interface untuk tipe data
+/**
+ * Interface untuk mendefinisikan struktur kolom dalam DataTable
+ * @interface Column
+ * @property {string} data - Nama properti data yang akan ditampilkan dalam kolom
+ * @property {string} name - Nama unik untuk identifikasi kolom
+ * @property {string} title - Judul yang ditampilkan di header kolom
+ * @property {boolean} [searchable] - Menentukan apakah kolom dapat dicari
+ * @property {boolean} [sortable] - Menentukan apakah kolom dapat diurutkan
+ * @property {function} [render] - Fungsi kustom untuk merender konten sel
+ */
 interface Column {
   data: string;
   name: string;
@@ -25,6 +34,19 @@ interface Column {
   render?: (data: any, row: any) => React.ReactNode;
 }
 
+/**
+ * Props untuk komponen DataTable
+ * @interface DataTableProps
+ * @property {string} url - URL endpoint untuk mengambil data
+ * @property {Column[]} columns - Array dari definisi kolom
+ * @property {{column: string, direction: 'asc' | 'desc'}} [defaultSort] - Pengaturan pengurutan default
+ * @property {number} [defaultPageLength] - Jumlah item per halaman default
+ * @property {boolean} [serverSide] - Flag untuk mengaktifkan server-side processing
+ * @property {string} [className] - Kelas CSS tambahan
+ * @property {React.ReactNode} [filterComponent] - Komponen filter tambahan
+ * @property {function} [onDataLoad] - Callback yang dipanggil setelah data dimuat
+ * @property {boolean} [withTrashToggle] - Flag untuk menampilkan toggle data terhapus
+ */
 interface DataTableProps {
   url: string;
   columns: Column[];
@@ -37,7 +59,15 @@ interface DataTableProps {
   withTrashToggle?: boolean;
 }
 
-// Tambahkan interface untuk ref
+/**
+ * Interface untuk ref DataTable yang mengekspos method-method publik
+ * @interface DataTableRef
+ * @property {function} refetch - Method untuk memuat ulang data
+ * @property {function} setSearch - Method untuk mengatur teks pencarian
+ * @property {function} setPage - Method untuk mengatur halaman saat ini
+ * @property {function} setPageLength - Method untuk mengatur jumlah item per halaman
+ * @property {function} setSorting - Method untuk mengatur pengurutan
+ */
 export interface DataTableRef {
   refetch: () => Promise<void>;
   setSearch: (text: string) => void;
@@ -46,6 +76,16 @@ export interface DataTableRef {
   setSorting: (column: string, direction: 'asc' | 'desc') => void;
 }
 
+/**
+ * Interface untuk parameter query yang dikirim ke server
+ * @interface QueryParams
+ * @property {number} draw - Nomor request untuk sinkronisasi
+ * @property {number} start - Index awal data yang diminta
+ * @property {number} length - Jumlah data yang diminta
+ * @property {Object} search - Parameter pencarian
+ * @property {Array} order - Parameter pengurutan
+ * @property {Array} columns - Konfigurasi kolom
+ */
 interface QueryParams {
   draw: number;
   start: number;
@@ -61,6 +101,15 @@ interface QueryParams {
   }[];
 }
 
+/**
+ * Interface untuk response dari server
+ * @interface ServerResponse
+ * @property {number} draw - Nomor request untuk sinkronisasi
+ * @property {number} recordsTotal - Total jumlah record
+ * @property {number} recordsFiltered - Jumlah record setelah filter
+ * @property {Array} data - Data yang dikembalikan
+ * @property {string} [error] - Pesan error jika ada
+ */
 interface ServerResponse {
   draw: number;
   recordsTotal: number;
@@ -69,6 +118,18 @@ interface ServerResponse {
   error?: string;
 }
 
+/**
+ * @fileoverview Komponen DataTable kustom untuk menampilkan data dalam bentuk tabel dengan fitur-fitur seperti
+ * pengurutan, pencarian, paginasi, dan integrasi dengan server-side processing.
+ *
+ * @module CustomDataTable
+ * @requires react
+ * @requires react-bootstrap
+ * @requires axios
+ * @requires @fortawesome/react-fontawesome
+ * @requires @fortawesome/free-solid-svg-icons
+ * @requires tailwind-merge
+ */
 const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
   url,
   columns,
@@ -79,7 +140,6 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
   filterComponent,
   onDataLoad
 }, ref) => {
-  // State management dengan nilai default yang aman
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -94,18 +154,15 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
   const [draw, setDraw] = useState(1);
   const [includeTrashed, setIncludeTrashed] = useState(false);
 
-  // Fungsi untuk fetch data dengan penanganan error yang lebih baik
   const fetchData = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // Validasi columns sebelum membuat params
       if (!Array.isArray(columns) || columns.length === 0) {
         throw new Error('Columns configuration is required');
       }
 
-      // Build the URL with the trash toggle parameter if applicable
       const fetchUrl = `${url}${includeTrashed ? '?withTrashed=true' : ''}`;
 
       const sortColumnIndex = columns.findIndex(col => col.data === sortColumn);
@@ -165,7 +222,6 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
     }
   };
 
-  // Expose methods via ref
   useImperativeHandle(ref, () => ({
     refetch: fetchData,
     setSearch: (text: string) => {
@@ -185,7 +241,6 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
     }
   }));
 
-  // Effect untuk memuat data
   useEffect(() => {
     const controller = new AbortController();
 
@@ -197,7 +252,6 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
     };
   }, [currentPage, pageLength, searchText, sortColumn, sortDirection, includeTrashed]);
 
-  // Handler untuk pengurutan
   const handleSort = (columnName: string) => {
     const column = columns.find(col => col.data === columnName);
     if (column?.sortable === false) return;
@@ -210,30 +264,25 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
     }
   };
 
-  // Handler untuk pencarian
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
     setCurrentPage(1);
   };
 
-  // Handler untuk perubahan halaman
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  // Handler untuk perubahan jumlah entri per halaman
   const handlePageLengthChange = (length: number) => {
     setPageLength(length);
     setCurrentPage(1);
   };
 
-  // Handler untuk mengubah status trash toggle
   const handleTrashToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIncludeTrashed(e.target.checked);
-    setCurrentPage(1); // Reset to first page when toggling
+    setCurrentPage(1);
   };
 
-  // Render pagination dengan validasi
   const renderPagination = () => {
     const totalPages = Math.max(1, Math.ceil(totalRecords / pageLength));
     const items = [];
@@ -302,12 +351,8 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
     return <Pagination className='mb-0'>{items}</Pagination>;
   };
 
-  // Render ikon pengurutan
   const renderSortIcon = (columnName: string) => {
     return (
-      // <FontAwesomeIcon icon={sortColumn !== columnName ? faUpDown : (
-      //   sortDirection === 'asc' ? faArrowUp : faArrowDown
-      // )} />
       <div className="d-flex flex-column">
         <FontAwesomeIcon className={sortColumn === columnName && sortDirection !== 'asc' ? 'opacity-50' : ''} style={{ width: '.5rem', height: '.5rem' }} icon={faChevronUp} />
         <FontAwesomeIcon className={sortColumn === columnName && sortDirection !== 'desc' ? 'opacity-50' : ''} style={{ width: '.5rem', height: '.5rem' }} icon={faChevronDown} />
@@ -315,7 +360,6 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
     )
   };
 
-  // Render komponen utama
   return (
     <div className={twMerge("custom-datatable", className)}>
       {error && (

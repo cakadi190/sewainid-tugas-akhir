@@ -1,9 +1,32 @@
 import { usePage } from '@inertiajs/react';
-
 import { PageProps } from '@/types';
 
 /**
- * Custom hook to check authentication and user roles.
+ * Hook kustom untuk mengelola autentikasi dan peran pengguna dalam aplikasi
+ *
+ * @module useAuth
+ * @returns {Object} Objek yang berisi fungsi-fungsi untuk pengecekan autentikasi
+ * @property {Function} isGuest - Fungsi untuk mengecek apakah pengguna adalah tamu
+ * @property {Function} isLoggedIn - Fungsi untuk mengecek apakah pengguna sudah login
+ * @property {Function} isRole - Fungsi untuk mengecek peran spesifik pengguna
+ *
+ * @example
+ * const { isGuest, isLoggedIn, isRole } = useAuth();
+ *
+ * // Cek apakah pengguna adalah tamu
+ * if (isGuest()) {
+ *   // Lakukan sesuatu untuk tamu
+ * }
+ *
+ * // Cek apakah pengguna sudah login
+ * if (isLoggedIn()) {
+ *   // Lakukan sesuatu untuk pengguna yang login
+ * }
+ *
+ * // Cek peran pengguna
+ * if (isRole('admin')) {
+ *   // Lakukan sesuatu untuk admin
+ * }
  */
 export const useAuth = () => {
   const {
@@ -12,27 +35,14 @@ export const useAuth = () => {
     },
   } = usePage<PageProps>();
 
-  /**
-   * Check if the user is a guest (no valid user).
-   * @returns {boolean} - Returns true if the user is a guest
-   */
   const isGuest = (): boolean => {
     return !user || Object.keys(user).length === 0 || !user.id;
   };
 
-  /**
-   * Check if the user is logged in (valid user).
-   * @returns {boolean} - Returns true if the user is logged in
-   */
   const isLoggedIn = (): boolean => {
     return !!user && !!user.id;
   };
 
-  /**
-   * Check if the user has a specific role.
-   * @param {string} role - The role to check for ('admin', 'operator', 'user')
-   * @returns {boolean} - Returns true if the user has the specified role
-   */
   const isRole = (role: 'admin' | 'operator' | 'user'): boolean => {
     return !!user && !!user.role && user.role.key === role;
   };

@@ -1,7 +1,22 @@
+/**
+ * @fileoverview Komponen untuk menangani aksi keamanan dengan konfirmasi kata sandi
+ * @module SecurityAction
+ */
+
 import { ChangeEvent, FC, useState } from 'react';
 import { Button, Modal, Spinner, Form } from 'react-bootstrap';
 import { useForm } from '@inertiajs/react';
 
+/**
+ * Komponen modal konfirmasi untuk meminta kata sandi
+ * @component
+ * @param {Object} props - Props komponen
+ * @param {boolean} props.isOpen - Status tampilan modal
+ * @param {Function} props.onClose - Handler ketika modal ditutup
+ * @param {Function} props.onConfirm - Handler ketika konfirmasi diterima
+ * @param {boolean} [props.isLoading=false] - Status loading
+ * @returns {JSX.Element} Komponen modal konfirmasi
+ */
 const ConfirmationModal: FC<{
   isOpen: boolean;
   onClose: () => void;
@@ -42,6 +57,16 @@ const ConfirmationModal: FC<{
   );
 };
 
+/**
+ * Komponen utama untuk membuka aksi yang memerlukan keamanan
+ * @component
+ * @param {Object} props - Props komponen
+ * @param {number} props.id - ID data yang akan diproses
+ * @param {string} props.dataTarget - Target data yang akan diproses
+ * @param {Function} [props.onSuccess] - Handler ketika aksi berhasil
+ * @param {Function} [props.onError] - Handler ketika terjadi kesalahan
+ * @returns {JSX.Element} Komponen SecurityOpen
+ */
 const SecurityOpen: FC<{
   id: number;
   dataTarget: string;

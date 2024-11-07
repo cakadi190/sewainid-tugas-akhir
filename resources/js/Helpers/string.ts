@@ -1,8 +1,8 @@
 /**
- * Extracts the path from a given URL string.
+ * Mengekstrak path dari string URL yang diberikan.
  *
- * @param {string} urlString - The full URL from which to extract the path.
- * @returns {string | null} The path from the URL (e.g., "/dashboard"), or null if the URL is invalid.
+ * @param {string} urlString - URL lengkap yang akan diekstrak path-nya
+ * @returns {string | null} Path dari URL (contoh: "/dashboard"), atau null jika URL tidak valid
  */
 export const extractPath = (urlString: string): string | null => {
   try {
@@ -17,11 +17,11 @@ export const extractPath = (urlString: string): string | null => {
 };
 
 /**
- * Checks if the target path matches the path of the current URL.
+ * Memeriksa apakah path target cocok dengan path URL saat ini.
  *
- * @param {string} urlTarget - The target path to compare (e.g., "/dashboard").
- * @param {string} current - The current full URL to compare against.
- * @returns {boolean} True if the extracted path from the current URL matches the target path, otherwise false.
+ * @param {string} urlTarget - Path target yang akan dibandingkan (contoh: "/dashboard")
+ * @param {string} current - URL lengkap saat ini yang akan dibandingkan
+ * @returns {boolean} True jika path yang diekstrak dari URL saat ini cocok dengan path target, false jika tidak
  */
 export const isSameUrl = (urlTarget: string, current: string): boolean => {
   if (extractPath(urlTarget) === null) return current === '/';
@@ -31,34 +31,15 @@ export const isSameUrl = (urlTarget: string, current: string): boolean => {
 /**
  * Menggabungkan URL dasar aplikasi dengan path yang diberikan.
  *
- * @param {string} [path] - Path opsional yang akan digabungkan dengan URL dasar.
- *   Jika tidak diberikan atau undefined, hanya URL dasar yang akan dikembalikan.
- *
- * @returns {string} URL lengkap yang dihasilkan dari penggabungan URL dasar dengan path.
- *
- * @example
- * // Jika VITE_APP_URL adalah 'https://example.com'
- * baseUrl('/api/users'); // Returns: 'https://example.com/api/users'
- * baseUrl(); // Returns: 'https://example.com'
- *
- * @throws {TypeError} Jika VITE_APP_URL tidak valid atau tidak didefinisikan.
+ * @param {string} [path] - Path opsional yang akan digabungkan dengan URL dasar
+ * @returns {string} URL lengkap hasil penggabungan URL dasar dengan path
+ * @throws {TypeError} Jika VITE_APP_URL tidak valid atau tidak didefinisikan
  */
 export const baseUrl = (path?: string): string =>
   new URL(path ?? '', import.meta.env.VITE_APP_URL).toString();
 
 /**
- * Collection of utility functions to generate random strings, numbers, and alphanumeric values
- * @module StringGenerator
- */
-
-/**
- * Configuration options for string generation
- * @interface GeneratorOptions
- * @property {boolean} [includeUpperCase=true] - Include uppercase letters in generation
- * @property {boolean} [includeLowerCase=true] - Include lowercase letters in generation
- * @property {boolean} [includeNumbers=false] - Include numbers in generation
- * @property {boolean} [includeSpecialChars=false] - Include special characters in generation
- * @property {string} [customChars=''] - Custom characters to include in generation
+ * Interface untuk opsi konfigurasi pembuatan string
  */
 interface GeneratorOptions {
   includeUpperCase?: boolean;
@@ -69,61 +50,48 @@ interface GeneratorOptions {
 }
 
 /**
- * Generates a random string based on specified options
- * @param {number} length - Length of the string to generate
- * @param {GeneratorOptions} options - Configuration options for string generation
- * @returns {string} Generated random string
- * @throws {Error} If length is less than 1 or no character set is selected
- * @example
- * // Generate a 10-character string with uppercase and lowercase letters
- * generateString(10, { includeUpperCase: true, includeLowerCase: true })
- * // Returns something like: "aXbYcZdWeF"
+ * Menghasilkan string acak berdasarkan opsi yang ditentukan
+ *
+ * @param {number} length - Panjang string yang akan dihasilkan
+ * @param {GeneratorOptions} options - Opsi konfigurasi untuk pembuatan string
+ * @returns {string} String acak yang dihasilkan
+ * @throws {Error} Jika panjang kurang dari 1 atau tidak ada set karakter yang dipilih
  */
 const generateString = (length: number, options: GeneratorOptions = {}): string => {
-  const {
-    includeUpperCase = true,
-    includeLowerCase = true,
-    includeNumbers = false,
-    includeSpecialChars = false,
-    customChars = ''
-  } = options;
+  if (length < 1) throw new Error('Length must be at least 1');
 
-  if (length < 1) {
-    throw new Error('Length must be at least 1');
-  }
+  const charSets = {
+    upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    lower: 'abcdefghijklmnopqrstuvwxyz',
+    numbers: '0123456789',
+    special: '!@#$%^&*()_+-=[]{}|;:,.<>?'
+  };
 
-  let chars = '';
-  if (includeUpperCase) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  if (includeLowerCase) chars += 'abcdefghijklmnopqrstuvwxyz';
-  if (includeNumbers) chars += '0123456789';
-  if (includeSpecialChars) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
-  if (customChars) chars += customChars;
+  const chars = [
+    options.includeUpperCase !== false && charSets.upper,
+    options.includeLowerCase !== false && charSets.lower,
+    options.includeNumbers && charSets.numbers,
+    options.includeSpecialChars && charSets.special,
+    options.customChars
+  ].filter(Boolean).join('');
 
-  if (!chars) {
-    throw new Error('At least one character set must be selected');
-  }
+  if (!chars) throw new Error('At least one character set must be selected');
 
-  return Array.from({ length }, () =>
-    chars.charAt(Math.floor(Math.random() * chars.length))
+  return Array.from(
+    { length },
+    () => chars[Math.floor(Math.random() * chars.length)]
   ).join('');
 };
 
 /**
- * Generates a random number within specified range
- * @param {number} min - Minimum value (inclusive)
- * @param {number} max - Maximum value (inclusive)
- * @param {boolean} [isFloat=false] - Whether to generate floating point number
- * @param {number} [decimals=2] - Number of decimal places for float numbers
- * @returns {number} Generated random number
- * @throws {Error} If min is greater than max or decimals is less than 0
- * @example
- * // Generate integer between 1 and 100
- * generateNumber(1, 100)
- * // Returns something like: 42
+ * Menghasilkan angka acak dalam rentang yang ditentukan
  *
- * // Generate float with 2 decimal places
- * generateNumber(1, 100, true, 2)
- * // Returns something like: 42.69
+ * @param {number} min - Nilai minimum (inklusif)
+ * @param {number} max - Nilai maksimum (inklusif)
+ * @param {boolean} [isFloat=false] - Apakah akan menghasilkan angka desimal
+ * @param {number} [decimals=2] - Jumlah angka desimal untuk angka float
+ * @returns {number} Angka acak yang dihasilkan
+ * @throws {Error} Jika min lebih besar dari max atau decimals kurang dari 0
  */
 const generateNumber = (
   min: number,
@@ -144,19 +112,12 @@ const generateNumber = (
 };
 
 /**
- * Generates a random alphanumeric string
- * @param {number} length - Length of the alphanumeric string
- * @param {boolean} [lettersOnly=false] - Whether to include only letters (no numbers)
- * @returns {string} Generated random alphanumeric string
- * @throws {Error} If length is less than 1
- * @example
- * // Generate 8-character alphanumeric string
- * generateAlphanumeric(8)
- * // Returns something like: "a1B2c3D4"
+ * Menghasilkan string alfanumerik acak
  *
- * // Generate 8-character letters-only string
- * generateAlphanumeric(8, true)
- * // Returns something like: "aBcDeFgH"
+ * @param {number} length - Panjang string alfanumerik
+ * @param {boolean} [lettersOnly=false] - Apakah hanya menyertakan huruf (tanpa angka)
+ * @returns {string} String alfanumerik acak yang dihasilkan
+ * @throws {Error} Jika panjang kurang dari 1
  */
 const generateAlphanumeric = (length: number, lettersOnly: boolean = false): string => {
   return generateString(length, {

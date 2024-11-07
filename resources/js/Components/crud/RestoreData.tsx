@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashRestore, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
-// Styled Button component to match layout for both ForceDelete and Restore
 const ButtonComponent = styled(Button)`
   width: fit-content;
   margin: 0;
@@ -15,6 +14,16 @@ const ButtonComponent = styled(Button)`
   }
 `;
 
+/**
+ * Komponen untuk menampilkan konfirmasi pemulihan data
+ *
+ * @component
+ * @param {Object} props - Props komponen
+ * @param {boolean} props.isRestoring - Status proses pemulihan sedang berlangsung
+ * @param {() => void} props.onConfirm - Handler ketika konfirmasi diterima
+ * @param {() => void} props.onCancel - Handler ketika konfirmasi dibatalkan
+ * @returns {JSX.Element} Komponen konfirmasi pemulihan
+ */
 const RestoreConfirmation: FC<{
   isRestoring: boolean;
   onConfirm: () => void;
@@ -41,6 +50,18 @@ const RestoreConfirmation: FC<{
   </>
 );
 
+/**
+ * Komponen modal untuk proses pemulihan data
+ *
+ * @component
+ * @param {Object} props - Props komponen
+ * @param {boolean} props.show - Status tampilan modal
+ * @param {string} props.url - URL endpoint untuk pemulihan data
+ * @param {() => void} props.onClose - Handler ketika modal ditutup
+ * @param {() => void} [props.onSuccess] - Handler opsional ketika pemulihan berhasil
+ * @param {() => void} [props.onError] - Handler opsional ketika pemulihan gagal
+ * @returns {JSX.Element} Komponen modal pemulihan
+ */
 const RestoreModal: FC<{
   show: boolean;
   url: string;
@@ -76,6 +97,16 @@ const RestoreModal: FC<{
   );
 };
 
+/**
+ * Komponen utama untuk menampilkan tombol dan modal pemulihan data
+ *
+ * @component
+ * @param {Object} props - Props komponen
+ * @param {string} props.url - URL endpoint untuk pemulihan data
+ * @param {() => void} [props.onSuccess] - Handler opsional ketika pemulihan berhasil
+ * @param {() => void} [props.onError] - Handler opsional ketika pemulihan gagal
+ * @returns {JSX.Element} Komponen pemulihan data
+ */
 const RestoreData: FC<{
   url: string;
   onSuccess?: () => void;

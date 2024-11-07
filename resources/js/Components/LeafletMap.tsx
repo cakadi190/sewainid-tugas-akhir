@@ -1,11 +1,22 @@
+/**
+ * @fileoverview Komponen peta interaktif menggunakan Leaflet untuk menampilkan lokasi tunggal atau multiple
+ * @module LeafletMap
+ * @requires react
+ * @requires react-leaflet
+ * @requires leaflet
+ */
+
 import React, { useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-// Fix Leaflet default icon issue
 L.Icon.Default.imagePath = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/';
 
+/**
+ * Konfigurasi default icon untuk marker peta
+ * @constant {L.Icon}
+ */
 const defaultIcon = L.icon({
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -16,32 +27,60 @@ const defaultIcon = L.icon({
   shadowSize: [41, 41]
 });
 
-// Type untuk posisi yang dapat menerima array biasa atau tuple
+/**
+ * Tipe data untuk posisi koordinat
+ * @typedef {number[] | [number, number]} PositionType
+ */
 type PositionType = number[] | [number, number];
 
-// Fungsi helper untuk memastikan format posisi yang benar
+/**
+ * Memastikan format posisi koordinat valid
+ * @param {PositionType} pos - Posisi koordinat yang akan divalidasi
+ * @returns {[number, number]} Posisi koordinat yang sudah divalidasi
+ */
 const ensurePosition = (pos: PositionType): [number, number] => {
   if (Array.isArray(pos) && pos.length >= 2) {
     return [pos[0], pos[1]];
   }
-  return [0, 0]; // default fallback
+  return [0, 0];
 };
 
-// Interface untuk single location
+/**
+ * Interface untuk data lokasi tunggal
+ * @interface SingleLocation
+ * @property {PositionType} position - Koordinat lokasi
+ * @property {string} name - Nama lokasi
+ * @property {string} address - Alamat lokasi
+ */
 interface SingleLocation {
   position: PositionType;
   name: string;
   address: string;
 }
 
-// Interface untuk props komponen single map
+/**
+ * Interface untuk props komponen peta lokasi tunggal
+ * @interface LeafletSingleProps
+ * @extends {Omit<SingleLocation, 'position'>}
+ * @property {PositionType} position - Koordinat lokasi
+ * @property {string|number} [height='400px'] - Tinggi peta
+ * @property {string|number} [width='100%'] - Lebar peta
+ */
 interface LeafletSingleProps extends Omit<SingleLocation, 'position'> {
   position: PositionType;
   height?: string | number;
   width?: string | number;
 }
 
-// Interface untuk props komponen multi map
+/**
+ * Interface untuk props komponen peta multi lokasi
+ * @interface MultiLeafletMapProps
+ * @property {SingleLocation[]} locations - Array lokasi yang akan ditampilkan
+ * @property {string|number} [height='400px'] - Tinggi peta
+ * @property {string|number} [width='100%'] - Lebar peta
+ * @property {number} [initialZoom=12] - Level zoom awal
+ * @property {boolean} [showAllMarkers=true] - Menampilkan semua marker dalam viewport
+ */
 interface MultiLeafletMapProps {
   locations: SingleLocation[];
   height?: string | number;
@@ -50,7 +89,12 @@ interface MultiLeafletMapProps {
   showAllMarkers?: boolean;
 }
 
-// Komponen untuk single marker map
+/**
+ * Komponen untuk menampilkan peta dengan satu marker
+ * @component
+ * @param {LeafletSingleProps} props - Props komponen
+ * @returns {JSX.Element} Komponen peta dengan marker tunggal
+ */
 export const LeafletSingle: React.FC<LeafletSingleProps> = ({
   position,
   name,
@@ -84,7 +128,12 @@ export const LeafletSingle: React.FC<LeafletSingleProps> = ({
   );
 };
 
-// Komponen untuk multiple marker map
+/**
+ * Komponen untuk menampilkan peta dengan multiple marker
+ * @component
+ * @param {MultiLeafletMapProps} props - Props komponen
+ * @returns {JSX.Element} Komponen peta dengan multiple marker
+ */
 export const MultiLeafletMapPin: React.FC<MultiLeafletMapProps> = ({
   locations,
   height = '400px',
@@ -92,7 +141,6 @@ export const MultiLeafletMapPin: React.FC<MultiLeafletMapProps> = ({
   initialZoom = 12,
   showAllMarkers = true
 }) => {
-  // Calculate center point from all markers
   const center = useMemo(() => {
     if (locations.length === 0) return [0, 0] as [number, number];
 
@@ -106,7 +154,6 @@ export const MultiLeafletMapPin: React.FC<MultiLeafletMapProps> = ({
     ] as [number, number];
   }, [locations]);
 
-  // Calculate bounds for fitting all markers
   const bounds = useMemo(() => {
     if (!showAllMarkers || locations.length === 0) return undefined;
 

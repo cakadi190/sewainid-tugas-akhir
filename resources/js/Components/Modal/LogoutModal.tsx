@@ -2,9 +2,13 @@ import { FC, useState } from 'react';
 import { Button, Modal, Spinner } from 'react-bootstrap';
 import { router } from '@inertiajs/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationTriangle, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
+/**
+ * Komponen Button yang telah di-styled menggunakan emotion
+ * Menyesuaikan lebar button berdasarkan konten dan responsive pada mobile
+ */
 const ButtonComponent = styled(Button)`
   width: fit-content;
   margin: 0;
@@ -14,6 +18,14 @@ const ButtonComponent = styled(Button)`
   }
 `;
 
+/**
+ * Komponen untuk menampilkan konten konfirmasi logout
+ * @param {Object} props - Props komponen
+ * @param {boolean} props.isLoading - Status loading saat proses logout
+ * @param {() => void} props.onConfirm - Handler ketika user mengkonfirmasi logout
+ * @param {() => void} props.onCancel - Handler ketika user membatalkan logout
+ * @returns {JSX.Element} Konten modal konfirmasi logout
+ */
 const LogoutConfirmationContent: FC<{
   isLoading: boolean;
   onConfirm: () => void;
@@ -40,6 +52,16 @@ const LogoutConfirmationContent: FC<{
   </>
 );
 
+/**
+ * Komponen Modal untuk konfirmasi logout
+ * Menampilkan dialog konfirmasi sebelum user logout dari sistem
+ * Menangani proses logout dengan memanggil endpoint /logout
+ *
+ * @param {Object} props - Props komponen
+ * @param {boolean} props.show - Status tampil/sembunyi modal
+ * @param {() => void} props.onClose - Handler ketika modal ditutup
+ * @returns {JSX.Element} Modal konfirmasi logout
+ */
 const LogoutConfirmationModal: FC<{
   show: boolean;
   onClose: () => void;

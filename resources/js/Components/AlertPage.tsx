@@ -1,9 +1,32 @@
+/**
+ * Komponen AlertPage untuk menampilkan pesan alert menggunakan SweetAlert2
+ *
+ * @component
+ * @description
+ * Komponen ini menangani tampilan alert/notifikasi menggunakan SweetAlert2.
+ * Alert akan muncul secara otomatis ketika ada perubahan pada prop alert.
+ * Mendukung 4 tipe alert: error, success, warning, dan info.
+ *
+ * @param {Object} props - Props komponen
+ * @param {string} [props.className] - Class CSS tambahan untuk container
+ *
+ * @example
+ * // Penggunaan dasar
+ * <AlertPage />
+ *
+ * // Dengan class tambahan
+ * <AlertPage className="mt-4" />
+ *
+ * @typedef {Object} AlertTypes
+ * @property {string} title - Judul alert yang akan ditampilkan
+ * @property {'success'|'info'|'error'|'warning'} type - Tipe alert
+ * @property {string} [message] - Pesan alert yang akan ditampilkan
+ */
+
 import { renderSwalModal } from '@/Helpers/swal';
 import { PageProps } from '@/types';
 import { usePage } from '@inertiajs/react';
 import React, { useEffect } from 'react';
-import Swal, { SweetAlertIcon } from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
 
 const AlertPage: React.FC<{ className?: string }> = ({ className }) => {
   const { props: { alert } } = usePage<PageProps>();
@@ -32,7 +55,7 @@ const AlertPage: React.FC<{ className?: string }> = ({ className }) => {
     });
   }, [alert]);
 
-  return <div className={className}></div>; // Empty div since alerts are shown via SweetAlert
+  return <div className={className}></div>;
 };
 
 export default AlertPage;
