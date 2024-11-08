@@ -13,6 +13,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import ImageGallery from "@/Components/ImageGallery";
 import { MediaLibrary } from "@/types/medialibrary";
+import { renderSwalModal } from "@/Helpers/swal";
 
 export default function EditData({ id, onSuccess: onSuccessAction }: { id: number; onSuccess?: () => void }) {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -23,7 +24,7 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
 
   const { post, data: formData, setData, processing, reset, errors, clearErrors } = useForm<Omit<Database['GarageData'], 'deleted_at' | 'created_at' | 'id' | 'updated_at'> & { _method: string }>({
     _method: 'put',
-    name: '',
+    garage_name: '',
     address: '',
     coordinate: '',
     capacity: 0,
@@ -52,13 +53,11 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
       },
       onError(error) {
         // Display error message using SweetAlert
-        withReactContent(Swal).fire({
-          title: 'Error!',
+        renderSwalModal('error', {
+          title: 'Kesalahan!',
           // @ts-ignore
-          text: error.response?.data?.error || 'Something went wrong!',
-          icon: 'error',
-          confirmButtonText: 'OK'
-        });
+          text: error.response?.data?.error || 'Terjadi kesalahan!',
+        })
       }
     });
   };
@@ -73,7 +72,7 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
 
         setData({
           _method: 'put',
-          name: data.name,
+          garage_name: data.name,
           address: data.address,
           coordinate: data.coordinate,
           capacity: data.capacity,
@@ -111,13 +110,13 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
                   <Form.Control
                     type="text"
                     placeholder="Nama"
-                    value={formData.name}
-                    onChange={(e) => setData("name", e.target.value)}
-                    isInvalid={!!errors.name}
+                    value={formData.garage_name}
+                    onChange={(e) => setData("garage_name", e.target.value)}
+                    isInvalid={!!errors.garage_name}
                   />
                   <Form.Label>Nama</Form.Label>
                   <Form.Text>Untuk identifikasi garasinya biar mudah dicari.</Form.Text>
-                  <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{errors.garage_name}</Form.Control.Feedback>
                 </Form.Floating>
               </div>
 

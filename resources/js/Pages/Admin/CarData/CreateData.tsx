@@ -6,10 +6,9 @@ import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { createPortal } from "react-dom";
 import { CarModelEnum, CarStatusEnum } from "@/types/enum";
 import { getCarModelLabel, getCarStatusLabel } from "@/Helpers/EnumHelper";
+import { renderSwalModal } from "@/Helpers/swal";
 import ImageUploader from "@/Components/Dropzone";
 import Database from "@/types/database";
-import withReactContent from "sweetalert2-react-content";
-import Swal from "sweetalert2";
 import SeparatorText from "@/Components/SeparatorText";
 
 export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?: () => void }) {
@@ -63,13 +62,11 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
       },
       onError(error) {
         // Display error message using SweetAlert
-        withReactContent(Swal).fire({
-          title: 'Error!',
+        renderSwalModal('error', {
+          title: 'Kesalahan!',
           // @ts-ignore
-          text: error.response?.data?.error || 'Something went wrong!',
-          icon: 'error',
-          confirmButtonText: 'OK'
-        });
+          text: error.response?.data?.error || 'Terjadi kesalahan!',
+        })
       }
     });
   };

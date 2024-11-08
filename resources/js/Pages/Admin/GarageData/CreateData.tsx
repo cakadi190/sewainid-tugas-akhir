@@ -1,12 +1,11 @@
 import { useState, FormEvent } from "react";
-import { Button, Modal, Form, Spinner, Alert, Row, Col } from "react-bootstrap";
+import { Button, Modal, Form, Spinner, Row, Col } from "react-bootstrap";
 import { useForm } from "@inertiajs/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { createPortal } from "react-dom";
+import { renderSwalModal } from "@/Helpers/swal";
 import Database from "@/types/database";
-import withReactContent from "sweetalert2-react-content";
-import Swal from "sweetalert2";
 
 export default function CreateGarageData({ onSuccess: onSuccessAction }: { onSuccess?: () => void }) {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -40,13 +39,12 @@ export default function CreateGarageData({ onSuccess: onSuccessAction }: { onSuc
         onSuccessAction?.();
       },
       onError(error) {
-        withReactContent(Swal).fire({
-          title: 'Error!',
+        // Display error message using SweetAlert
+        renderSwalModal('error', {
+          title: 'Kesalahan!',
           // @ts-ignore
-          text: error.response?.data?.error || 'Something went wrong!',
-          icon: 'error',
-          confirmButtonText: 'OK'
-        });
+          text: error.response?.data?.error || 'Terjadi kesalahan!',
+        })
       }
     });
   };

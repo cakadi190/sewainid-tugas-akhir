@@ -133,7 +133,7 @@ export const showConfirmAlert = (options: AlertOptions) => {
  * @param {AlertOptions} options - Opsi konfigurasi alert
  * @returns {Promise} Promise dari SweetAlert2
  */
-export const renderSwalModal = (type: 'success' | 'info' | 'error' | 'warning', options: AlertOptions) => {
+export const renderSwalModal = (type: 'success' | 'info' | 'error' | 'warning', options: AlertOptions): Promise<any> => {
   const alertRender = {
     success: () => showSuccessAlert(options),
     error: () => showErrorAlert(options),

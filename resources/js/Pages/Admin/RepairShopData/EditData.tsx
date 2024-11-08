@@ -4,10 +4,9 @@ import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "@inertiajs/react";
 import { FormEvent, useState } from "react";
-import { Button, Card, Col, Form, Modal, Row, Spinner } from "react-bootstrap";
+import { Button, Col, Form, Modal, Row, Spinner } from "react-bootstrap";
 import { createPortal } from "react-dom";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
+import { renderSwalModal } from "@/Helpers/swal";
 
 export default function EditData({ id, onSuccess: onSuccessAction }: { id: number; onSuccess?: () => void }) {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -46,13 +45,11 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
       },
       onError(error) {
         // Display error message using SweetAlert
-        withReactContent(Swal).fire({
-          title: 'Error!',
+        renderSwalModal('error', {
+          title: 'Kesalahan!',
           // @ts-ignore
-          text: error.response?.data?.error || 'Something went wrong!',
-          icon: 'error',
-          confirmButtonText: 'OK'
-        });
+          text: error.response?.data?.error || 'Terjadi kesalahan!',
+        })
       }
     });
   };

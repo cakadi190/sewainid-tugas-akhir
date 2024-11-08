@@ -1,8 +1,6 @@
 import axios from "axios";
 import ImageUploader from "@/Components/Dropzone";
 import SeparatorText from "@/Components/SeparatorText";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
 import ImageGallery from "@/Components/ImageGallery";
 import Database from "@/types/database";
 import { getCarModelLabel, getCarStatusLabel } from "@/Helpers/EnumHelper";
@@ -14,6 +12,7 @@ import { FormEvent, useState } from "react";
 import { Button, Card, Form, Modal, Spinner } from "react-bootstrap";
 import { createPortal } from "react-dom";
 import { MediaLibrary } from "@/types/medialibrary";
+import { renderSwalModal } from "@/Helpers/swal";
 
 export default function EditData({ id, onSuccess: onSuccessAction }: { id: number; onSuccess?: () => void }) {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -72,13 +71,11 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
       },
       onError(error) {
         // Display error message using SweetAlert
-        withReactContent(Swal).fire({
-          title: 'Error!',
+        renderSwalModal('error', {
+          title: 'Kesalahan!',
           // @ts-ignore
-          text: error.response?.data?.error || 'Something went wrong!',
-          icon: 'error',
-          confirmButtonText: 'OK'
-        });
+          text: error.response?.data?.error || 'Terjadi kesalahan!',
+        })
       }
     });
   };
