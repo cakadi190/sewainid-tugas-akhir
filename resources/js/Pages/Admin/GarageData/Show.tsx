@@ -88,134 +88,90 @@ export default function Show({ id }: { id: number }) {
             <Modal.Title as="h5">Lihat Data</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <form onSubmit={(e) => e.preventDefault()}>
-              <div className="mb-3 form-group">
-                <Form.Floating>
-                  <Form.Control
-                    type="text"
-                    placeholder="Nama"
-                    readOnly
-                    value={formData.garage_name}
-                    onChange={(e) => setData("garage_name", e.target.value)}
-                    isInvalid={!!errors.garage_name}
-                  />
-                  <Form.Label>Nama</Form.Label>
-                  <Form.Text>Untuk identifikasi garasinya biar mudah dicari.</Form.Text>
-                  <Form.Control.Feedback type="invalid">{errors.garage_name}</Form.Control.Feedback>
-                </Form.Floating>
-              </div>
+            <div className="mb-3 form-group">
+              <Form.Control
+                type="text"
+                placeholder="Nama"
+                readOnly
+                value={formData.garage_name}
+              />
+              <Form.Label>Nama</Form.Label>
+              <Form.Text>Untuk identifikasi garasinya biar mudah dicari.</Form.Text>
+            </div>
 
-              <div className="mb-3 form-group">
-                <Form.Floating className="mb-3">
-                  <Form.Control
-                    type="text"
-                    placeholder="Alamat"
-                    readOnly
-                    value={formData.address}
-                    onChange={(e) => setData("address", e.target.value)}
-                    isInvalid={!!errors.address}
-                  />
-                  <Form.Label>Alamat</Form.Label>
-                  <Form.Control.Feedback type="invalid">{errors.address}</Form.Control.Feedback>
-                </Form.Floating>
+            <div className="mb-3 form-group">
+              <Form.Control
+                type="text"
+                placeholder="Alamat"
+                readOnly
+                value={formData.address}
+              />
+              <Form.Label>Alamat</Form.Label>
 
-                <LeafletSingle
-                  iconUrl={GarageIcon}
-                  iconRetinaUrl={GarageIcon}
-                  shadowUrl=""
-                  position={position}
-                  name={formData.garage_name}
-                  address={formData.address}
+              <LeafletSingle
+                iconUrl={GarageIcon}
+                iconRetinaUrl={GarageIcon}
+                shadowUrl=""
+                disableDrag
+                disableZoom
+                position={position}
+                name={formData.garage_name}
+                address={formData.address}
+              />
+            </div>
+
+            <div className="mb-3 form-group">
+              <Form.Control
+                type="number"
+                placeholder="Kapasitas Kendaraan"
+                readOnly
+                value={formData.capacity || ''}
+              />
+              <Form.Label>Kapasitas Kendaraan</Form.Label>
+            </div>
+
+            <div className="mb-3 form-group">
+              <Form.Control
+                type="text"
+                placeholder="Telepon"
+                readOnly
+                value={formData.phone}
+              />
+              <Form.Label>Telepon</Form.Label>
+            </div>
+
+            <Row className="mb-3">
+              <Col md="6">
+                <Form.Control
+                  type="time"
+                  placeholder="Waktu Buka"
+                  readOnly
+                  value={formData.opening_time}
                 />
-              </div>
+                <Form.Label>Waktu Buka</Form.Label>
+              </Col>
 
-              <div className="mb-3 form-group">
-                <Form.Floating>
-                  <Form.Control
-                    type="number"
-                    placeholder="Kapasitas Kendaraan"
-                    readOnly
-                    value={formData.capacity || ''}
-                    onChange={(e) => setData("capacity", e.target.value ? parseInt(e.target.value) : 0)}
-                    isInvalid={!!errors.capacity}
-                  />
-                  <Form.Label>Kapasitas Kendaraan</Form.Label>
-                  <Form.Control.Feedback type="invalid">{errors.capacity}</Form.Control.Feedback>
-                </Form.Floating>
-              </div>
-
-              <div className="mb-3 form-group">
-                <Form.Floating>
-                  <Form.Control
-                    type="text"
-                    placeholder="Telepon"
-                    readOnly
-                    value={formData.phone}
-                    onChange={(e) => setData("phone", e.target.value)}
-                    isInvalid={!!errors.phone}
-                  />
-                  <Form.Label>Telepon</Form.Label>
-                  <Form.Control.Feedback type="invalid">{errors.phone}</Form.Control.Feedback>
-                </Form.Floating>
-              </div>
-
-              <Row className="mb-3">
-                <Col md="6">
-                  <Form.Floating>
-                    <Form.Control
-                      type="time"
-                      placeholder="Waktu Buka"
-                      readOnly
-                      value={formData.opening_time}
-                      onChange={(e) => setData("opening_time", e.target.value)}
-                      isInvalid={!!errors.opening_time}
-                    />
-                    <Form.Label>Waktu Buka</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.opening_time}</Form.Control.Feedback>
-                  </Form.Floating>
-                </Col>
-
-                <Col md="6">
-                  <Form.Floating>
-                    <Form.Control
-                      type="time"
-                      placeholder="Waktu Tutup"
-                      readOnly
-                      value={formData.closing_time}
-                      onChange={(e) => setData("closing_time", e.target.value)}
-                      isInvalid={!!errors.closing_time}
-                    />
-                    <Form.Label>Waktu Tutup</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.closing_time}</Form.Control.Feedback>
-                  </Form.Floating>
-                </Col>
-              </Row>
-
-              <div className="mb-3 form-group">
-                <Form.Check
-                  type="switch"
-                  label="Aktif"
-                  checked={formData.is_active}
-                  onChange={(e) => setData("is_active", e.target.checked)}
+              <Col md="6">
+                <Form.Control
+                  type="time"
+                  placeholder="Waktu Tutup"
+                  readOnly
+                  value={formData.closing_time}
                 />
-              </div>
+                <Form.Label>Waktu Tutup</Form.Label>
+              </Col>
+            </Row>
 
-              <div className="mb-3 form-group">
-                <Form.Floating>
-                  <Form.Control
-                    as="textarea"
-                    placeholder="Deskripsi"
-                    readOnly
-                    value={formData.description}
-                    onChange={(e) => setData("description", e.target.value)}
-                    style={{ height: '100px' }}
-                    isInvalid={!!errors.description}
-                  />
-                  <Form.Label>Deskripsi</Form.Label>
-                  <Form.Control.Feedback type="invalid">{errors.description}</Form.Control.Feedback>
-                </Form.Floating>
-              </div>
-            </form>
+            <div className="mb-3 form-group">
+              <Form.Control
+                as="textarea"
+                placeholder="Deskripsi"
+                readOnly
+                value={String(formData.description || '')}
+                style={{ height: '100px' }}
+              />
+              <Form.Label>Deskripsi</Form.Label>
+            </div>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" disabled={processing} onClick={onCloseModal}>

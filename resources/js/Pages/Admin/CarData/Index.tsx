@@ -11,6 +11,7 @@ import RestoreData from "@/Components/crud/RestoreData";
 import ForceDeleteData from "@/Components/crud/ForceDeleteData";
 import CreateData from "./CreateData";
 import AlertPage from "@/Components/AlertPage";
+import Show from "./Show";
 
 export default function Index() {
   const { dataTableRef, refetch } = useDataTable();
@@ -80,6 +81,9 @@ export default function Index() {
               </>
             ) : (
               <>
+                <Show
+                  id={Number(value)}
+                />
                 <EditData
                   onSuccess={refetch}
                   id={Number(value)}

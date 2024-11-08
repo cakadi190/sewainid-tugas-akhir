@@ -53,6 +53,8 @@ interface SingleLocation {
  * @property {string} [iconUrl='https://...'] - URL untuk icon marker
  * @property {string} [iconRetinaUrl='https://...'] - URL untuk icon marker retina
  * @property {string} [shadowUrl='https://...'] - URL untuk shadow marker
+ * @property {boolean} [disableZoom=true] - Menonaktifkan zoom peta
+ * @property {boolean} [disableDrag=true] - Menonaktifkan drag peta
  */
 interface LeafletSingleProps extends Omit<SingleLocation, 'position'> {
   position: PositionType;
@@ -61,6 +63,8 @@ interface LeafletSingleProps extends Omit<SingleLocation, 'position'> {
   iconUrl?: string;
   iconRetinaUrl?: string;
   shadowUrl?: string;
+  disableZoom?: boolean;
+  disableDrag?: boolean;
 }
 
 /**
@@ -74,6 +78,8 @@ interface LeafletSingleProps extends Omit<SingleLocation, 'position'> {
  * @property {string} [iconUrl='https://...'] - URL untuk icon marker
  * @property {string} [iconRetinaUrl='https://...'] - URL untuk icon marker retina
  * @property {string} [shadowUrl='https://...'] - URL untuk shadow marker
+ * @property {boolean} [disableZoom=true] - Menonaktifkan zoom peta
+ * @property {boolean} [disableDrag=true] - Menonaktifkan drag peta
  */
 interface MultiLeafletMapProps {
   locations: SingleLocation[];
@@ -84,6 +90,8 @@ interface MultiLeafletMapProps {
   iconUrl?: string;
   iconRetinaUrl?: string;
   shadowUrl?: string;
+  disableZoom?: boolean;
+  disableDrag?: boolean;
 }
 
 /**
@@ -100,7 +108,9 @@ export const LeafletSingle: React.FC<LeafletSingleProps> = ({
   width = '100%',
   iconUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   iconRetinaUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  shadowUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png'
+  shadowUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  disableZoom = true,
+  disableDrag = true
 }) => {
   const validPosition = ensurePosition(position);
   const customIcon = L.icon({
@@ -119,6 +129,10 @@ export const LeafletSingle: React.FC<LeafletSingleProps> = ({
         center={validPosition}
         zoom={15}
         style={{ height: '100%', width: '100%' }}
+        scrollWheelZoom={!disableZoom}
+        zoomControl={!disableZoom}
+        dragging={!disableDrag}
+        doubleClickZoom={!disableZoom}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -151,7 +165,9 @@ export const MultiLeafletMapPin: React.FC<MultiLeafletMapProps> = ({
   showAllMarkers = true,
   iconUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   iconRetinaUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  shadowUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png'
+  shadowUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  disableZoom = true,
+  disableDrag = true
 }) => {
   const center = useMemo(() => {
     if (locations.length === 0) return [0, 0] as [number, number];
@@ -192,6 +208,10 @@ export const MultiLeafletMapPin: React.FC<MultiLeafletMapProps> = ({
         style={{ height: '100%', width: '100%' }}
         bounds={bounds}
         boundsOptions={{ padding: [50, 50] }}
+        scrollWheelZoom={!disableZoom}
+        zoomControl={!disableZoom}
+        dragging={!disableDrag}
+        doubleClickZoom={!disableZoom}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

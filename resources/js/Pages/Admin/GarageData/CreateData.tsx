@@ -179,7 +179,7 @@ export default function CreateGarageData({ onSuccess: onSuccessAction }: { onSuc
                   <Form.Control
                     as="textarea"
                     placeholder="Deskripsi"
-                    value={formData.description}
+                    value={String(formData.description || '')}
                     onChange={(e) => setData("description", e.target.value)}
                     style={{ height: '100px' }}
                     isInvalid={!!errors.description}

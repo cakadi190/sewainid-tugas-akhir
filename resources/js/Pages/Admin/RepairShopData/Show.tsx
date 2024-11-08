@@ -86,119 +86,101 @@ export default function Show({ id }: { id: number }) {
             <Modal.Title as="h5">Lihat Data</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <form onSubmit={(e) => e.preventDefault()}>
-              <div className="mb-3 form-group">
-                <Form.Floating>
-                  <Form.Control
-                    type="text"
-                    placeholder="Nama"
-                    readOnly
-                    value={formData.repair_shop_name}
-                    onChange={(e) => setData("repair_shop_name", e.target.value)}
-                    isInvalid={!!errors.repair_shop_name}
-                  />
-                  <Form.Label>Nama</Form.Label>
-                  <Form.Text>Untuk identifikasi garasinya biar mudah dicari.</Form.Text>
-                  <Form.Control.Feedback type="invalid">{errors.repair_shop_name}</Form.Control.Feedback>
-                </Form.Floating>
-              </div>
-
-              <div className="mb-3 form-group">
-                <Form.Floating className="mb-3">
-                  <Form.Control
-                    type="text"
-                    placeholder="Alamat"
-                    readOnly
-                    value={formData.address}
-                    onChange={(e) => setData("address", e.target.value)}
-                    isInvalid={!!errors.address}
-                  />
-                  <Form.Label>Alamat</Form.Label>
-                  <Form.Control.Feedback type="invalid">{errors.address}</Form.Control.Feedback>
-                </Form.Floating>
-
-                <LeafletSingle
-                  position={position}
-                  name={formData.repair_shop_name}
-                  address={formData.address}
-                  iconUrl={CarRepairIcon}
-                  iconRetinaUrl={CarRepairIcon}
-                  shadowUrl=""
+            <div className="mb-3 form-group">
+              <Form.Floating>
+                <Form.Control
+                  type="text"
+                  placeholder="Nama"
+                  readOnly
+                  value={formData.repair_shop_name}
                 />
-              </div>
+                <Form.Label>Nama</Form.Label>
+                <Form.Text>Untuk identifikasi garasinya biar mudah dicari.</Form.Text>
+              </Form.Floating>
+            </div>
 
-              <div className="mb-3 form-group">
-                <Form.Floating>
-                  <Form.Control
-                    type="text"
-                    placeholder="Telepon"
-                    readOnly
-                    value={formData.phone}
-                    onChange={(e) => setData("phone", e.target.value)}
-                    isInvalid={!!errors.phone}
-                  />
-                  <Form.Label>Telepon</Form.Label>
-                  <Form.Control.Feedback type="invalid">{errors.phone}</Form.Control.Feedback>
-                </Form.Floating>
-              </div>
-
-              <Row className="mb-3">
-                <Col md="6">
-                  <Form.Floating>
-                    <Form.Control
-                      type="time"
-                      placeholder="Waktu Buka"
-                      readOnly
-                      value={formData.opening_time}
-                      onChange={(e) => setData("opening_time", e.target.value)}
-                      isInvalid={!!errors.opening_time}
-                    />
-                    <Form.Label>Waktu Buka</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.opening_time}</Form.Control.Feedback>
-                  </Form.Floating>
-                </Col>
-
-                <Col md="6">
-                  <Form.Floating>
-                    <Form.Control
-                      type="time"
-                      placeholder="Waktu Tutup"
-                      readOnly
-                      value={formData.closing_time}
-                      onChange={(e) => setData("closing_time", e.target.value)}
-                      isInvalid={!!errors.closing_time}
-                    />
-                    <Form.Label>Waktu Tutup</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.closing_time}</Form.Control.Feedback>
-                  </Form.Floating>
-                </Col>
-              </Row>
-
-              <div className="mb-3 form-group">
-                <Form.Check
-                  type="switch"
-                  label="Aktif"
-                  checked={formData.is_active}
-                  onChange={(e) => setData("is_active", e.target.checked)}
+            <div className="mb-3 form-group">
+              <Form.Floating className="mb-3">
+                <Form.Control
+                  type="text"
+                  placeholder="Alamat"
+                  readOnly
+                  value={formData.address}
                 />
-              </div>
+                <Form.Label>Alamat</Form.Label>
+              </Form.Floating>
 
-              <div className="mb-3 form-group">
+              <LeafletSingle
+                position={position}
+                name={formData.repair_shop_name}
+                address={formData.address}
+                iconUrl={CarRepairIcon}
+                iconRetinaUrl={CarRepairIcon}
+                shadowUrl=""
+                disableDrag
+                disableZoom
+              />
+            </div>
+
+            <div className="mb-3 form-group">
+              <Form.Floating>
+                <Form.Control
+                  type="text"
+                  placeholder="Telepon"
+                  readOnly
+                  value={formData.phone}
+                />
+                <Form.Label>Telepon</Form.Label>
+              </Form.Floating>
+            </div>
+
+            <Row className="mb-3">
+              <Col md="6">
                 <Form.Floating>
                   <Form.Control
-                    as="textarea"
-                    placeholder="Deskripsi"
+                    type="time"
+                    placeholder="Waktu Buka"
                     readOnly
-                    value={String(formData.description)}
-                    onChange={(e) => setData("description", e.target.value)}
-                    style={{ height: '100px' }}
-                    isInvalid={!!errors.description}
+                    value={formData.opening_time}
                   />
-                  <Form.Label>Deskripsi</Form.Label>
-                  <Form.Control.Feedback type="invalid">{errors.description}</Form.Control.Feedback>
+                  <Form.Label>Waktu Buka</Form.Label>
                 </Form.Floating>
-              </div>
-            </form>
+              </Col>
+
+              <Col md="6">
+                <Form.Floating>
+                  <Form.Control
+                    type="time"
+                    placeholder="Waktu Tutup"
+                    readOnly
+                    value={formData.closing_time}
+                  />
+                  <Form.Label>Waktu Tutup</Form.Label>
+                </Form.Floating>
+              </Col>
+            </Row>
+
+            <div className="mb-3 form-group">
+              <Form.Check
+                type="switch"
+                label="Aktif"
+                checked={formData.is_active}
+                disabled
+              />
+            </div>
+
+            <div className="mb-3 form-group">
+              <Form.Floating>
+                <Form.Control
+                  as="textarea"
+                  placeholder="Deskripsi"
+                  readOnly
+                  value={String(formData.description || '')}
+                  style={{ height: '100px' }}
+                />
+                <Form.Label>Deskripsi</Form.Label>
+              </Form.Floating>
+            </div>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" disabled={processing} onClick={onCloseModal}>

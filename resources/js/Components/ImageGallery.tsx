@@ -10,6 +10,7 @@ import { router } from "@inertiajs/react";
 
 interface ImageGalleryInterface {
   initialData: MediaLibrary[];
+  readOnly?: boolean;
 }
 
 /**
@@ -184,7 +185,7 @@ const RemoveButton = styled.button`
  *
  * @returns {JSX.Element} Komponen ImageGallery dengan grid gambar dan lightbox
  */
-export default function ImageGallery({ initialData }: ImageGalleryInterface) {
+export default function ImageGallery({ initialData, readOnly }: ImageGalleryInterface) {
   const [data, setData] = useState<MediaLibrary[]>(initialData);
   const mappingToPreviewUrl = data.map((value) => ({
     id: value.id,
@@ -256,9 +257,11 @@ export default function ImageGallery({ initialData }: ImageGalleryInterface) {
       <ImageGalleryWrapper>
         {mappingToPreviewUrl.map((item, index) => (
           <ImageGalleryWrap key={item.id} onClick={() => openLightboxOnSlide(index + 1)}>
-            <RemoveButton type='button' onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}>
-              <FontAwesomeIcon icon={faTrash} />
-            </RemoveButton>
+            {!readOnly && (
+              <RemoveButton type='button' onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}>
+                <FontAwesomeIcon icon={faTrash} />
+              </RemoveButton>
+            )}
             <Image src={item.url} alt={item.name} />
           </ImageGalleryWrap>
         ))}
