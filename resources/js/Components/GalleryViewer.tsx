@@ -1,7 +1,6 @@
 import { MediaLibrary } from "@/types/medialibrary";
 import styled from '@emotion/styled';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import 'react-perfect-scrollbar/dist/css/styles.css';
 
 /**
  * Komponen styled untuk membungkus galeri gambar

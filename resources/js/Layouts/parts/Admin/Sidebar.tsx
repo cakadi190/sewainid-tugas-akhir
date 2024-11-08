@@ -24,7 +24,6 @@ import { Link, usePage } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import { useSidebar } from '@/Hooks/useSidebar';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import 'react-perfect-scrollbar/dist/css/styles.css';
 
 // Types
 type MenuList = {
