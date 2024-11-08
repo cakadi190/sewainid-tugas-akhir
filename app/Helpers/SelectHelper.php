@@ -30,16 +30,14 @@ class SelectHelper implements SelectHelperInterface
         }
 
         try {
-            /** @var Model $model */
             $model = new $modelClass;
             $selectedFields = $fields ?? ['id', 'name'];
 
             $data = $model
                 ->select($selectedFields)
-                ->when(
-                    $search,
-                    fn(Builder $query, string $term) => $query->where('name', 'LIKE', "%{$term}%")
-                )
+                ->when($search, function (Builder $query) use ($search) {
+                    $query->where('name', 'LIKE', "%{$search}%");
+                })
                 ->get();
 
             return $this->successResponse($data, $selectedFields);
@@ -57,16 +55,17 @@ class SelectHelper implements SelectHelperInterface
      */
     private function successResponse(Collection $data, array $selectedFields): JsonResponse
     {
-        $formattedData = $data->map(fn(Model $item) => [
-            'value' => $item->id,
-            'label' => $item->name,
-        ])->toArray();
+        $formattedData = $data->map(function (Model $item) {
+            return [
+                'value' => $item->id,
+                'label' => $item->name,
+            ];
+        })->toArray();
 
-        $isNotEmpty = !empty($formattedData);
-        $statusCode = $isNotEmpty ? 200 : 404;
+        $statusCode = $formattedData ? 200 : 404;
 
         return response()->json([
-            'success' => $isNotEmpty,
+            'success' => !!$formattedData,
             'data' => $formattedData,
             'code' => $statusCode,
         ], $statusCode);

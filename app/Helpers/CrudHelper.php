@@ -60,27 +60,25 @@ class CrudHelper implements CrudInterface
 
                 $files = collect($request->allFiles());
 
-                // Handle multiple file uploads
-                $files->each(function ($file, $key) use ($createdModel, $multipleUploadTarget) {
-                    if (in_array($key, $multipleUploadTarget) && is_array($file)) {
-                        foreach ($file as $singleFile) {
-                            if ($singleFile->isValid()) {
-                                $fileName = Str::uuid() . '.' . $singleFile->getClientOriginalExtension();
-                                $createdModel->addMedia($singleFile)
-                                    ->usingFileName($fileName)
-                                    ->toMediaCollection($key);
+                // Handle file uploads in a more efficient way
+                $uploadTargets = array_merge($singleUploadTarget, $multipleUploadTarget);
+                $files->each(function ($file, $key) use ($createdModel, $uploadTargets) {
+                    if (in_array($key, $uploadTargets)) {
+                        if (is_array($file)) {
+                            foreach ($file as $singleFile) {
+                                if ($singleFile->isValid()) {
+                                    $fileName = Str::uuid() . '.' . $singleFile->getClientOriginalExtension();
+                                    $createdModel->addMedia($singleFile)
+                                        ->usingFileName($fileName)
+                                        ->toMediaCollection($key);
+                                }
                             }
+                        } else if ($file->isValid()) {
+                            $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
+                            $createdModel->addMedia($file)
+                                ->usingFileName($fileName)
+                                ->toMediaCollection($key);
                         }
-                    }
-                });
-
-                // Handle single file uploads
-                $files->each(function ($file, $key) use ($createdModel, $singleUploadTarget) {
-                    if (in_array($key, $singleUploadTarget) && $file->isValid()) {
-                        $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
-                        $createdModel->addMedia($file)
-                            ->usingFileName($fileName)
-                            ->toMediaCollection($key);
                     }
                 });
             }
@@ -113,14 +111,9 @@ class CrudHelper implements CrudInterface
     {
         $data = ($model instanceof HasMedia) ? $model->toArray() : $model;
 
-        // Inject single upload target media directly into data
-        foreach ($singleUploadTarget as $target) {
-            $mediaItem = $model->getFirstMedia($target);
-            $data[$target] = $mediaItem->toArray();
-        }
-
-        // Inject multiple upload target media directly into data
-        foreach ($multipleUploadTarget as $target) {
+        // Inject single and multiple upload target media directly into data in a more efficient way
+        $uploadTargets = array_merge($singleUploadTarget, $multipleUploadTarget);
+        foreach ($uploadTargets as $target) {
             $mediaItems = $model->getMedia($target);
             $data[$target] = $mediaItems->toArray();
         }
@@ -174,27 +167,25 @@ class CrudHelper implements CrudInterface
 
                 $files = collect($request->allFiles());
 
-                // Handle multiple file uploads
-                $files->each(function ($file, $key) use ($model, $multipleUploadTarget) {
-                    if (in_array($key, $multipleUploadTarget) && is_array($file)) {
-                        foreach ($file as $singleFile) {
-                            if ($singleFile->isValid()) {
-                                $fileName = Str::uuid() . '.' . $singleFile->getClientOriginalExtension();
-                                $model->addMedia($singleFile)
-                                    ->usingFileName($fileName)
-                                    ->toMediaCollection($key);
+                // Handle file uploads in a more efficient way
+                $uploadTargets = array_merge($singleUploadTarget, $multipleUploadTarget);
+                $files->each(function ($file, $key) use ($model, $uploadTargets) {
+                    if (in_array($key, $uploadTargets)) {
+                        if (is_array($file)) {
+                            foreach ($file as $singleFile) {
+                                if ($singleFile->isValid()) {
+                                    $fileName = Str::uuid() . '.' . $singleFile->getClientOriginalExtension();
+                                    $model->addMedia($singleFile)
+                                        ->usingFileName($fileName)
+                                        ->toMediaCollection($key);
+                                }
                             }
+                        } else if ($file->isValid()) {
+                            $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
+                            $model->addMedia($file)
+                                ->usingFileName($fileName)
+                                ->toMediaCollection($key);
                         }
-                    }
-                });
-
-                // Handle single file uploads
-                $files->each(function ($file, $key) use ($model, $singleUploadTarget) {
-                    if (in_array($key, $singleUploadTarget) && $file->isValid()) {
-                        $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
-                        $model->addMedia($file)
-                            ->usingFileName($fileName)
-                            ->toMediaCollection($key);
                     }
                 });
             }

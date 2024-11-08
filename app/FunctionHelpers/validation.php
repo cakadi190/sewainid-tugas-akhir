@@ -2,24 +2,23 @@
 
 if (!function_exists('isNotEmptyArray')) {
     /**
-     * Memeriksa apakah array yang diberikan tidak kosong.
+     * Fungsi ini memeriksa apakah array tidak kosong.
      *
-     * @param array $arr - Array yang akan diperiksa.
-     * @return bool - Mengembalikan true jika array valid dan memiliki setidaknya satu elemen;
-     *                jika tidak, false.
+     * @param array $arr Array yang akan diperiksa.
+     * @return bool Mengembalikan true jika array tidak kosong, false jika tidak.
      */
     function isNotEmptyArray(array $arr): bool
     {
-        return is_array($arr) && count($arr) > 0;
+        return is_array($arr) && !empty($arr);
     }
 }
 
 if (!function_exists('convertNullIntoArray')) {
     /**
-     * Mengonversi nilai null atau undefined menjadi array kosong.
+     * Fungsi ini mengonversi nilai null menjadi array kosong.
      *
-     * @param array|null $arr - Nilai yang akan diperiksa dan dikonversi.
-     * @return array - Mengembalikan array asli jika valid; jika tidak, mengembalikan array kosong.
+     * @param array|null $arr Array yang akan dikonversi.
+     * @return array Mengembalikan array jika nilai bukan null, array kosong jika null.
      */
     function convertNullIntoArray(?array $arr): array
     {
@@ -29,12 +28,10 @@ if (!function_exists('convertNullIntoArray')) {
 
 if (!function_exists('isTruthy')) {
     /**
-     * Menentukan apakah suatu nilai dianggap benar (truthy).
+     * Fungsi ini memeriksa apakah nilai adalah benar.
      *
-     * Nilai dianggap benar jika bernilai '1', 'true', true, atau 1.
-     *
-     * @param mixed $value - Nilai yang akan diperiksa.
-     * @return bool - True jika nilai dianggap benar, false jika tidak.
+     * @param mixed $value Nilai yang akan diperiksa.
+     * @return bool Mengembalikan true jika nilai adalah benar, false jika tidak.
      */
     function isTruthy($value): bool
     {
@@ -44,12 +41,10 @@ if (!function_exists('isTruthy')) {
 
 if (!function_exists('isFalsy')) {
     /**
-     * Menentukan apakah suatu nilai dianggap salah (falsy).
+     * Fungsi ini memeriksa apakah nilai adalah salah.
      *
-     * Nilai dianggap salah jika bernilai '0', 'false', false, atau 0.
-     *
-     * @param mixed $value - Nilai yang akan diperiksa.
-     * @return bool - True jika nilai dianggap salah, false jika tidak.
+     * @param mixed $value Nilai yang akan diperiksa.
+     * @return bool Mengembalikan true jika nilai adalah salah, false jika tidak.
      */
     function isFalsy($value): bool
     {
@@ -59,11 +54,11 @@ if (!function_exists('isFalsy')) {
 
 if (!function_exists('returnConditionIfTrue')) {
     /**
-     * Mengembalikan nilai jika kondisi benar, jika tidak mengembalikan null.
+     * Fungsi ini mengembalikan nilai jika kondisi adalah benar.
      *
-     * @param bool $condition - Kondisi yang akan dievaluasi.
-     * @param mixed $returnedValue - Nilai yang dikembalikan jika kondisi benar.
-     * @return mixed|null - Nilai yang dikembalikan jika kondisi benar; jika tidak, null.
+     * @param bool $condition Kondisi yang akan diperiksa.
+     * @param mixed $returnedValue Nilai yang akan dikembalikan jika kondisi benar.
+     * @return mixed Mengembalikan nilai jika kondisi benar, null jika tidak.
      */
     function returnConditionIfTrue(bool $condition, $returnedValue)
     {
@@ -73,11 +68,11 @@ if (!function_exists('returnConditionIfTrue')) {
 
 if (!function_exists('returnConditionIfFalse')) {
     /**
-     * Mengembalikan nilai jika kondisi salah, jika tidak mengembalikan null.
+     * Fungsi ini mengembalikan nilai jika kondisi adalah salah.
      *
-     * @param bool $condition - Kondisi yang akan dievaluasi.
-     * @param mixed $returnedValue - Nilai yang dikembalikan jika kondisi salah.
-     * @return mixed|null - Nilai yang dikembalikan jika kondisi salah; jika tidak, null.
+     * @param bool $condition Kondisi yang akan diperiksa.
+     * @param mixed $returnedValue Nilai yang akan dikembalikan jika kondisi salah.
+     * @return mixed Mengembalikan nilai jika kondisi salah, null jika tidak.
      */
     function returnConditionIfFalse(bool $condition, $returnedValue)
     {
@@ -87,11 +82,11 @@ if (!function_exists('returnConditionIfFalse')) {
 
 if (!function_exists('returnTrueConditionIfUndefined')) {
     /**
-     * Mengembalikan nilai jika kondisi benar, mengembalikan null jika undefined.
+     * Fungsi ini mengembalikan nilai jika kondisi adalah tidak terdefinisi.
      *
-     * @param mixed|null $condition - Kondisi yang diperiksa.
-     * @param mixed $returnedValue - Nilai yang dikembalikan jika kondisi benar.
-     * @return mixed|null - Nilai yang dikembalikan jika kondisi benar, null jika undefined.
+     * @param mixed $condition Kondisi yang akan diperiksa.
+     * @param mixed $returnedValue Nilai yang akan dikembalikan jika kondisi tidak terdefinisi.
+     * @return mixed Mengembalikan nilai jika kondisi tidak terdefinisi, null jika tidak.
      */
     function returnTrueConditionIfUndefined($condition, $returnedValue)
     {
@@ -101,11 +96,11 @@ if (!function_exists('returnTrueConditionIfUndefined')) {
 
 if (!function_exists('returnFalseConditionIfUndefined')) {
     /**
-     * Mengembalikan nilai jika kondisi salah, mengembalikan null jika undefined.
+     * Fungsi ini mengembalikan nilai jika kondisi adalah tidak terdefinisi.
      *
-     * @param mixed|null $condition - Kondisi yang diperiksa.
-     * @param mixed $returnedValue - Nilai yang dikembalikan jika kondisi salah.
-     * @return mixed|null - Nilai yang dikembalikan jika kondisi salah, null jika undefined.
+     * @param mixed $condition Kondisi yang akan diperiksa.
+     * @param mixed $returnedValue Nilai yang akan dikembalikan jika kondisi tidak terdefinisi.
+     * @return mixed Mengembalikan nilai jika kondisi tidak terdefinisi, null jika tidak.
      */
     function returnFalseConditionIfUndefined($condition, $returnedValue)
     {
@@ -115,12 +110,11 @@ if (!function_exists('returnFalseConditionIfUndefined')) {
 
 if (!function_exists('includeSome')) {
     /**
-     * Memeriksa apakah string `str` mengandung substring `value`.
+     * Fungsi ini memeriksa apakah string mengandung nilai tertentu.
      *
-     * @param string $str - String yang akan diperiksa.
-     * @param string $value - Substring yang akan dicari dalam `str`.
-     * @return bool - Mengembalikan true jika substring ditemukan dalam `str`,
-     *                jika tidak mengembalikan false.
+     * @param string $str String yang akan diperiksa.
+     * @param string $value Nilai yang akan dicari dalam string.
+     * @return bool Mengembalikan true jika string mengandung nilai, false jika tidak.
      */
     function includeSome(string $str, string $value): bool
     {
@@ -130,13 +124,13 @@ if (!function_exists('includeSome')) {
 
 if (!function_exists('returnNullIfUndefined')) {
     /**
-     * Mengembalikan nilai variabel jika didefinisikan, atau null jika tidak.
+     * Fungsi ini mengembalikan nilai dari variabel global jika variabel tidak terdefinisi.
      *
-     * @param string $varName Nama variabel yang akan diperiksa.
-     * @return mixed Nilai variabel jika didefinisikan, atau null jika tidak.
+     * @param string $varName Nama variabel global yang akan diperiksa.
+     * @return mixed Mengembalikan nilai variabel global jika terdefinisi, null jika tidak.
      */
     function returnNullIfUndefined(string $varName)
     {
-        return isset($GLOBALS[$varName]) ? $GLOBALS[$varName] : null;
+        return $GLOBALS[$varName] ?? null;
     }
 }

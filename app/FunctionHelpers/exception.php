@@ -9,7 +9,6 @@ if (!function_exists('errorCode')) {
      * @return int Kode error yang valid, atau 500 jika tidak valid.
      */
     function errorCode($e) {
-        $code = $e->getCode();
-        return is_int($code) ? $code : 500;
+        return is_int($e->getCode()) ? $e->getCode() : 500;
     }
 }

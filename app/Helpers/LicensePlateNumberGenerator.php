@@ -7,14 +7,14 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 /**
- * Class for generating Indonesian vehicle license plate numbers
+ * Kelas untuk menghasilkan nomor plat kendaraan Indonesia
  *
- * This class implements the logic to generate valid vehicle license plate
- * numbers according to the format and rules applicable in Indonesia.
- * Includes all provinces including the latest territorial expansions.
+ * Kelas ini mengimplementasikan logika untuk menghasilkan nomor plat kendaraan
+ * yang valid sesuai dengan format dan aturan yang berlaku di Indonesia.
+ * Termasuk semua provinsi termasuk ekspansi wilayah terbaru.
  *
- * License plate format: [Region Code] [Number] [Letters]
- * Example: B 1234 ABC
+ * Format plat kendaraan: [Kode Wilayah] [Angka] [Huruf]
+ * Contoh: B 1234 ABC
  *
  * @package LicensePlate
  * @author Cak Adi
@@ -22,7 +22,7 @@ use Illuminate\Support\Str;
  */
 class LicensePlateNumberGenerator implements LicensePlateNumberGeneratorInterface {
     /**
-     * List of region codes for each province in Indonesia using Collection
+     * Daftar kode wilayah untuk setiap provinsi di Indonesia menggunakan Collection
      */
     private Collection $regionCodes;
 
@@ -77,21 +77,21 @@ class LicensePlateNumberGenerator implements LicensePlateNumberGeneratorInterfac
     }
 
     /**
-     * Generate random number with 1-4 digits length
+     * Menghasilkan angka acak dengan panjang 1-4 digit
      *
-     * @return string Generated number with '0' padding in front if needed
+     * @return string Angka yang dihasilkan dengan '0' sebagai padding di depan jika perlu
      */
     private function generateNumber(): string {
         return Str::padLeft((string)random_int(1, 9999), random_int(1, 4), '0');
     }
 
     /**
-     * Generate random letter combination for the back of the plate
+     * Menghasilkan kombinasi huruf acak untuk bagian belakang plat
      *
-     * Generates 1-3 random letters from A-Z (except I and O to avoid
-     * confusion with numbers 1 and 0)
+     * Menghasilkan 1-3 huruf acak dari A-Z (kecuali I dan O untuk menghindari
+     * kebingungan dengan angka 1 dan 0)
      *
-     * @return string Generated letter combination
+     * @return string Kombinasi huruf yang dihasilkan
      */
     private function generateBackLetters(): string {
         return collect(range('A', 'Z'))
@@ -103,13 +103,13 @@ class LicensePlateNumberGenerator implements LicensePlateNumberGeneratorInterfac
     /**
      * {@inheritdoc}
      *
-     * @throws \Exception If the provided region is not registered
+     * @throws \Exception Jika wilayah yang diberikan tidak terdaftar
      */
     public function generateLicensePlate(?string $region = null): string {
         $region = $region ?? $this->regionCodes->keys()->random();
 
         if (!$this->regionCodes->has($region)) {
-            throw new \Exception("Region '$region' is not valid");
+            throw new \Exception("Wilayah '$region' tidak valid");
         }
 
         $regionCode = collect($this->regionCodes->get($region))->random();
@@ -120,7 +120,7 @@ class LicensePlateNumberGenerator implements LicensePlateNumberGeneratorInterfac
     }
 
     /**
-     * Get list of regions
+     * Mendapatkan daftar wilayah
      *
      * @return array
      */
@@ -130,7 +130,7 @@ class LicensePlateNumberGenerator implements LicensePlateNumberGeneratorInterfac
     }
 
     /**
-     * Get region code based on region name
+     * Mendapatkan kode wilayah berdasarkan nama wilayah
      *
      * @param string $region
      * @return array|null

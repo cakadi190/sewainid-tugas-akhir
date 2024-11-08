@@ -2,19 +2,19 @@
 
 if (!function_exists("nameToEmail")) {
     /**
-     * Converts a full name (including title) to an email address.
+     * Mengubah nama lengkap (termasuk gelar) menjadi alamat email.
      *
-     * This function takes a full name (including any title), removes the title,
-     * formats the name for use as an email address by removing spaces, converting
-     * to lowercase, and appending an email domain.
+     * Fungsi ini mengambil nama lengkap (termasuk gelar), menghapus gelar,
+     * memformat nama untuk digunakan sebagai alamat email dengan menghapus spasi,
+     * mengubah menjadi huruf kecil, dan menambahkan domain email.
      *
-     * If the optional parameter $needRandomNumber is true, it appends a random
-     * number between 100 and 999 to the email name. Otherwise, it generates the email
-     * without a number.
+     * Jika parameter opsional $needRandomNumber adalah true, maka nomor acak
+     * antara 100 dan 999 ditambahkan ke nama email. Jika tidak, maka email
+     * dihasilkan tanpa nomor.
      *
-     * @param string $fullName Full name including title (e.g., "Gasti Suryatmi S.Pd").
-     * @param bool|null $needRandomNumber If true, a random number is appended to the email name.
-     * @return string The generated email address (e.g., "gasti.suryatmi123@gmail.com").
+     * @param string $fullName Nama lengkap termasuk gelar (contoh, "Gasti Suryatmi S.Pd").
+     * @param bool|null $needRandomNumber Jika true, nomor acak ditambahkan ke nama email.
+     * @return string Alamat email yang dihasilkan (contoh, "gasti.suryatmi123@gmail.com").
      */
     function nameToEmail(string $fullName, ?bool $needRandomNumber = false): string
     {
@@ -24,16 +24,12 @@ if (!function_exists("nameToEmail")) {
         // Hapus gelar (elemen terakhir dari array)
         array_pop($parts);
 
-        // Gabungkan kembali nama tanpa gelar
-        $nameWithoutTitle = implode(' ', $parts);
-
-        // Ubah menjadi huruf kecil dan ganti spasi dengan titik
-        $emailName = str_replace(' ', '.', strtolower($nameWithoutTitle));
+        // Gabungkan kembali nama tanpa gelar dan ubah menjadi huruf kecil serta ganti spasi dengan titik
+        $emailName = str_replace(' ', '.', strtolower(implode(' ', $parts)));
 
         // Jika $needRandomNumber adalah true, tambahkan nomor acak antara 100 dan 999
         if ($needRandomNumber) {
-            $randomNumber = rand(100, 999);
-            $emailName .= $randomNumber;
+            $emailName .= rand(100, 999);
         }
 
         // Tambahkan domain email

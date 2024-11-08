@@ -8,6 +8,7 @@ use App\Enums\CarModelEnum;
 use App\Enums\CarStatusEnum;
 use App\Enums\CarTransmissionEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
@@ -133,5 +134,15 @@ class CarData extends Model implements HasMedia
             ->addMediaConversion('preview')
             ->fit(Fit::Contain, 300, 300)
             ->nonQueued();
+    }
+
+    /**
+     * Mendapatkan penugasan mobil yang terkait dengan data mobil ini.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function carGarageAssigment(): HasMany
+    {
+        return $this->hasMany(CarGarageAssigment::class, 'car_data_id', 'id');
     }
 }

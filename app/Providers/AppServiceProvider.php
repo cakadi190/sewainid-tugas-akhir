@@ -23,10 +23,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         RedirectIfAuthenticated::redirectUsing(function (Request $request) {
-            $user = $request->user();
-            return route($user->getAttribute('role') !== 'user' ? 'administrator.home' : 'dashboard');
+            $userRole = $request->user()->getAttribute('role');
+            return route($userRole !== 'user' ? 'administrator.home' : 'dashboard');
         });
 
-        Vite::prefetch(concurrency: 3);
+        Vite::prefetch(3);
     }
 }

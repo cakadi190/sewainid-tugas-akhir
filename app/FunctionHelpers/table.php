@@ -18,12 +18,14 @@ if (!function_exists('convertPluralToSingular')) {
             '/([^aeiou])es$/i' => '$1',
         ];
 
-        foreach ($rules as $pattern => $replacement) {
-            if (preg_match($pattern, $word))
-                return preg_replace($pattern, $replacement, $word);
-        }
-
-        return $word;
+        return preg_replace_callback('/(ies|oes|[a-z]s|[^aeiou]es)$/i', function ($matches) use ($rules) {
+            foreach ($rules as $pattern => $replacement) {
+                if (preg_match($pattern, $matches[0])) {
+                    return preg_replace($pattern, $replacement, $matches[0]);
+                }
+            }
+            return $matches[0];
+        }, $word);
     }
 }
 
@@ -36,16 +38,9 @@ if (!function_exists('generateForeignKeyString')) {
      */
     function generateForeignKeyString(string $modelClass): string
     {
-        /** @var \Illuminate\Database\Eloquent\Model $model */
         $model = new $modelClass;
-
-        /** @var string $tableName */
-        $tableName = $model->getTable();
-
-        /** @var string $primaryKey */
+        $tableName = convertPluralToSingular($model->getTable());
         $primaryKey = $model->getKeyName();
-
-        $tableName = convertPluralToSingular($tableName);
 
         return "{$tableName}_{$primaryKey}";
     }

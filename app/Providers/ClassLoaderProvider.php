@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\File;
 
 /**
  * Class ClassLoaderProvider
@@ -21,21 +22,19 @@ class ClassLoaderProvider extends ServiceProvider
      * Load files from a specified directory.
      *
      * This method searches for PHP files in the given directory path and includes them if they exist.
-     * It uses glob to find files and requires_once to load them, ensuring each file is loaded only once.
+     * It uses File::glob to find files and require_once to load them, ensuring each file is loaded only once.
      *
      * @param string $path The relative path within the app directory to search for files
      * @return void
      */
     private function fileLoader(string $path): void
     {
-        $files = glob(app_path($path));
+        $files = File::glob(app_path($path));
 
-        if ($files === false) return;
+        if (empty($files)) return;
 
         foreach ($files as $file) {
-            if (file_exists($file)) {
-                require_once $file;
-            }
+            require_once $file;
         }
     }
 
