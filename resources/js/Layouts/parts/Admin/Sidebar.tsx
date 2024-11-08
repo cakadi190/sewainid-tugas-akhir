@@ -365,11 +365,11 @@ export default function Sidebar() {
           href: route('administrator.car-data.index'),
         },
         {
-          label: 'Penempatan Garasi',
+          label: 'Riwayat Penempatan Mobil',
           href: '#',
         },
         {
-          label: 'Reparasi Kendaraan',
+          label: 'Riwayat Reparasi Kendaraan',
           href: '#',
         },
       ]
