@@ -8,8 +8,6 @@ use App\Enums\CarModelEnum;
 use App\Enums\CarStatusEnum;
 use App\Enums\CarTransmissionEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
@@ -64,12 +62,29 @@ class CarData extends Model implements HasMedia
         'car_name',
         'brand',
         'frame_number',
+        'engine_number',
         'license_plate',
+        'license_plate_expiration',
+        'vehicle_registration_cert_number',
+        'vehicle_registration_cert_expiration',
         'color',
         'year_of_manufacture',
+        'transmission',
         'model',
         'status',
         'description',
+        'doors',
+        'seats',
+        'max_speed',
+        'big_luggage',
+        'med_luggage',
+        'small_luggage',
+        'ac',
+        'audio',
+        'abs',
+        'child_lock',
+        'traction_control',
+        'baby_seat',
     ];
 
     /**
@@ -118,19 +133,5 @@ class CarData extends Model implements HasMedia
             ->addMediaConversion('preview')
             ->fit(Fit::Contain, 300, 300)
             ->nonQueued();
-    }
-
-    /**
-     * Get the features associated with the car.
-     *
-     * This defines a many-to-many relationship between CarData and CarFeatureData,
-     * using the 'car_data_feature' pivot table.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function features(): HasMany
-    {
-        return $this->hasMany(CarFeatureData::class)
-                    ->withTimestamps();
     }
 }

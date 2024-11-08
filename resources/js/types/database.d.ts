@@ -34,12 +34,29 @@ export interface CarData extends BaseModel {
   car_name: string;
   brand: string;
   frame_number: string;
+  engine_number: string;
   license_plate: string;
+  license_plate_expiration: string;
+  vehicle_registration_cert_number: string;
+  vehicle_registration_cert_expiration: string;
   color: string;
   year_of_manufacture: number;
+  transmission?: CarTransmissionEnum;
   model?: CarModelEnum;
   status?: CarStatusEnum;
   description?: string;
+  doors: number;
+  seats: number;
+  max_speed: number;
+  big_luggage: number;
+  med_luggage: number;
+  small_luggage: number;
+  ac: boolean;
+  audio: boolean;
+  abs: boolean;
+  child_lock: boolean;
+  traction_control: boolean;
+  baby_seat: boolean;
 }
 
 export interface GarageData extends BaseModel {

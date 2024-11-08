@@ -6,9 +6,9 @@ import { twMerge } from 'tailwind-merge';
  * Komponen styled untuk membungkus separator text
  * Menampilkan garis pemisah dengan teks di tengahnya
  */
-const WrapperDiv = styled.div`
+const WrapperDiv = styled.div<{ align: 'start' | 'center' | 'end' }>`
   display: flex;
-  justify-content: center;
+  justify-content: ${({ align }) => align};
   align-items: center;
   margin-bottom: 1rem;
   padding-top: 1rem;
@@ -43,12 +43,14 @@ const InnerDiv = styled.div`
  * @property {string} [innerClassName] - Kelas CSS tambahan untuk inner div
  * @property {string} [label] - Teks yang akan ditampilkan
  * @property {'sm' | 'lg'} [size] - Ukuran teks ('sm' atau 'lg')
+ * @property {'start' | 'center' | 'end'} [align] - Arah teks ('start', 'center', atau 'end')
  */
 interface SeparatorTextInterface {
   wrapperClassName?: string;
   innerClassName?: string;
   label?: string;
   size?: 'sm' | 'lg';
+  align?: 'start' | 'center' | 'end';
 }
 
 /**
@@ -59,12 +61,13 @@ interface SeparatorTextInterface {
  * @param {string} [props.label] - Teks yang akan ditampilkan
  * @param {string} [props.wrapperClassName] - Kelas CSS tambahan untuk wrapper
  * @param {'sm' | 'lg'} [props.size='md'] - Ukuran teks
+ * @param {'start' | 'center' | 'end'} [props.align='center'] - Arah teks
  * @param {string} [props.innerClassName] - Kelas CSS tambahan untuk inner div
  * @returns {JSX.Element} Komponen SeparatorText
  */
-const SeparatorText: FC<SeparatorTextInterface> = ({ label, wrapperClassName, size = 'md', innerClassName }) => (
-  <WrapperDiv className={wrapperClassName}>
-    <InnerDiv className={twMerge(innerClassName, size ? `text-${size}` : '')}>
+const SeparatorText: FC<SeparatorTextInterface> = ({ label, wrapperClassName, size = 'md', innerClassName, align = 'center' }) => (
+  <WrapperDiv align={align} className={wrapperClassName}>
+    <InnerDiv className={twMerge(innerClassName, size ? `text-${size}` : '', align ? `text-${align}` : '')}>
       {label}
     </InnerDiv>
   </WrapperDiv>

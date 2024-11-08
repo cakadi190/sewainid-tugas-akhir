@@ -155,54 +155,52 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
   const [includeTrashed, setIncludeTrashed] = useState(false);
 
   const fetchData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+    setLoading(true);
+    setError(null);
 
-      if (!Array.isArray(columns) || columns.length === 0) {
-        throw new Error('Columns configuration is required');
-      }
+    if (!Array.isArray(columns) || columns.length === 0) {
+      setLoading(false);
+      setError('Konfigurasi kolom diperlukan');
+      return;
+    }
 
-      const fetchUrl = `${url}${includeTrashed ? '?withTrashed=true' : ''}`;
+    const fetchUrl = `${url}${includeTrashed ? '?withTrashed=true' : ''}`;
+    const sortColumnIndex = columns.findIndex(col => col.data === sortColumn);
 
-      // Menggunakan name property untuk sorting
-      const sortColumnDef = columns.find(col => col.data === sortColumn);
-      const sortColumnName = sortColumnDef?.name || sortColumnDef?.data;
-      const sortColumnIndex = columns.findIndex(col => col.data === sortColumn);
-
-      const params: QueryParams = {
-        draw,
-        start: (currentPage - 1) * pageLength,
-        length: pageLength,
+    const params: QueryParams = {
+      draw,
+      start: (currentPage - 1) * pageLength,
+      length: pageLength,
+      search: {
+        value: searchText,
+        regex: false
+      },
+      order: [
+        {
+          column: sortColumnIndex >= 0 ? sortColumnIndex : 0,
+          dir: sortDirection
+        }
+      ],
+      columns: columns.map((column) => ({
+        data: column.data,
+        name: column.name || column.data,
+        searchable: column.searchable !== false,
+        orderable: column.sortable !== false,
         search: {
-          value: searchText,
+          value: '',
           regex: false
-        },
-        order: [
-          {
-            column: sortColumnIndex >= 0 ? sortColumnIndex : 0,
-            dir: sortDirection
-          }
-        ],
-        columns: columns.map((column, index) => ({
-          data: column.data,
-          name: column.name || column.data,
-          searchable: column.searchable !== false,
-          orderable: column.sortable !== false,
-          search: {
-            value: '',
-            regex: false
-          }
-        }))
-      };
+        }
+      }))
+    };
 
+    try {
       const response = await axios.get<ServerResponse>(fetchUrl, {
         params,
         timeout: 30000
       });
 
       if (!response.data) {
-        throw new Error('Invalid server response');
+        throw new Error('Respon server tidak valid');
       }
 
       const responseData = response.data;
@@ -215,7 +213,7 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
         }
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      const errorMessage = error instanceof Error ? error.message : 'Terjadi kesalahan yang tidak diketahui';
       console.error('Error fetching data:', error);
       setError(errorMessage);
       setData([]);
@@ -259,12 +257,8 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
     const column = columns.find(col => col.data === columnName);
     if (column?.sortable === false) return;
 
-    if (sortColumn === columnName) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortColumn(columnName);
-      setSortDirection('asc');
-    }
+    setSortColumn(columnName);
+    setSortDirection(sortColumn === columnName ? (sortDirection === 'asc' ? 'desc' : 'asc') : 'asc');
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -393,7 +387,7 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
                 </InputGroup.Text>
                 <Form.Control
                   type="text"
-                  placeholder="Search..."
+                  placeholder="Cari..."
                   value={searchText}
                   onChange={handleSearch}
                 />
@@ -452,14 +446,14 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
               <tr>
                 <td colSpan={columns.length} className="text-center text-nowrap">
                   <Spinner animation="border" role="status">
-                    <span className="visually-hidden">Loading...</span>
+                    <span className="visually-hidden">Memuat...</span>
                   </Spinner>
                 </td>
               </tr>
             ) : data.length === 0 ? (
               <tr>
                 <td colSpan={columns.length} className="text-center text-nowrap">
-                  {error ? 'Error loading data' : 'No data available'}
+                  {error ? 'Error memuat data' : 'Tidak ada data yang tersedia'}
                 </td>
               </tr>
             ) : (
@@ -481,7 +475,7 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
         <div className="gap-2 px-3 pt-3 pb-3 datatable-footer flex-column flex-lg-row d-flex justify-content-between align-items-center">
           <div>
             Menampilkan {Math.min((currentPage - 1) * pageLength + 1, totalRecords)} ke{' '}
-            {Math.min(currentPage * pageLength, totalRecords)} dari {totalRecords} senarai
+            {Math.min(currentPage * pageLength, totalRecords)} dari {totalRecords} daftar
           </div>
           {renderPagination()}
         </div>

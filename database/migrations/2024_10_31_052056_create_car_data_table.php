@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            $table->string('name');
+            $table->string('car_name');
             $table->string('brand')->comment('Misal: Toyota, Suzuki, Honda, Mercy');
             $table->string('frame_number')->unique();
             $table->string('engine_number')->unique();

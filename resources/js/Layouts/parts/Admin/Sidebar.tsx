@@ -46,7 +46,7 @@ const SidebarStyle = styled.aside<{ isToggled: boolean }>`
   transition: all 0.3s ease;
   z-index: 1030;
   margin-left: -20rem;
-  background: linear-gradient(45deg, rgba(var(--bs-body-bg-rgb), .5) 75%, rgba(var(--bs-primary-rgb), .125) 100%);
+  background: linear-gradient(-45deg, rgba(var(--bs-body-bg-rgb), .5) 75%, rgba(var(--bs-primary-rgb), .125) 100%);
   backdrop-filter: blur(1rem);
   border-right: 1px solid var(--bs-border-color);
 
@@ -361,10 +361,6 @@ export default function Sidebar() {
       href: '#',
       icon: faCar,
       child: [
-        {
-          label: 'Data Fitur Kendaraan',
-          href: route('administrator.car-feature-data.index'),
-        },
         {
           label: 'Data Kendaraan',
           href: route('administrator.car-data.index'),

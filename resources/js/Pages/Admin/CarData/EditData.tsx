@@ -13,6 +13,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import ImageGallery from "@/Components/ImageGallery";
 import { MediaLibrary } from "@/types/medialibrary";
+import SeparatorText from "@/Components/SeparatorText";
 
 export default function EditData({ id, onSuccess: onSuccessAction }: { id: number; onSuccess?: () => void }) {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -23,17 +24,34 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
   const onClose = () => setShowModal(false);
 
   const { post, data: formData, setData, processing, reset, errors, clearErrors } = useForm<Omit<Database['CarData'], 'deleted_at' | 'created_at' | 'id' | 'updated_at'> & { gallery: File[]; _method: string }>({
-    car_name: '',
     _method: 'put',
+    car_name: '',
     brand: '',
     frame_number: '',
+    engine_number: '',
     license_plate: '',
+    license_plate_expiration: '',
+    vehicle_registration_cert_number: '',
+    vehicle_registration_cert_expiration: '',
     color: '',
     year_of_manufacture: 0,
+    transmission: undefined,
     model: undefined,
     status: undefined,
     description: '',
-    gallery: []
+    doors: 0,
+    seats: 0,
+    max_speed: 0,
+    big_luggage: 0,
+    med_luggage: 0,
+    small_luggage: 0,
+    ac: true,
+    audio: true,
+    abs: true,
+    child_lock: true,
+    traction_control: true,
+    baby_seat: true,
+    gallery: [],
   });
 
   const onCloseModal = () => {
@@ -80,12 +98,29 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
           car_name: data.car_name,
           brand: data.brand,
           frame_number: data.frame_number,
+          engine_number: data.engine_number,
           license_plate: data.license_plate,
+          license_plate_expiration: data.license_plate_expiration,
+          vehicle_registration_cert_number: data.vehicle_registration_cert_number,
+          vehicle_registration_cert_expiration: data.vehicle_registration_cert_expiration,
           color: data.color,
           year_of_manufacture: data.year_of_manufacture,
+          transmission: data.transmission,
           model: data.model,
           status: data.status,
           description: data.description,
+          doors: data.doors,
+          seats: data.seats,
+          max_speed: data.max_speed,
+          big_luggage: data.big_luggage,
+          med_luggage: data.med_luggage,
+          small_luggage: data.small_luggage,
+          ac: data.ac,
+          audio: data.audio,
+          abs: data.abs,
+          child_lock: data.child_lock,
+          traction_control: data.traction_control,
+          baby_seat: data.baby_seat,
           gallery: []
         });
       })
@@ -246,6 +281,152 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
                   <Form.Label>Deskripsi</Form.Label>
                   <Form.Control.Feedback type="invalid">{errors.description}</Form.Control.Feedback>
                 </Form.Floating>
+              </div>
+
+              <div className="mb-3 form-group">
+                <Form.Floating>
+                  <Form.Control
+                    type="number"
+                    placeholder="Jumlah Pintu"
+                    value={formData.doors}
+                    onChange={(e) => setData("doors", parseInt(e.target.value))}
+                    isInvalid={!!errors.doors}
+                  />
+                  <Form.Label>Jumlah Pintu</Form.Label>
+                  <Form.Control.Feedback type="invalid">{errors.doors}</Form.Control.Feedback>
+                </Form.Floating>
+              </div>
+
+              <div className="mb-3 form-group">
+                <Form.Floating>
+                  <Form.Control
+                    type="number"
+                    placeholder="Jumlah Kursi"
+                    value={formData.seats}
+                    onChange={(e) => setData("seats", parseInt(e.target.value))}
+                    isInvalid={!!errors.seats}
+                  />
+                  <Form.Label>Jumlah Kursi</Form.Label>
+                  <Form.Control.Feedback type="invalid">{errors.seats}</Form.Control.Feedback>
+                </Form.Floating>
+              </div>
+
+              <div className="mb-3 form-group">
+                <Form.Floating>
+                  <Form.Control
+                    type="number"
+                    placeholder="Kecepatan Maksimal"
+                    value={formData.max_speed}
+                    onChange={(e) => setData("max_speed", parseInt(e.target.value))}
+                    isInvalid={!!errors.max_speed}
+                  />
+                  <Form.Label>Kecepatan Maksimal</Form.Label>
+                  <Form.Control.Feedback type="invalid">{errors.max_speed}</Form.Control.Feedback>
+                </Form.Floating>
+              </div>
+
+              <div className="mb-3 form-group">
+                <Form.Floating>
+                  <Form.Control
+                    type="number"
+                    placeholder="Kapasitas Bagasi Besar"
+                    value={formData.big_luggage}
+                    onChange={(e) => setData("big_luggage", parseInt(e.target.value))}
+                    isInvalid={!!errors.big_luggage}
+                  />
+                  <Form.Label>Kapasitas Bagasi Besar</Form.Label>
+                  <Form.Control.Feedback type="invalid">{errors.big_luggage}</Form.Control.Feedback>
+                </Form.Floating>
+              </div>
+
+              <div className="mb-3 form-group">
+                <Form.Floating>
+                  <Form.Control
+                    type="number"
+                    placeholder="Kapasitas Bagasi Sedang"
+                    value={formData.med_luggage}
+                    onChange={(e) => setData("med_luggage", parseInt(e.target.value))}
+                    isInvalid={!!errors.med_luggage}
+                  />
+                  <Form.Label>Kapasitas Bagasi Sedang</Form.Label>
+                  <Form.Control.Feedback type="invalid">{errors.med_luggage}</Form.Control.Feedback>
+                </Form.Floating>
+              </div>
+
+              <div className="mb-3 form-group">
+                <Form.Floating>
+                  <Form.Control
+                    type="number"
+                    placeholder="Kapasitas Bagasi Kecil"
+                    value={formData.small_luggage}
+                    onChange={(e) => setData("small_luggage", parseInt(e.target.value))}
+                    isInvalid={!!errors.small_luggage}
+                  />
+                  <Form.Label>Kapasitas Bagasi Kecil</Form.Label>
+                  <Form.Control.Feedback type="invalid">{errors.small_luggage}</Form.Control.Feedback>
+                </Form.Floating>
+              </div>
+
+              <SeparatorText align="start" label="Fitur Kendaraan" />
+
+              <div className="pt-3 mb-3 form-group">
+                <Form.Check
+                  type="checkbox"
+                  label="AC"
+                  checked={formData.ac}
+                  onChange={(e) => setData("ac", e.target.checked)}
+                  id="ac-checkbox"
+                />
+              </div>
+
+              <div className="mb-3 form-group">
+                <Form.Check
+                  type="checkbox"
+                  label="Audio"
+                  checked={formData.audio}
+                  onChange={(e) => setData("audio", e.target.checked)}
+                  id="audio-checkbox"
+                />
+              </div>
+
+              <div className="mb-3 form-group">
+                <Form.Check
+                  type="checkbox"
+                  label="ABS"
+                  checked={formData.abs}
+                  onChange={(e) => setData("abs", e.target.checked)}
+                  id="abs-checkbox"
+                />
+              </div>
+
+              <div className="mb-3 form-group">
+                <Form.Check
+                  type="checkbox"
+                  label="Kunci Anak"
+                  checked={formData.child_lock}
+                  onChange={(e) => setData("child_lock", e.target.checked)}
+                  id="child-lock-checkbox"
+                />
+              </div>
+
+              <div className="mb-3 form-group">
+                <Form.Check
+                  type="checkbox"
+                  label="Kontrol Traksi"
+                  checked={formData.traction_control}
+                  onChange={(e) => setData("traction_control", e.target.checked)}
+                  id="traction-control-checkbox"
+                />
+              </div>
+
+              <div className="mb-3 form-group">
+                <Form.Check
+                  type="checkbox"
+                  label="Kursi Bayi"
+                  checked={formData.baby_seat}
+                  onChange={(e) => setData("baby_seat", e.target.checked)}
+                  id="baby-seat-checkbox"
+                />
               </div>
 
               <div className="mb-3">

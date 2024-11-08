@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Administrator',
             'email' => 'admin@sewamobil.com',
             'role' => RoleUser::ADMIN->value,
+            'password' => bcrypt('@Sewain.iD2024'),
         ]);
     }
 }
