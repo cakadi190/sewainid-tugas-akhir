@@ -19,8 +19,8 @@ import {
   faWrench
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link, usePage } from '@inertiajs/react';
 import { Button } from 'react-bootstrap';
+import { Link, usePage } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import { useSidebar } from '@/Hooks/useSidebar';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -191,7 +191,7 @@ const SubmenuLink = styled(Link, {
   shouldForwardProp: (prop) => prop !== 'isActive',
 }) <{ isActive?: boolean }>`
   padding: 0.5rem 1rem 0.5rem 3.5rem;
-  color: rgba(var(--bs-dark-rgb), 0.5);
+  color: rgba(var(--bs-dark-rgb), 0.625);
   text-decoration: none;
   display: flex;
   align-items: center;
