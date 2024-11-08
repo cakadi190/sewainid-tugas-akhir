@@ -1,19 +1,19 @@
 import axios from "axios";
+import ImageUploader from "@/Components/Dropzone";
+import SeparatorText from "@/Components/SeparatorText";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import ImageGallery from "@/Components/ImageGallery";
 import Database from "@/types/database";
 import { getCarModelLabel, getCarStatusLabel } from "@/Helpers/EnumHelper";
 import { CarModelEnum, CarStatusEnum } from "@/types/enum";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "@inertiajs/react";
-import { FormEvent, useEffect, useState } from "react";
-import { Alert, Button, Card, Form, Modal, Spinner } from "react-bootstrap";
-import ImageUploader from "@/Components/Dropzone";
+import { FormEvent, useState } from "react";
+import { Button, Card, Form, Modal, Spinner } from "react-bootstrap";
 import { createPortal } from "react-dom";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-import ImageGallery from "@/Components/ImageGallery";
 import { MediaLibrary } from "@/types/medialibrary";
-import SeparatorText from "@/Components/SeparatorText";
 
 export default function EditData({ id, onSuccess: onSuccessAction }: { id: number; onSuccess?: () => void }) {
   const [showModal, setShowModal] = useState<boolean>(false);
