@@ -366,7 +366,7 @@ export default function Sidebar() {
         },
         {
           label: 'Riwayat Penempatan Mobil',
-          href: '#',
+          href: route('administrator.car-assign.index'),
         },
         {
           label: 'Riwayat Reparasi Kendaraan',
