@@ -106,7 +106,7 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
                     isInvalid={!!errors.repair_shop_name}
                   />
                   <Form.Label>Nama</Form.Label>
-                  <Form.Text>Untuk identifikasi garasinya biar mudah dicari.</Form.Text>
+                  <Form.Text>Untuk identifikasi bengkelnya biar mudah dicari.</Form.Text>
                   <Form.Control.Feedback type="invalid">{errors.repair_shop_name}</Form.Control.Feedback>
                 </Form.Floating>
               </div>
