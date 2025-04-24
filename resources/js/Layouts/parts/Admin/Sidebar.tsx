@@ -82,8 +82,6 @@ const InnerSidebar = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgba(var(--bs-dark-rgb), 0.1),
-    0 2px 4px -1px rgba(var(--bs-dark-rgb), 0.06);
 `;
 
 const HeaderSidebar = styled.div`
@@ -343,36 +341,16 @@ export default function Sidebar() {
 
     { label: 'Master Data', type: 'heading' },
     {
-      label: 'Lokasi Pool / Garasi',
-      href: route('administrator.garage-data.index'),
+      label: 'Manajemen Kendaraan',
+      icon: faCar,
       type: 'menu',
-      icon: faBuilding,
+      href: route('administrator.car-data.index'),
     },
     {
-      label: 'Lokasi Bengkel',
-      href: route('administrator.repair-shop-data.index'),
+      label: 'Catatan Perbaikan',
+      href: route('administrator.car-data.index'),
       type: 'menu',
       icon: faWrench,
-    },
-    {
-      label: 'Manajemen Kendaraan',
-      type: 'menu',
-      href: '#',
-      icon: faCar,
-      child: [
-        {
-          label: 'Data Kendaraan',
-          href: route('administrator.car-data.index'),
-        },
-        {
-          label: 'Riwayat Penempatan Mobil',
-          href: route('administrator.car-assign.index'),
-        },
-        {
-          label: 'Riwayat Reparasi Kendaraan',
-          href: '#',
-        },
-      ]
     },
     {
       label: 'Manajemen Pengguna',

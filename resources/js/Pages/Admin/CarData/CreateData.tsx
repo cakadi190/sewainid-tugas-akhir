@@ -294,6 +294,8 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
                 </Form.Floating>
               </div>
 
+              <SeparatorText align="start" wrapperClassName="pt-0 mb-5" label="Fitur Kendaraan" />
+
               <div className="mb-3 form-group">
                 <Form.Floating>
                   <Form.Control

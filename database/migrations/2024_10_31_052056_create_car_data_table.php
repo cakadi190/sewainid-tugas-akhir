@@ -1,5 +1,8 @@
 <?php
 
+use App\Enums\CarModelEnum;
+use App\Enums\CarStatusEnum;
+use App\Enums\CarTransmissionEnum;
 use App\Models\CarData;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,19 +19,19 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            $table->string('car_name');
-            $table->string('brand')->comment('Misal: Toyota, Suzuki, Honda, Mercy');
-            $table->string('frame_number')->unique();
-            $table->string('engine_number')->unique();
-            $table->string('license_plate')->unique();
+            $table->string('car_name', 50);
+            $table->string('brand', 50)->comment('Misal: Toyota, Suzuki, Honda, Mercy')->index();
+            $table->string('frame_number', 20)->unique()->index();
+            $table->string('engine_number', 20)->unique()->index();
+            $table->string('license_plate', 20)->unique()->index();
             $table->date('license_plate_expiration')->useCurrent()->useCurrentOnUpdate();
-            $table->string('vehicle_registration_cert_number')->unique();
+            $table->string('vehicle_registration_cert_number', 20)->unique()->index();
             $table->date('vehicle_registration_cert_expiration')->useCurrent()->useCurrentOnUpdate();
-            $table->string('color');
-            $table->unsignedInteger('year_of_manufacture');
-            $table->enum('transmission', CarData::getAllCarTransmission()->toArray());
-            $table->enum('model', CarData::getAllCarModels()->toArray());
-            $table->enum('status', CarData::getAllCarStatuses()->toArray());
+            $table->string('color', 20);
+            $table->unsignedInteger('year_of_manufacture')->default(0);
+            $table->enum('transmission', CarData::getAllCarTransmission()->toArray())->default(CarTransmissionEnum::MT->value);
+            $table->enum('model', CarData::getAllCarModels()->toArray())->default(CarModelEnum::SUV->value);
+            $table->enum('status', CarData::getAllCarStatuses()->toArray())->default(CarStatusEnum::READY->value);
             $table->text('description')->nullable();
             $table->unsignedInteger('doors')->default(0);
             $table->unsignedInteger('seats')->default(0);
@@ -42,7 +45,7 @@ return new class extends Migration
             $table->boolean('child_lock')->default(true);
             $table->boolean('traction_control')->default(true);
             $table->boolean('baby_seat')->default(true);
-            $table->softDeletes();
+            $table->string('gps_imei', 16)->nullable();
         });
     }
 
@@ -54,3 +57,4 @@ return new class extends Migration
         Schema::dropIfExists('car_data');
     }
 };
+

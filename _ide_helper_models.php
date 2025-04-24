@@ -1,20 +1,17 @@
 <?php
 
-namespace App\Models;
+// @formatter:off
+// phpcs:ignoreFile
+/**
+ * A helper file for your Eloquent Models
+ * Copy the phpDocs from this file to the correct Model,
+ * And remove them from this file, to prevent double declarations.
+ *
+ * @author Barry vd. Heuvel <barryvdh@gmail.com>
+ */
 
-use App\Traits\WithTrashedRouteBinding;
-use Illuminate\Database\Eloquent\Model;
-use App\Enums\CarModelEnum;
-use App\Enums\CarStatusEnum;
-use App\Enums\CarTransmissionEnum;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Image\Enums\Fit;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
+namespace App\Models{
 /**
  * Car Data model
  *
@@ -86,101 +83,68 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereYearOfManufacture($value)
  * @mixin \Eloquent
  */
-class CarData extends Model implements HasMedia
-{
-    use HasFactory, InteractsWithMedia;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'car_name',
-        'brand',
-        'frame_number',
-        'engine_number',
-        'license_plate',
-        'license_plate_expiration',
-        'vehicle_registration_cert_number',
-        'vehicle_registration_cert_expiration',
-        'color',
-        'year_of_manufacture',
-        'transmission',
-        'model',
-        'status',
-        'description',
-        'doors',
-        'seats',
-        'max_speed',
-        'big_luggage',
-        'med_luggage',
-        'small_luggage',
-        'ac',
-        'audio',
-        'abs',
-        'child_lock',
-        'traction_control',
-        'baby_seat',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'model' => CarModelEnum::class,
-        'status' => CarStatusEnum::class,
-    ];
-
-    /**
-     * Mengambil semua model mobil yang ada dalam CarModelEnum.
-     *
-     * @return \Illuminate\Support\Collection Koleksi dari semua nilai model mobil.
-     */
-    public static function getAllCarModels(): \Illuminate\Support\Collection
-    {
-        return collect(CarModelEnum::cases())->pluck('value');
-    }
-
-    /**
-     * Mengambil semua status mobil yang ada dalam CarStatusEnum.
-     *
-     * @return \Illuminate\Support\Collection Koleksi dari semua nilai status mobil.
-     */
-    public static function getAllCarStatuses(): \Illuminate\Support\Collection
-    {
-        return collect(CarStatusEnum::cases())->pluck('value');
-    }
-
-    /**
-     * Mengambil semua jenis transmisi mobil yang ada dalam value: CarTransmissionEnum.
-     *
-     * @return \Illuminate\Support\Collection Koleksi dari semua jenis transmisi mobil.
-     */
-    public static function getAllCarTransmission(): \Illuminate\Support\Collection
-    {
-        return collect(value: CarTransmissionEnum::cases())->pluck('value');
-    }
-
-    /**
-     * Register media conversions for the CarData model.
-     *
-     * This function adds a 'preview' media conversion that fits the media within
-     * a 300x300 boundary using the 'Contain' fit method. The conversion is processed
-     * without being queued.
-     *
-     * @param \Spatie\MediaLibrary\MediaCollections\Models\Media|null $media
-     *        Optional media instance for which conversions are registered.
-     *
-     * @return void
-     */
-    public function registerMediaConversions(?Media $media = null): void
-    {
-        $this
-            ->addMediaConversion('preview')
-            ->fit(Fit::Contain, 300, 300)
-            ->nonQueued();
-    }
+	class CarData extends \Eloquent implements \Spatie\MediaLibrary\HasMedia {}
 }
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @method static \Database\Factories\CarRepairNoteDataFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData query()
+ * @mixin \Eloquent
+ */
+	class CarRepairNoteData extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * User Class model
+ *
+ * @property int $id
+ * @property string $name
+ * @property GenderUser|null $gender
+ * @property RoleUser|null $role
+ * @property string|null $pbirth
+ * @property string|null $dbirth
+ * @property string $email
+ * @property \Illuminate\Support\Carbon|null $email_verified_at
+ * @property string $password
+ * @property string $avatar
+ * @property string|null $nik Encrypted Data
+ * @property string|null $kk Encrypted Data
+ * @property string|null $sim Encrypted Data
+ * @property string|null $remember_token
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
+ * @property-read int|null $notifications_count
+ * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereAvatar($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereDbirth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmailVerifiedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereGender($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereKk($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereNik($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePbirth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRole($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereSim($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	class User extends \Eloquent implements \Illuminate\Contracts\Auth\MustVerifyEmail {}
+}
+

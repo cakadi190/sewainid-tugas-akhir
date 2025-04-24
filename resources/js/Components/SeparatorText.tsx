@@ -10,7 +10,7 @@ const WrapperDiv = styled.div<{ align: 'start' | 'center' | 'end' }>`
   display: flex;
   justify-content: ${({ align }) => align};
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   padding-top: 1rem;
   border-bottom: 1px solid rgba(var(--bs-dark-rgb), .125);
 
@@ -25,9 +25,11 @@ const WrapperDiv = styled.div<{ align: 'start' | 'center' | 'end' }>`
  * Menampilkan teks dengan latar belakang yang sesuai tema
  */
 const InnerDiv = styled.div`
-  margin-bottom: -.75rem;
+  margin-bottom: -1.25rem;
   background: var(--bs-white);
-  padding: 0 1rem;
+  padding: .5rem 1rem;
+  border-radius: var(--bs-border-radius);
+  border: 1px solid var(--bs-border-color);
 
   [data-bs-theme='dark'] &,
   &[data-bs-theme='dark'] {

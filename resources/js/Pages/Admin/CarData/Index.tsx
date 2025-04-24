@@ -123,7 +123,6 @@ export default function Index() {
 
       <DataTable
         ref={dataTableRef}
-        withTrashToggle
         className="mt-3"
         url={route('v1.admin.car-data.index')}
         columns={columns}
