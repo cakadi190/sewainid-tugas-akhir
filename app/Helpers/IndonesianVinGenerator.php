@@ -32,7 +32,7 @@ class IndonesianVinGenerator
         $vds = self::generateVDS();
         $vis = self::generateVIS();
 
-        return $wmi . $vds . $vis;
+        return "{$wmi}{$vds}{$vis}";
     }
 
     /**
