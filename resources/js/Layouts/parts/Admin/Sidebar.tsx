@@ -443,12 +443,6 @@ export default function Sidebar() {
       href: '#',
       icon: faUserShield,
     },
-    {
-      label: 'Pengaturan Sistem',
-      type: 'menu',
-      href: '#',
-      icon: faCog,
-    },
   ];
 
   return (
