@@ -82,6 +82,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereVehicleRegistrationCertNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereYearOfManufacture($value)
  * @mixin \Eloquent
+ * @property string|null $gps_imei
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereGpsImei($value)
  */
 	class CarData extends \Eloquent implements \Spatie\MediaLibrary\HasMedia {}
 }
@@ -95,8 +97,90 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData query()
  * @mixin \Eloquent
+ * @property int $id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $repair_date
+ * @property string $description
+ * @property string $cost
+ * @property string $status
+ * @property string|null $notes
+ * @property int $car_data_id
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereCarDataId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereRepairDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereUpdatedAt($value)
  */
 	class CarRepairNoteData extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @property int $id
+ * @property string $status
+ * @property string|null $confirmed_at
+ * @property string|null $payment_channel
+ * @property string|null $payment_references
+ * @property int $total_price
+ * @property int $total_pay
+ * @property string|null $pickup_date
+ * @property string|null $return_date
+ * @property string|null $expired_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $car_data_id
+ * @property int $user_id
+ * @method static \Database\Factories\TransactionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereCarDataId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereConfirmedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereExpiredAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction wherePaymentChannel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction wherePaymentReferences($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction wherePickupDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereReturnDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereTotalPay($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereTotalPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereUserId($value)
+ */
+	class Transaction extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @property int $id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $transaction_receipt
+ * @property string $transaction_id
+ * @property int $user_id
+ * @method static \Database\Factories\TransactionConfirmationFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransactionConfirmation newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransactionConfirmation newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransactionConfirmation query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransactionConfirmation whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransactionConfirmation whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransactionConfirmation whereTransactionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransactionConfirmation whereTransactionReceipt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransactionConfirmation whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransactionConfirmation whereUserId($value)
+ */
+	class TransactionConfirmation extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -144,6 +228,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereSim($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string|null $google_id
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereGoogleId($value)
  */
 	class User extends \Eloquent implements \Illuminate\Contracts\Auth\MustVerifyEmail {}
 }

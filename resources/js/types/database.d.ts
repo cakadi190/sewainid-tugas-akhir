@@ -57,6 +57,7 @@ export interface CarData extends BaseModel {
   child_lock: boolean;
   traction_control: boolean;
   baby_seat: boolean;
+  imei: ?string;
 }
 
 export interface GarageData extends BaseModel {

@@ -3,7 +3,7 @@ import { useSidebar } from '@/Hooks/useSidebar';
 import { PageProps } from '@/types';
 import { faBarsStaggered, faClock, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { FC, useEffect, useState } from 'react';
 import { Navbar, Nav, Container, NavItem, NavDropdown } from 'react-bootstrap';
 import useWindowSize from '@/Hooks/useWindowSize';
@@ -104,8 +104,9 @@ const UserDropdown: FC = () => {
         id="basic-nav-dropdown"
         align="end"
       >
-        <NavDropdown.Item href="#">Action</NavDropdown.Item>
-        <NavDropdown.Item href="#">Another action</NavDropdown.Item>
+        <NavDropdown.Item as={Link} href={route('profile.edit') + '#profile-update'}>Profilku</NavDropdown.Item>
+        <NavDropdown.Item as={Link} href={route('profile.edit') + '#password-update'}>Ganti Kata Sandi</NavDropdown.Item>
+        <NavDropdown.Item as={Link} href={route('profile.edit') + '#social-media-update'}>Akun Sosial Media</NavDropdown.Item>
         <NavDropdown.Divider />
         <NavDropdown.Item onClick={openModal} href="#">Keluar Sesi</NavDropdown.Item>
       </NavDropdownStyled>

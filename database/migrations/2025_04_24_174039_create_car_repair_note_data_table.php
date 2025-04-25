@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\CarRepairNoteStatusEnum;
+use App\Models\CarRepairNoteData;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,7 +20,7 @@ return new class extends Migration
             $table->date('repair_date');
             $table->text('description');
             $table->decimal('cost', 10, 2);
-            $table->enum('status', ['pending', 'in_progress', 'completed'])->default('pending');
+            $table->enum('status', CarRepairNoteData::getAllRepairStatus()->toArray())->default(CarRepairNoteStatusEnum::PENDING);
             $table->longText('notes')->nullable();
             $table->foreignId('car_data_id')->constrained('car_data')->cascadeOnDelete()->cascadeOnUpdate();
         });

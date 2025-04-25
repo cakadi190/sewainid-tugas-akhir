@@ -30,27 +30,23 @@ export default function Edit({
         </h2>
       }
     >
-      <Head title="Profile" />
+      <Head title="Profil Saya" />
 
       <div className="pt-4">
-        <Card className="mb-4">
-          <Card.Body>
-            <UpdateProfileInformationForm
-              mustVerifyEmail={mustVerifyEmail}
-              status={status}
-            />
-          </Card.Body>
-        </Card>
+        {auth.user.role !== 'admin' && (
+          <Card className="mb-4" id="profile">
+            <Card.Body>
+              <UpdateProfileInformationForm
+                mustVerifyEmail={mustVerifyEmail}
+                status={status}
+              />
+            </Card.Body>
+          </Card>
+        )}
 
-        <Card className="mb-4">
+        <Card className="mb-4" id='password-update'>
           <Card.Body>
             <UpdatePasswordForm />
-          </Card.Body>
-        </Card>
-
-        <Card>
-          <Card.Body>
-            <DeleteUserForm />
           </Card.Body>
         </Card>
       </div>

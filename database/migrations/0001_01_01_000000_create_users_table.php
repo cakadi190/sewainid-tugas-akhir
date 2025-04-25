@@ -21,11 +21,12 @@ return new class extends Migration {
             $table->date('dbirth')->nullable()->default(null);
             $table->string('email', 100)->unique();
             $table->timestamp('email_verified_at')->nullable()->default(null);
-            $table->string('password', 255);
+            $table->string('password', 255)->nullable()->default(null);
             $table->string('avatar', 255);
-            $table->string('nik', 20)->unique()->nullable()->comment('Encrypted Data')->default(null);
-            $table->string('kk', 20)->nullable()->comment('Encrypted Data')->default(null);
-            $table->string('sim', 20)->nullable()->comment('Encrypted Data')->default(null);
+            $table->string('nik', 128)->unique()->nullable()->comment('Encrypted Data')->default(null);
+            $table->string('kk', 128)->nullable()->comment('Encrypted Data')->default(null);
+            $table->string('sim', 128)->nullable()->comment('Encrypted Data')->default(null);
+            $table->string('google_id', 32)->nullable()->default(null);
             $table->rememberToken();
             $table->timestamps();
         });

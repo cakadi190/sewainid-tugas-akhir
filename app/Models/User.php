@@ -77,6 +77,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'nik',
         'kk',
         'sim',
+        'avatar',
+        'google_id',
     ];
 
     /**
@@ -144,3 +146,4 @@ class User extends Authenticatable implements MustVerifyEmail
         return collect(GenderUser::cases())->pluck('value');
     }
 }
+

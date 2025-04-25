@@ -74,12 +74,10 @@ class AuthenticatedSessionController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        // If the user is not an admin
         if ($user->getAttribute('role') !== 'user') {
             return redirect()->intended(route('administrator.home', absolute: false));
         }
 
-        // Otherwise, redirect to the user dashboard
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

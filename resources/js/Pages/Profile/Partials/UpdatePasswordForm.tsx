@@ -48,21 +48,21 @@ export default function UpdatePasswordForm({
   return (
     <section className={className}>
       <header>
-        <h2 className="h5">Update Password</h2>
+        <h2 className="h5">Perbarui Kata Sandi</h2>
         <p className="small text-muted">
-          Ensure your account is using a long, random password to stay secure.
+          Pastikan akun Anda menggunakan kata sandi yang panjang dan acak untuk tetap aman.
         </p>
       </header>
 
       <Form onSubmit={updatePassword} className="mt-4">
-        <FloatingLabel className="mb-3" controlId="current_password" label="Current Password">
+        <FloatingLabel className="mb-3" controlId="current_password" label="Kata Sandi Saat Ini">
           <Form.Control
             type="password"
             ref={currentPasswordInput}
             value={data.current_password}
             onChange={(e) => setData('current_password', e.target.value)}
             isInvalid={!!errors.current_password}
-            placeholder="Current Password"
+            placeholder="Kata Sandi Saat Ini"
             autoComplete="current-password"
           />
           <Form.Control.Feedback type="invalid">
@@ -70,14 +70,14 @@ export default function UpdatePasswordForm({
           </Form.Control.Feedback>
         </FloatingLabel>
 
-        <FloatingLabel className="mb-3" controlId="password" label="New Password">
+        <FloatingLabel className="mb-3" controlId="password" label="Kata Sandi Baru">
           <Form.Control
             type="password"
             ref={passwordInput}
             value={data.password}
             onChange={(e) => setData('password', e.target.value)}
             isInvalid={!!errors.password}
-            placeholder="New Password"
+            placeholder="Kata Sandi Baru"
             autoComplete="new-password"
           />
           <Form.Control.Feedback type="invalid">
@@ -85,13 +85,13 @@ export default function UpdatePasswordForm({
           </Form.Control.Feedback>
         </FloatingLabel>
 
-        <FloatingLabel className="mb-3" controlId="password_confirmation" label="Confirm Password">
+        <FloatingLabel className="mb-3" controlId="password_confirmation" label="Konfirmasi Kata Sandi">
           <Form.Control
             type="password"
             value={data.password_confirmation}
             onChange={(e) => setData('password_confirmation', e.target.value)}
             isInvalid={!!errors.password_confirmation}
-            placeholder="Confirm Password"
+            placeholder="Konfirmasi Kata Sandi"
             autoComplete="new-password"
           />
           <Form.Control.Feedback type="invalid">
@@ -101,12 +101,12 @@ export default function UpdatePasswordForm({
 
         <div className="gap-3 d-flex align-items-center">
           <Button type="submit" variant="primary" disabled={processing}>
-            Save
+            Simpan
           </Button>
 
           {recentlySuccessful && (
             <Alert variant="success" className="mb-0">
-              Saved.
+              Tersimpan.
             </Alert>
           )}
         </div>
@@ -114,3 +114,4 @@ export default function UpdatePasswordForm({
     </section>
   );
 }
+

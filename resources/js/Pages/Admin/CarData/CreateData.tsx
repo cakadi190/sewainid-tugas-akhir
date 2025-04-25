@@ -42,6 +42,7 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
     traction_control: true,
     baby_seat: true,
     gallery: [],
+    imei: ''
   });
 
   const onOpen = () => setShowModal(true);
@@ -440,6 +441,22 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
                   onChange={(e) => setData("baby_seat", e.target.checked)}
                   id="baby-seat-checkbox"
                 />
+              </div>
+
+              <SeparatorText align="start" label="Data GPS" />
+
+              <div className="pt-3 mb-3 form-group">
+                <Form.Floating>
+                  <Form.Control
+                    type="text"
+                    placeholder="Nomor IMEI Pada GPS"
+                    value={formData.imei || ''}
+                    onChange={(e) => setData("imei", e.target.value)}
+                    isInvalid={!!errors.imei}
+                  />
+                  <Form.Label>Nomor IMEI Pada GPS</Form.Label>
+                  <Form.Control.Feedback type="invalid">{errors.imei}</Form.Control.Feedback>
+                </Form.Floating>
               </div>
 
               <div>

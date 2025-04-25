@@ -30,9 +30,9 @@ export default function UpdateProfileInformation({
   return (
     <section className={className}>
       <header>
-        <h2 className="h5">Profile Information</h2>
+        <h2 className="h5">Informasi Profil</h2>
         <p className="small text-muted">
-          Update your account's profile information and email address.
+          Perbarui informasi profil dan alamat email Anda.
         </p>
       </header>
 
@@ -44,13 +44,13 @@ export default function UpdateProfileInformation({
             onChange={(e) => setData('name', e.target.value)}
             required
             isInvalid={!!errors.name}
-            placeholder="Name"
+            placeholder="name"
             autoComplete="name"
           />
           <Form.Control.Feedback type="invalid">
             {errors.name}
           </Form.Control.Feedback>
-          <Form.Label>Name</Form.Label>
+          <Form.Label>Nama Lengkap</Form.Label>
         </FormFloating>
 
         <FormFloating className="mb-3">
@@ -72,20 +72,20 @@ export default function UpdateProfileInformation({
         {mustVerifyEmail && user.email_verified_at === null && (
           <div className="mt-2">
             <p className="small text-muted">
-              Your email address is unverified.
+              Alamat email Anda belum diverifikasi.
               <Link
                 href={route('verification.send')}
                 method="post"
                 as="button"
                 className="p-0 btn btn-link text-muted"
               >
-                Click here to re-send the verification email.
+                Klik disini untuk mengirimkan email verifikasi lagi.
               </Link>
             </p>
 
             {status === 'verification-link-sent' && (
               <Alert variant="success" className="mt-2">
-                A new verification link has been sent to your email address.
+                Tautan verifikasi baru telah dikirimkan ke alamat email Anda.
               </Alert>
             )}
           </div>
@@ -93,12 +93,12 @@ export default function UpdateProfileInformation({
 
         <div className="gap-3 mt-4 d-flex align-items-center">
           <Button type="submit" variant="primary" disabled={processing}>
-            Save
+            Simpan
           </Button>
 
           {recentlySuccessful && (
             <Alert variant="success" className="mb-0">
-              Saved.
+              Tersimpan.
             </Alert>
           )}
         </div>
@@ -106,3 +106,4 @@ export default function UpdateProfileInformation({
     </section>
   );
 }
+

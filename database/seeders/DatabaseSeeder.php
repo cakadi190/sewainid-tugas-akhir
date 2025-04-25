@@ -22,5 +22,12 @@ class DatabaseSeeder extends Seeder
             'role' => RoleUser::ADMIN->value,
             'password' => bcrypt('@Sewain.iD2024'),
         ]);
+
+        User::factory()->create([
+            'name' => 'Amir Zuhdi Wibowo',
+            'email' => 'cakadi190@mail.com',
+            'role' => RoleUser::USER->value,
+            'password' => bcrypt('@Cakadi.iD2024'),
+        ]);
     }
 }

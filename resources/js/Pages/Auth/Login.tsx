@@ -51,13 +51,13 @@ export default function Login({
             id="floatingInputCustom"
             type="email"
             name="email"
-            placeholder="name@example.com"
+            placeholder="nama@contoh.com"
             value={data.email}
             autoComplete="username"
             isInvalid={!!errors.email}
             onChange={(e) => setData('email', e.target.value)}
           />
-          <label htmlFor="floatingInputCustom">Email address</label>
+          <label htmlFor="floatingInputCustom">Alamat Email</label>
           {errors.email && (
             <div className="mt-2 invalid-feedback d-block">{errors.email}</div>
           )}
@@ -68,13 +68,13 @@ export default function Login({
             id="floatingPasswordCustom"
             type="password"
             name="password"
-            placeholder="Password"
+            placeholder="Kata Sandi"
             value={data.password}
             autoComplete="current-password"
             isInvalid={!!errors.password}
             onChange={(e) => setData('password', e.target.value)}
           />
-          <label htmlFor="floatingPasswordCustom">Password</label>
+          <label htmlFor="floatingPasswordCustom">Kata Sandi</label>
           {errors.password && (
             <div className="mt-2 invalid-feedback d-block">{errors.password}</div>
           )}
@@ -83,7 +83,7 @@ export default function Login({
         <div className="my-4 justify-content-between d-flex">
           <Form.Check
             type="checkbox"
-            label="Remember me"
+            label="Ingat saya"
             id="remember-me"
             checked={data.remember}
             onChange={(e) => setData('remember', e.target.checked)}
@@ -94,7 +94,7 @@ export default function Login({
               href={route('password.request')}
               className="text-sm text-muted text-decoration-underline"
             >
-              Forgot your password?
+              Lupa kata sandi?
             </Link>
           )}
         </div>
@@ -104,12 +104,14 @@ export default function Login({
             {processing ? <Spinner size='sm' /> : (
               <>
                 <FontAwesomeIcon icon={faSignInAlt} />
-                <span>Log in</span>
+                <span>Masuk</span>
               </>
             )}
           </Button>
 
-          <SeparatorText label="Atau" />
+          <SeparatorText label="Atau" wrapperClassName='mb-5 mt-3' />
+
+          <a className="btn btn-danger btn-lg" href={route("auth.google.redirect")}>Masuk dengan Google</a>
 
           <Link className="btn btn-link" href="/register">Mendaftar Akun Baru</Link>
         </div>
@@ -117,3 +119,4 @@ export default function Login({
     </GuestLayout>
   );
 }
+
