@@ -348,7 +348,7 @@ export default function Sidebar() {
     },
     {
       label: 'Catatan Perbaikan',
-      href: route('administrator.car-data.index'),
+      href: route('administrator.car-repair.index'),
       type: 'menu',
       icon: faWrench,
     },

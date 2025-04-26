@@ -1,3 +1,5 @@
+import { CarModelEnum, CarRepairNoteStatusEnum, CarStatusEnum, CarTransmissionEnum } from "./enum";
+
 // Base Interfaces
 export interface DeleteColumns {
   deleted_at?: string;
@@ -57,32 +59,17 @@ export interface CarData extends BaseModel {
   child_lock: boolean;
   traction_control: boolean;
   baby_seat: boolean;
-  imei: ?string;
+  gps_imei: ?string;
 }
 
-export interface GarageData extends BaseModel {
-  id: number;
-  garage_name: string;
-  address: string;
-  coordinate?: string;
-  capacity: number;
-  phone: string;
-  opening_time: string;
-  closing_time: string;
-  is_active: boolean;
+export interface CarRepairNoteData extends BaseModel {
+  id: string;
+  repair_date: string;
   description: string;
-}
-
-export interface RepairShopData extends BaseModel {
-  id: number;
-  repair_shop_name: string;
-  address: string;
-  coordinate?: string;
-  phone: string;
-  opening_time: string;
-  closing_time: string;
-  is_active: boolean;
-  description: string;
+  cost: number;
+  status: CarRepairNoteStatusEnum;
+  notes?: string;
+  car_data_id: number | string;
 }
 
 // Main Database Interface
@@ -91,6 +78,7 @@ export default interface Database {
   CarData: WithSoftDeletes<CarData>;
   GarageData: WithSoftDeletes<GarageData>;
   RepairShopData: WithSoftDeletes<RepairShopData>;
+  CarRepairNoteData: WithSoftDeletes<CarRepairNoteData>;
 }
 
 // Type helpers untuk mengakses model dengan soft delete

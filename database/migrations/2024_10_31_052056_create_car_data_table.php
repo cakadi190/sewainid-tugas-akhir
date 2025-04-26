@@ -45,6 +45,7 @@ return new class extends Migration
             $table->boolean('child_lock')->default(true);
             $table->boolean('traction_control')->default(true);
             $table->boolean('baby_seat')->default(true);
+            $table->integer('rent_price')->default(0);
             $table->string('gps_imei', 16)->nullable();
         });
     }

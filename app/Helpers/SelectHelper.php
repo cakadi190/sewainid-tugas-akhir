@@ -33,16 +33,31 @@ class SelectHelper implements SelectHelperInterface
             $model = new $modelClass;
             $selectedFields = $fields ?? ['id', 'name'];
 
+            $selectFields = [];
+            foreach ($selectedFields as $field) {
+                if (is_array($field)) {
+                    foreach ($field as $subField) {
+                        $selectFields[] = $subField;
+                    }
+                } else {
+                    $selectFields[] = $field;
+                }
+            }
+
             $data = $model
-                ->select($selectedFields)
-                ->when($search, function (Builder $query) use ($search) {
-                    $query->where('name', 'LIKE', "%{$search}%");
+                ->select($selectFields)
+                ->when($search, function (Builder $query) use ($search, $selectedFields) {
+                    $searchField = is_array($selectedFields[1] ?? 'name')
+                        ? $selectedFields[1][0]
+                        : ($selectedFields[1] ?? 'name');
+
+                    $query->where($searchField, 'LIKE', "%{$search}%");
                 })
                 ->get();
 
             return $this->successResponse($data, $selectedFields);
         } catch (\Throwable $th) {
-            return $this->errorResponse($th);
+            return $this->errorResponse($th->getMessage());
         }
     }
 
@@ -55,17 +70,29 @@ class SelectHelper implements SelectHelperInterface
      */
     private function successResponse(Collection $data, array $selectedFields): JsonResponse
     {
-        $formattedData = $data->map(function (Model $item) {
+        $formattedData = $data->map(function (Model $item) use ($selectedFields) {
+            $labelField = $selectedFields[1] ?? 'name';
+
+            if (is_array($labelField)) {
+                $labelParts = [];
+                foreach ($labelField as $field) {
+                    $labelParts[] = $item->{$field};
+                }
+                $label = implode(' - ', $labelParts);
+            } else {
+                $label = $item->{$labelField};
+            }
+
             return [
                 'value' => $item->id,
-                'label' => $item->name,
+                'label' => $label,
             ];
         })->toArray();
 
         $statusCode = $formattedData ? 200 : 404;
 
         return response()->json([
-            'success' => !!$formattedData,
+            'success' => !empty($formattedData),
             'data' => $formattedData,
             'code' => $statusCode,
         ], $statusCode);
@@ -74,11 +101,15 @@ class SelectHelper implements SelectHelperInterface
     /**
      * Return error response.
      *
-     * @param string $message The error message to include in the response.
+     * @param string|\Throwable $message The error message to include in the response.
      * @return JsonResponse The JSON response containing the error message.
      */
-    private function errorResponse(string $message): JsonResponse
+    private function errorResponse($message): JsonResponse
     {
+        if ($message instanceof \Throwable) {
+            $message = $message->getMessage();
+        }
+
         return response()->json([
             'success' => false,
             'message' => $message,

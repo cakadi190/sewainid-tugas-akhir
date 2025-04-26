@@ -14,11 +14,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('car_repair_note_data', function (Blueprint $table) {
-            $table->id();
+            $table->string('id', 36)->primary();
             $table->timestamps();
 
             $table->date('repair_date');
             $table->text('description');
+            $table->unsignedBigInteger('last_mileage')->nullable();
+            $table->unsignedBigInteger('current_mileage')->nullable();
             $table->decimal('cost', 10, 2);
             $table->enum('status', CarRepairNoteData::getAllRepairStatus()->toArray())->default(CarRepairNoteStatusEnum::PENDING);
             $table->longText('notes')->nullable();

@@ -51,7 +51,7 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
     traction_control: true,
     baby_seat: true,
     gallery: [],
-    imei: ''
+    gps_imei: ''
   });
 
   const onCloseModal = () => {
@@ -89,6 +89,8 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
         const { data } = result.data;
         onOpen();
 
+        console.log(data);
+
         setGalleryData(data.gallery);
 
         setData({
@@ -120,7 +122,7 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
           traction_control: data.traction_control,
           baby_seat: data.baby_seat,
           gallery: [],
-          imei: data.imei
+          gps_imei: data.gps_imei
         });
       })
       .finally(() => setLoading(false));
@@ -435,12 +437,12 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
                   <Form.Control
                     type="text"
                     placeholder="Nomor IMEI Pada GPS"
-                    value={formData.imei || ''}
-                    onChange={(e) => setData("imei", e.target.value)}
-                    isInvalid={!!errors.imei}
+                    value={formData.gps_imei || ''}
+                    onChange={(e) => setData("gps_imei", e.target.value)}
+                    isInvalid={!!errors.gps_imei}
                   />
                   <Form.Label>Nomor IMEI Pada GPS</Form.Label>
-                  <Form.Control.Feedback type="invalid">{errors.imei}</Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{errors.gps_imei}</Form.Control.Feedback>
                 </Form.Floating>
               </div>
 

@@ -47,7 +47,7 @@ class UpdateCarDataRequest extends FormRequest
             'year_of_manufacture' => 'required|integer|digits:4|min:1886', // first cars were made around 1886
             'model' => 'required|in:' . implode(',', \App\Models\CarData::getAllCarModels()->toArray()),
             'status' => 'required|in:' . implode(',', \App\Models\CarData::getAllCarStatuses()->toArray()),
-            'description' => 'nullable|string|max:500',
+            'description' => 'nullable|string|max:1000',
             'gallery.*' => 'file|mimes:jpeg,png|max:10240', // maksimal 10 MB per file
             'engine_number' => [
                 'required',
@@ -75,6 +75,7 @@ class UpdateCarDataRequest extends FormRequest
             'child_lock' => 'nullable|boolean',
             'traction_control' => 'nullable|boolean',
             'baby_seat' => 'nullable|boolean',
+            'gps_imei' => 'nullable|string|max:16',
         ];
     }
 
@@ -123,6 +124,8 @@ class UpdateCarDataRequest extends FormRequest
             'child_lock.required' => 'Kunci anak wajib diisi.',
             'traction_control.required' => 'Kontrol traksi wajib diisi.',
             'baby_seat.required' => 'Kursi bayi wajib diisi.',
+            'gps_imei.max' => 'IMEI GPS tidak boleh lebih dari 16 karakter.',
         ];
     }
 }
+

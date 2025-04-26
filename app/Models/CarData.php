@@ -122,6 +122,7 @@ class CarData extends Model implements HasMedia
         'child_lock',
         'traction_control',
         'baby_seat',
+        'gps_imei'
     ];
 
     /**

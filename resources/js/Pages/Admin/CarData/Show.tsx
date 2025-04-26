@@ -49,6 +49,7 @@ export default function Show({ id }: { id: number }) {
     traction_control: true,
     baby_seat: true,
     gallery: [],
+    gps_imei: ''
   });
 
   const onCloseModal = () => {
@@ -95,7 +96,8 @@ export default function Show({ id }: { id: number }) {
           child_lock: data.child_lock,
           traction_control: data.traction_control,
           baby_seat: data.baby_seat,
-          gallery: []
+          gallery: [],
+          gps_imei: data.gps_imei
         });
       })
       .finally(() => setLoading(false));
@@ -116,7 +118,7 @@ export default function Show({ id }: { id: number }) {
       {createPortal((
         <Modal show={showModal} size="lg" onHide={onCloseModal}>
           <Modal.Header closeButton>
-            <Modal.Title as="h5">Ubah Data Kendaraan</Modal.Title>
+            <Modal.Title as="h5">Data Kendaraan</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <div className="mb-3 form-group">
@@ -363,6 +365,21 @@ export default function Show({ id }: { id: number }) {
                 checked={formData.baby_seat}
                 disabled
               />
+            </div>
+
+            <SeparatorText align="start" label="Data GPS" />
+
+            <div className="pt-3 mb-3 form-group">
+              <Form.Floating>
+                <Form.Control
+                  type="text"
+                  placeholder="Nomor IMEI Pada GPS"
+                  value={formData.gps_imei || ''}
+                  readOnly
+                  onChange={(e) => setData("gps_imei", e.target.value)}
+                />
+                <Form.Label>Nomor IMEI Pada GPS</Form.Label>
+              </Form.Floating>
             </div>
 
             <div className="mb-3">

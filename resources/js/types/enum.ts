@@ -19,6 +19,18 @@ export enum CarStatusEnum {
   SOLD = 'sold'
 }
 
+export enum CarTransmissionEnum {
+  MT = 'manual',
+  AT = 'automatic'
+}
+
+export enum CarRepairNoteStatusEnum {
+  PENDING = 'pending',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  CANCELED = 'canceled',
+}
+
 enum GenderUser {
   MALE = 'male',
   FEMALE = 'female',

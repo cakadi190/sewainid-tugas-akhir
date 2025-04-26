@@ -111,7 +111,8 @@ export default function Login({
 
           <SeparatorText label="Atau" wrapperClassName='mb-5 mt-3' />
 
-          <a className="btn btn-danger btn-lg" href={route("auth.google.redirect")}>Masuk dengan Google</a>
+          <a className="btn btn-danger btn-lg" href={route("auth.social.redirect", "google")}>Masuk dengan Google</a>
+          <a className="btn btn-primary btn-lg" href={route("auth.social.redirect", "facebook")}>Masuk dengan Facebook</a>
 
           <Link className="btn btn-link" href="/register">Mendaftar Akun Baru</Link>
         </div>

@@ -19,8 +19,8 @@ export default function VerifikasiEmail({ status }: { status?: string }) {
       <Head title="Verifikasi Email" />
 
       <Row>
-        <Col>
-          <div className="mb-3 text-sm text-gray-600">
+        <Col md={12}>
+          <div className="mb-3 text-center text-gray-600">
             Terima kasih telah mendaftar! Sebelum memulai, bisakah Anda
             memverifikasi alamat email Anda dengan mengklik tautan yang baru
             saja kami kirimkan ke email Anda? Jika Anda tidak menerima email
@@ -34,12 +34,12 @@ export default function VerifikasiEmail({ status }: { status?: string }) {
             </Alert>
           )}
 
-          <form onSubmit={submit}>
-            <div className="mt-4 d-flex justify-content-between">
+          <form onSubmit={submit} className='w-full'>
+            <div className="w-full mt-4 d-grid justify-content-between">
               <Button
                 type="submit"
                 disabled={processing}
-                className="gap-2 justify-content-center d-flex align-items-center me-2"
+                className="w-full gap-2 justify-content-center d-flex align-items-center me-2"
               >
                 {processing ? <Spinner size='sm' /> : (
                   <>
@@ -53,7 +53,7 @@ export default function VerifikasiEmail({ status }: { status?: string }) {
                 href={route('logout')}
                 method="post"
                 as="button"
-                className="btn btn-link"
+                className="w-full btn btn-link"
               >
                 Keluar
               </Link>

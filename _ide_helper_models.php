@@ -106,6 +106,8 @@ namespace App\Models{
  * @property string $status
  * @property string|null $notes
  * @property int $car_data_id
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereCarDataId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereCost($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereCreatedAt($value)

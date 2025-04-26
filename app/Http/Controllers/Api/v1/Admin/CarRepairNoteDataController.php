@@ -62,24 +62,24 @@ class CarRepairNoteDataController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(CarRepairNoteData $car_repair_note_datum, Request $request): JsonResponse
+    public function show(CarRepairNoteData $car_repair, Request $request): JsonResponse
     {
-        return $this->_crudHelper->singleData($car_repair_note_datum, $request, [], ['gallery']);
+        return $this->_crudHelper->singleData($car_repair, $request, [], ['gallery']);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCarRepairNoteDataRequest $request, CarRepairNoteData $car_repair_note_datum): RedirectResponse
+    public function update(UpdateCarRepairNoteDataRequest $request, CarRepairNoteData $car_repair): RedirectResponse
     {
-        return $this->_crudHelper->editData($request, $car_repair_note_datum, [], ['gallery']);
+        return $this->_crudHelper->editData($request, $car_repair, [], ['gallery']);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, CarRepairNoteData $car_repair_note_datum)
+    public function destroy(Request $request, CarRepairNoteData $car_repair)
     {
-        return $this->_crudHelper->destroyData($car_repair_note_datum, $request);
+        return $this->_crudHelper->destroyData($car_repair, $request);
     }
 }

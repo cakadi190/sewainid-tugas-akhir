@@ -56,6 +56,7 @@ class StoreCarDataRequest extends FormRequest
             'child_lock' => 'nullable|boolean',
             'traction_control' => 'nullable|boolean',
             'baby_seat' => 'nullable|boolean',
+            'gps_imei' => 'nullable|string|max:16',
         ];
     }
 
@@ -100,6 +101,7 @@ class StoreCarDataRequest extends FormRequest
             'child_lock.required' => 'Kunci anak wajib diisi.',
             'traction_control.required' => 'Kontrol traksi wajib diisi.',
             'baby_seat.required' => 'Kursi bayi wajib diisi.',
+            'gps_imei.max' => 'IMEI GPS tidak boleh lebih dari 16 karakter.',
         ];
     }
 }

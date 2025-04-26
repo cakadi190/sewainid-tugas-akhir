@@ -4,7 +4,7 @@ import { useForm } from "@inertiajs/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { createPortal } from "react-dom";
-import { CarModelEnum, CarStatusEnum } from "@/types/enum";
+import { CarModelEnum, CarStatusEnum, CarTransmissionEnum } from "@/types/enum";
 import { getCarModelLabel, getCarStatusLabel } from "@/Helpers/EnumHelper";
 import { renderSwalModal } from "@/Helpers/swal";
 import ImageUploader from "@/Components/Dropzone";
@@ -25,9 +25,9 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
     vehicle_registration_cert_expiration: '',
     color: '',
     year_of_manufacture: 0,
-    transmission: undefined,
-    model: undefined,
-    status: undefined,
+    transmission: CarTransmissionEnum.MT,
+    model: CarModelEnum.MINI_VAN,
+    status: CarStatusEnum.READY,
     description: '',
     doors: 0,
     seats: 0,
@@ -42,7 +42,7 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
     traction_control: true,
     baby_seat: true,
     gallery: [],
-    imei: ''
+    gps_imei: ''
   });
 
   const onOpen = () => setShowModal(true);
@@ -230,7 +230,7 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
                 <Form.Floating>
                   <Form.Select
                     value={formData.transmission}
-                    onChange={(e) => setData("transmission", e.target.value)}
+                    onChange={(e) => setData("transmission", e.target.value as CarTransmissionEnum)}
                     isInvalid={!!errors.transmission}
                   >
                     <option disabled value="">Pilih Salah Satu</option>
@@ -450,12 +450,12 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
                   <Form.Control
                     type="text"
                     placeholder="Nomor IMEI Pada GPS"
-                    value={formData.imei || ''}
-                    onChange={(e) => setData("imei", e.target.value)}
-                    isInvalid={!!errors.imei}
+                    value={formData.gps_imei || ''}
+                    onChange={(e) => setData("gps_imei", e.target.value)}
+                    isInvalid={!!errors.gps_imei}
                   />
                   <Form.Label>Nomor IMEI Pada GPS</Form.Label>
-                  <Form.Control.Feedback type="invalid">{errors.imei}</Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{errors.gps_imei}</Form.Control.Feedback>
                 </Form.Floating>
               </div>
 

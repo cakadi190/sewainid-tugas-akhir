@@ -16,9 +16,9 @@ class GoogleAuthController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function redirect()
+    public function redirect(string $social = 'google')
     {
-        return Socialite::driver("google")->redirect();
+        return Socialite::driver($social)->redirect();
     }
 
     /**
@@ -26,13 +26,9 @@ class GoogleAuthController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|null|void
      */
-    public function callback()
+    public function callback(string $social = 'google')
     {
-        $googleUser = Socialite::driver('google')->user();
-
-        if($googleUser->getEmail() == null || User::where('email', $googleUser->getEmail())->count() === 0) {
-            return redirect()->route('register')->with('error','Anda belum terdaftar sebagai pengguna. Silahkan mendaftar terlebih dahulu!');
-        }
+        $googleUser = Socialite::driver($social)->user();
 
         $user = User::updateOrCreate(
             ['email' => $googleUser->getEmail()],
@@ -46,5 +42,7 @@ class GoogleAuthController extends Controller
         );
 
         Auth::login($user, true);
+
+        return redirect()->route('dashboard')->with('success','Berhasil melakukan autentikasi dengan akun google anda!');
     }
 }

@@ -26,7 +26,7 @@ export default function Edit({
       isAdmin={auth.user.role === 'admin'}
       header={
         <h2 className="text-gray-800 h4">
-          Profile
+          Profil Saya
         </h2>
       }
     >

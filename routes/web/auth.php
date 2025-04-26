@@ -35,7 +35,7 @@ Route::middleware('guest')->group(function () {
         ->name('password.store');
 
 
-    Route::prefix('auth/google')->name('auth.google.')->group(function () {
+    Route::prefix('auth/{social}')->name('auth.social.')->group(function () {
         Route::get('/redirect', [App\Http\Controllers\Web\Auth\Socialite\GoogleAuthController::class, 'redirect'])->name('redirect');
         Route::get('/callback', [App\Http\Controllers\Web\Auth\Socialite\GoogleAuthController::class, 'callback'])->name('callback');
     });
