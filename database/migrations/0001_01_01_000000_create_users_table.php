@@ -13,7 +13,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id')->primary();
             $table->string('name', 50);
             $table->enum('gender', User::genders()->toArray())->nullable()->default(null);
             $table->enum('role', User::roles()->toArray())->nullable()->default(RoleUser::USER);
@@ -39,7 +39,9 @@ return new class extends Migration {
 
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id', 255)->primary();
-            $table->foreignId('user_id')->nullable()->index()->constrained()->nullOnDelete();
+            $table->unsignedInteger('user_id')->nullable()->index();
+            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
+
             $table->string('ip_address', 45)->nullable()->default(null);
             $table->text('user_agent')->nullable()->default(null);
             $table->longText('payload')->nullable()->default(null);

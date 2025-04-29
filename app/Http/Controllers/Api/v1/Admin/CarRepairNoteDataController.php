@@ -32,21 +32,9 @@ class CarRepairNoteDataController extends Controller
         }
 
         return DataTables::of($query)
-            ->addColumn('model', function (CarRepairNoteData $model) {
-                return [
-                    'label' => $model->getAttribute('model')->label(),
-                    'color' => $model->getAttribute('model')->color(),
-                ];
-            })
-            ->addColumn('status', function (CarRepairNoteData $model) {
-                return [
-                    'label' => $model->getAttribute('status')->label(),
-                    'color' => $model->getAttribute('status')->color(),
-                ];
-            })
-            ->orderColumn('name', '-name $1')
-            ->setRowId(function (CarRepairNoteData $model) {
-                return $model->id;
+            ->addColumn('car_brand', function(CarRepairNoteData $car_repair) {
+                $carData = $car_repair->carData;
+                return "{$carData->brand} {$carData->car_name} ({$carData->license_plate})";
             })
             ->make(true);
     }
@@ -56,7 +44,7 @@ class CarRepairNoteDataController extends Controller
      */
     public function store(StoreCarRepairNoteDataRequest $request)
     {
-        return $this->_crudHelper->createData($request, $this->_carRepairNoteData, [], ['gallery']);
+        return $this->_crudHelper->createData($request, $this->_carRepairNoteData, [], ['repair-gallery']);
     }
 
     /**
@@ -64,7 +52,8 @@ class CarRepairNoteDataController extends Controller
      */
     public function show(CarRepairNoteData $car_repair, Request $request): JsonResponse
     {
-        return $this->_crudHelper->singleData($car_repair, $request, [], ['gallery']);
+        $car_repair->load('carData');
+        return $this->_crudHelper->singleData($car_repair, $request, [], ['repair-gallery']);
     }
 
     /**
@@ -72,7 +61,7 @@ class CarRepairNoteDataController extends Controller
      */
     public function update(UpdateCarRepairNoteDataRequest $request, CarRepairNoteData $car_repair): RedirectResponse
     {
-        return $this->_crudHelper->editData($request, $car_repair, [], ['gallery']);
+        return $this->_crudHelper->editData($request, $car_repair, [], ['repair-gallery']);
     }
 
     /**

@@ -24,12 +24,14 @@ class StoreCarRepairNoteDataRequest extends FormRequest
         return [
             'repair_date' => ['required', 'date'],
             'description' => ['required', 'string'],
-            'cost' => ['required', 'numeric', 'min:0', 'max:9999999.99'],
+            'cost' => ['nullable', 'numeric', 'min:0', 'max:9999999.99'],
             'status' => ['required', 'string', 'in:pending,in_progress,completed'],
             'notes' => ['nullable', 'string'],
             'car_data_id' => ['required', 'exists:car_data,id'],
             'gallery' => ['nullable', 'array'],
-            'gallery.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'gallery.*' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'current_mileage' => ['nullable', 'numeric', 'min:0'],
+            'last_mileage' => ['nullable', 'numeric', 'min:0'],
         ];
     }
 
@@ -56,6 +58,11 @@ class StoreCarRepairNoteDataRequest extends FormRequest
             'gallery.*.image' => 'File harus berupa gambar',
             'gallery.*.mimes' => 'Format file tidak didukung. Gunakan: jpeg, png, jpg, atau gif',
             'gallery.*.max' => 'Ukuran file tidak boleh lebih dari 2MB',
+            'current_mileage.numeric' => 'Jarak tempuh saat ini harus berupa angka',
+            'current_mileage.min' => 'Jarak tempuh saat ini tidak boleh negatif',
+            'last_mileage.numeric' => 'Jarak tempuh terakhir harus berupa angka',
+            'last_mileage.min' => 'Jarak tempuh terakhir tidak boleh negatif',
         ];
     }
 }
+

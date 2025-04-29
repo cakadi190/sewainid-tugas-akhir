@@ -10,14 +10,17 @@ import DeleteData from "@/Components/crud/DeleteData";
 import CreateData from "./CreateData";
 import AlertPage from "@/Components/AlertPage";
 import Show from "./Show";
+import { currencyFormat } from "@/Helpers/currency";
+import { getCarRepairStatusColor, getCarRepairStatusLabel } from "@/Helpers/enums/carRepairStatusLabel";
+import dayjs from "dayjs";
 
 export default function Index() {
   const { dataTableRef, refetch } = useDataTable();
 
   const columns = [
     {
-      data: 'car_data.car_name',
-      name: 'car_data.car_name',
+      data: 'car_brand',
+      name: 'car_brand',
       title: 'Kendaraan',
       render: (value: string) => <span dangerouslySetInnerHTML={{ __html: parseAntiXss(value) }} />,
     },
@@ -25,6 +28,7 @@ export default function Index() {
       data: 'repair_date',
       name: 'repair_date',
       title: 'Tanggal Perbaikan',
+      render: (value: string) => dayjs(value).format('DD MMMM YYYY'),
     },
     {
       data: 'description',
@@ -39,15 +43,15 @@ export default function Index() {
       name: 'cost',
       title: 'Biaya',
       render: (value: number) => (
-        <span>{value}</span>
+        <span className={value > 0 ? 'fw-bold' : 'text-muted'}>{value > 0 ? currencyFormat(value) : 'Tidak Ada Biaya'}</span>
       )
     },
     {
       data: 'status',
       name: 'status',
       title: 'Status',
-      render: (value: { label: string; color: string }) => (
-        <span className={`badge bg-${value.color}`}>{value.label}</span>
+      render: (value: string) => (
+        <span className={`badge ${getCarRepairStatusColor(value)}`}>{getCarRepairStatusLabel(value)}</span>
       )
     },
     {
@@ -80,10 +84,11 @@ export default function Index() {
       header={
         <div className="d-flex justify-content-between">
           <div className="flex-column d-flex">
-            <h3 className="h4 fw-semibold">Catatan Perbaikan Kendaraan</h3>
+            <h3 className="h4 fw-semibold">Catatan Perbaikan dan Pemakaian Kendaraan</h3>
             <Breadcrumb className="m-0" bsPrefix="m-0 breadcrumb">
               <BreadcrumbItem linkAs={Link} href={route('administrator.home')}>Dasbor Beranda</BreadcrumbItem>
-              <BreadcrumbItem active>Catatan Perbaikan Kendaraan</BreadcrumbItem>
+              <BreadcrumbItem linkAs={Link} href={route('administrator.car-data.index')}>Data Kendaraan</BreadcrumbItem>
+              <BreadcrumbItem active>Catatan Perbaikan dan Pemakaian Kendaraan</BreadcrumbItem>
             </Breadcrumb>
           </div>
 
@@ -91,7 +96,7 @@ export default function Index() {
         </div>
       }
     >
-      <Head title="Catatan Perbaikan Kendaraan" />
+      <Head title="Catatan Perbaikan dan Pemakaian Kendaraan" />
 
       <AlertPage />
 

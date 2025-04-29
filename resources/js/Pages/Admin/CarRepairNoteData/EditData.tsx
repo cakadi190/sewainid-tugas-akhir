@@ -15,7 +15,7 @@ import { CarRepairNoteStatusEnum } from "@/types/enum";
 import { getCarRepairStatusLabel } from "@/Helpers/enums/carRepairStatusLabel";
 
 interface CarData {
-  id: number;
+  value: number;
   label: string;
 }
 
@@ -142,7 +142,7 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: strin
                   >
                     <option value="">Pilih Kendaraan</option>
                     {carOptions.map((car) => (
-                      <option key={car.id} value={car.id}>
+                      <option key={car.value} value={car.value}>
                         {car.label}
                       </option>
                     ))}
@@ -178,6 +178,34 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: strin
                   />
                   <Form.Label>Deskripsi Perbaikan</Form.Label>
                   <Form.Control.Feedback type="invalid">{errors.description}</Form.Control.Feedback>
+                </Form.Floating>
+              </div>
+
+              <div className="mb-3 form-group">
+                <Form.Floating>
+                  <Form.Control
+                    type="number"
+                    placeholder="Kilometer Terakhir"
+                    value={formData.last_mileage}
+                    onChange={(e) => setData("last_mileage", parseInt(e.target.value) || 0)}
+                    isInvalid={!!errors.last_mileage}
+                  />
+                  <Form.Label>Kilometer Terakhir</Form.Label>
+                  <Form.Control.Feedback type="invalid">{errors.last_mileage}</Form.Control.Feedback>
+                </Form.Floating>
+              </div>
+
+              <div className="mb-3 form-group">
+                <Form.Floating>
+                  <Form.Control
+                    type="number"
+                    placeholder="Kilometer Saat Ini"
+                    value={formData.current_mileage}
+                    onChange={(e) => setData("current_mileage", parseInt(e.target.value) || 0)}
+                    isInvalid={!!errors.current_mileage}
+                  />
+                  <Form.Label>Kilometer Saat Ini</Form.Label>
+                  <Form.Control.Feedback type="invalid">{errors.current_mileage}</Form.Control.Feedback>
                 </Form.Floating>
               </div>
 

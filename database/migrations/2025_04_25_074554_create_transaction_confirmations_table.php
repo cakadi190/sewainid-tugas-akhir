@@ -19,8 +19,9 @@ return new class extends Migration
 
             $table->string('transaction_id', 48);
             $table->foreign('transaction_id')->references('id')->on('transactions')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->unsignedInteger('user_id')->nullable()->index();
 
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
         });
     }
 

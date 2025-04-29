@@ -1,14 +1,17 @@
 <?php
 
-use App\Http\Controllers\Web\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\Web\Auth\ConfirmablePasswordController;
-use App\Http\Controllers\Web\Auth\EmailVerificationNotificationController;
-use App\Http\Controllers\Web\Auth\EmailVerificationPromptController;
-use App\Http\Controllers\Web\Auth\NewPasswordController;
-use App\Http\Controllers\Web\Auth\PasswordController;
-use App\Http\Controllers\Web\Auth\PasswordResetLinkController;
-use App\Http\Controllers\Web\Auth\RegisteredUserController;
-use App\Http\Controllers\Web\Auth\VerifyEmailController;
+use App\Http\Controllers\Web\Auth\{
+    AuthenticatedSessionController,
+    ConfirmablePasswordController,
+    EmailVerificationNotificationController,
+    EmailVerificationPromptController,
+    NewPasswordController,
+    PasswordController,
+    PasswordResetLinkController,
+    RegisteredUserController,
+    SocialAuthController,
+    VerifyEmailController,
+};
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -36,8 +39,8 @@ Route::middleware('guest')->group(function () {
 
 
     Route::prefix('auth/{social}')->name('auth.social.')->group(function () {
-        Route::get('/redirect', [App\Http\Controllers\Web\Auth\Socialite\GoogleAuthController::class, 'redirect'])->name('redirect');
-        Route::get('/callback', [App\Http\Controllers\Web\Auth\Socialite\GoogleAuthController::class, 'callback'])->name('callback');
+        Route::get('/redirect', [SocialAuthController::class, 'redirect'])->name('redirect');
+        Route::get('/callback', [SocialAuthController::class, 'callback'])->name('callback');
     });
 });
 

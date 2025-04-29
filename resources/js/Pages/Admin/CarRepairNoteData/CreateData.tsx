@@ -11,9 +11,10 @@ import ImageUploader from "@/Components/Dropzone";
 import axios from "axios";
 import { CarRepairNoteStatusEnum } from "@/types/enum";
 import { getCarRepairStatusLabel } from "@/Helpers/enums/carRepairStatusLabel";
+import { formatDateForInput } from "@/Helpers/dayjs";
 
 interface CarData {
-  id: number;
+  value: number;
   label: string;
 }
 
@@ -22,17 +23,16 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
   const [carOptions, setCarOptions] = useState<CarData[]>([]);
   const [isLoadingCars, setIsLoadingCars] = useState<boolean>(false);
 
-  const { data: formData, setData, post, processing, reset, errors, clearErrors } = useForm<Database['CarRepairNoteData'] & { gallery: File[] }>({
-    id: '',
-    repair_date: '',
+  const { data: formData, setData, post, processing, reset, errors, clearErrors } = useForm<Omit<Database['CarRepairNoteData'], 'id' | 'created_at' | 'updated_at'> & { gallery: File[] }>({
+    repair_date: formatDateForInput(new Date()),
     description: '',
     cost: 0,
     status: CarRepairNoteStatusEnum.PENDING,
     notes: '',
+    last_mileage: 0,
+    current_mileage: 0,
     car_data_id: 0,
     gallery: [],
-    created_at: '',
-    updated_at: '',
   });
 
   useEffect(() => {
@@ -110,19 +110,19 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
             <form onSubmit={submitData}>
               <div className="mb-3 form-group">
                 <Form.Floating>
-                  <Form.Select
-                    value={formData.car_data_id || ''}
-                    onChange={(e) => setData("car_data_id", e.target.value)}
-                    isInvalid={!!errors.car_data_id}
-                    disabled={isLoadingCars}
-                  >
-                    <option value="">Pilih Kendaraan</option>
-                    {carOptions.map((car) => (
-                      <option key={car.id} value={car.id}>
-                        {car.label}
-                      </option>
-                    ))}
-                  </Form.Select>
+                <Form.Select
+                  value={formData.car_data_id || ''}
+                  onChange={(e) => setData("car_data_id", parseInt(e.target.value) || 0)}
+                  isInvalid={!!errors.car_data_id}
+                  disabled={isLoadingCars}
+                >
+                  <option value="">Pilih Kendaraan</option>
+                  {carOptions.map((car) => (
+                    <option key={car.value} value={car.value}>
+                      {car.label}
+                    </option>
+                  ))}
+                </Form.Select>
                   <Form.Label>Kendaraan</Form.Label>
                   <Form.Control.Feedback type="invalid">{errors.car_data_id}</Form.Control.Feedback>
                 </Form.Floating>
@@ -154,6 +154,34 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
                   />
                   <Form.Label>Deskripsi Perbaikan</Form.Label>
                   <Form.Control.Feedback type="invalid">{errors.description}</Form.Control.Feedback>
+                </Form.Floating>
+              </div>
+
+              <div className="mb-3 form-group">
+                <Form.Floating>
+                  <Form.Control
+                    type="number"
+                    placeholder="Kilometer Terakhir"
+                    value={formData.last_mileage}
+                    onChange={(e) => setData("last_mileage", parseInt(e.target.value) || 0)}
+                    isInvalid={!!errors.last_mileage}
+                  />
+                  <Form.Label>Kilometer Terakhir</Form.Label>
+                  <Form.Control.Feedback type="invalid">{errors.last_mileage}</Form.Control.Feedback>
+                </Form.Floating>
+              </div>
+
+              <div className="mb-3 form-group">
+                <Form.Floating>
+                  <Form.Control
+                    type="number"
+                    placeholder="Kilometer Saat Ini"
+                    value={formData.current_mileage}
+                    onChange={(e) => setData("current_mileage", parseInt(e.target.value) || 0)}
+                    isInvalid={!!errors.current_mileage}
+                  />
+                  <Form.Label>Kilometer Saat Ini</Form.Label>
+                  <Form.Control.Feedback type="invalid">{errors.current_mileage}</Form.Control.Feedback>
                 </Form.Floating>
               </div>
 

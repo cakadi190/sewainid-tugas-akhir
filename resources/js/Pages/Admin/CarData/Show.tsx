@@ -383,13 +383,15 @@ export default function Show({ id }: { id: number }) {
             </div>
 
             <div className="mb-3">
-              <Form.Label htmlFor={`upload-edit-${id}`}>Unggah Foto Kendaraan</Form.Label>
+              <small className="fw-bold">Foto Kendaraan</small>
 
-              {(galleryData && galleryData?.length > 0) && (
+              {(galleryData && galleryData?.length > 0) ? (
                 <Card body className="mb-3">
                   <h6>Yang Sudah Diunggah</h6>
                   <ImageGallery readOnly initialData={galleryData as unknown as MediaLibrary[]} />
                 </Card>
+              ) : (
+                <span>Tidak Ada</span>
               )}
             </div>
           </Modal.Body>

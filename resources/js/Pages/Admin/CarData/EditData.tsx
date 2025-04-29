@@ -193,6 +193,20 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: numbe
                 <Form.Floating>
                   <Form.Control
                     type="text"
+                    placeholder="Nomor Mesin"
+                    value={formData.engine_number}
+                    onChange={(e) => setData("engine_number", e.target.value)}
+                    isInvalid={!!errors.engine_number}
+                  />
+                  <Form.Label>Nomor Mesin</Form.Label>
+                  <Form.Control.Feedback type="invalid">{errors.engine_number}</Form.Control.Feedback>
+                </Form.Floating>
+              </div>
+
+              <div className="mb-3 form-group">
+                <Form.Floating>
+                  <Form.Control
+                    type="text"
                     placeholder="Plat Nomor"
                     value={formData.license_plate}
                     onChange={(e) => setData("license_plate", e.target.value)}

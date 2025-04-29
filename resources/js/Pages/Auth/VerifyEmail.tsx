@@ -35,7 +35,7 @@ export default function VerifikasiEmail({ status }: { status?: string }) {
           )}
 
           <form onSubmit={submit} className='w-full'>
-            <div className="w-full mt-4 d-grid justify-content-between">
+            <div className="w-full mt-4 d-grid">
               <Button
                 type="submit"
                 disabled={processing}

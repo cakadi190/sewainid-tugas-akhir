@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Web\Auth\Socialite;
+namespace App\Http\Controllers\Web\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Str;
 
-class GoogleAuthController extends Controller
+class SocialAuthController extends Controller
 {
     /**
      * Redirect the user to the Google authentication page.
@@ -18,6 +18,10 @@ class GoogleAuthController extends Controller
      */
     public function redirect(string $social = 'google')
     {
+        if($social !== 'google') {
+            abort(403, 'Only google auth can be processed!');
+        }
+
         return Socialite::driver($social)->redirect();
     }
 
@@ -28,16 +32,22 @@ class GoogleAuthController extends Controller
      */
     public function callback(string $social = 'google')
     {
-        $googleUser = Socialite::driver($social)->user();
+        if($social !== 'google') {
+            abort(403, 'Only google auth can be processed!');
+        }
+
+        $socialAccount = Socialite::driver($social)->user();
 
         $user = User::updateOrCreate(
-            ['email' => $googleUser->getEmail()],
             [
-                'name' => $googleUser->getName(),
-                'google_id' => $googleUser->getId(),
+                'email' => $socialAccount->getEmail(),
+                'name' => $socialAccount->getName(),
+            ],
+            [
+                'google_id' => $socialAccount->getId(),
                 'email_verified_at' => now(),
                 'password' => bcrypt(Str::random(16)),
-                'avatar' => $googleUser->getAvatar(),
+                'avatar' => $socialAccount->getAvatar(),
             ]
         );
 

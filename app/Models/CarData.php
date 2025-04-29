@@ -47,7 +47,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property int $child_lock
  * @property int $traction_control
  * @property int $baby_seat
- * @property string|null $deleted_at
+ * @property int $rent_price
+ * @property string|null $gps_imei
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, Media> $media
  * @property-read int|null $media_count
  * @method static \Database\Factories\CarDataFactory factory($count = null, $state = [])
@@ -64,17 +65,18 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereChildLock($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereColor($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereDoors($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereEngineNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereFrameNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereGpsImei($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereLicensePlate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereLicensePlateExpiration($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereMaxSpeed($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereMedLuggage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereModel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereRentPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereSeats($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereSmallLuggage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereStatus($value)

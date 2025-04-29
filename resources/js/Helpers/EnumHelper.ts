@@ -1,4 +1,4 @@
-import { CarModelEnum, CarStatusEnum } from "@/types/enum";
+import { CarModelEnum, CarStatusEnum, CarRepairNoteStatusEnum } from "@/types/enum";
 
 /**
  * Objek yang memetakan nilai enum CarModelEnum ke label yang sesuai dalam bahasa Indonesia
@@ -29,6 +29,13 @@ const carStatusLabels: { [key in CarStatusEnum]: string } = {
   [CarStatusEnum.SOLD]: 'Terjual'
 };
 
+const carRepairStatusLabels: { [key in CarRepairNoteStatusEnum]: string } = {
+  [CarRepairNoteStatusEnum.PENDING]: 'Belum Dikerjakan',
+  [CarRepairNoteStatusEnum.IN_PROGRESS]: 'Sedang Dikerjakan',
+  [CarRepairNoteStatusEnum.COMPLETED]: 'Selesai',
+  [CarRepairNoteStatusEnum.CANCELED]: 'Dibatalkan',
+}
+
 /**
  * Mengambil label yang sesuai untuk model mobil tertentu
  * @param model - Nilai enum CarModelEnum yang akan dikonversi ke label
@@ -36,6 +43,10 @@ const carStatusLabels: { [key in CarStatusEnum]: string } = {
  */
 export function getCarModelLabel(model: CarModelEnum): string {
   return carModelLabels[model] || 'Unknown Model';
+}
+
+export function getCarRepairStatusLabel(status: CarRepairNoteStatusEnum): string {
+  return carRepairStatusLabels[status] || 'Unknown Status';
 }
 
 /**

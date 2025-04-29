@@ -82,8 +82,10 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereVehicleRegistrationCertNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereYearOfManufacture($value)
  * @mixin \Eloquent
+ * @property int $rent_price
  * @property string|null $gps_imei
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereGpsImei($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereRentPrice($value)
  */
 	class CarData extends \Eloquent implements \Spatie\MediaLibrary\HasMedia {}
 }
@@ -102,23 +104,28 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string $repair_date
  * @property string $description
- * @property string $cost
+ * @property int|null $last_mileage
+ * @property int|null $current_mileage
+ * @property string|null $cost
  * @property string $status
  * @property string|null $notes
- * @property int $car_data_id
+ * @property int|null $car_data_id
+ * @property-read \App\Models\CarData|null $carData
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereCarDataId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereCost($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereCurrentMileage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereLastMileage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereNotes($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereRepairDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereUpdatedAt($value)
  */
-	class CarRepairNoteData extends \Eloquent {}
+	class CarRepairNoteData extends \Eloquent implements \Spatie\MediaLibrary\HasMedia {}
 }
 
 namespace App\Models{
@@ -137,8 +144,8 @@ namespace App\Models{
  * @property string|null $expired_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int $car_data_id
- * @property int $user_id
+ * @property int|null $car_data_id
+ * @property int|null $user_id
  * @method static \Database\Factories\TransactionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction newQuery()
@@ -170,7 +177,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string $transaction_receipt
  * @property string $transaction_id
- * @property int $user_id
+ * @property int|null $user_id
  * @method static \Database\Factories\TransactionConfirmationFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TransactionConfirmation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TransactionConfirmation newQuery()

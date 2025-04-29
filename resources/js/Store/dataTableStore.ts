@@ -18,7 +18,6 @@ const useDataTableStore = create<DataTableState>()((set, get) => ({
     const { dataTableRef } = get()
     if (dataTableRef?.current) {
       dataTableRef.current.refetch()
-      console.log(dataTableRef.current)
     }
   }
 }))

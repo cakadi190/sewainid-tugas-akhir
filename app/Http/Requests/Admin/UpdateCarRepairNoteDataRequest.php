@@ -30,6 +30,8 @@ class UpdateCarRepairNoteDataRequest extends FormRequest
             'car_data_id' => ['sometimes', 'required', 'exists:car_data,id'],
             'gallery' => ['nullable', 'array'],
             'gallery.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'current_mileage' => ['nullable', 'numeric', 'min:0'],
+            'last_mileage' => ['nullable', 'numeric', 'min:0'],
         ];
     }
 
@@ -56,6 +58,11 @@ class UpdateCarRepairNoteDataRequest extends FormRequest
             'gallery.*.image' => 'File harus berupa gambar',
             'gallery.*.mimes' => 'Format file tidak didukung. Gunakan: jpeg, png, jpg, atau gif',
             'gallery.*.max' => 'Ukuran file tidak boleh lebih dari 2MB',
+            'current_mileage.numeric' => 'Jarak tempuh saat ini harus berupa angka',
+            'current_mileage.min' => 'Jarak tempuh saat ini tidak boleh negatif',
+            'last_mileage.numeric' => 'Jarak tempuh terakhir harus berupa angka',
+            'last_mileage.min' => 'Jarak tempuh terakhir tidak boleh negatif',
         ];
     }
 }
+

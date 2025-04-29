@@ -31,8 +31,11 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->foreignId('car_data_id')->constrained('car_data')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->unsignedInteger('car_data_id')->nullable()->index();
+            $table->unsignedInteger('user_id')->nullable()->index();
+
+            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('car_data_id')->references('id')->on('car_data')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 

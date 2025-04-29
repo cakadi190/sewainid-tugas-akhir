@@ -68,6 +68,8 @@ export interface CarRepairNoteData extends BaseModel {
   description: string;
   cost: number;
   status: CarRepairNoteStatusEnum;
+  last_mileage?: number;
+  current_mileage?: number;
   notes?: string;
   car_data_id: number | string;
 }
