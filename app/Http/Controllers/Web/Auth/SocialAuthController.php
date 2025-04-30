@@ -43,24 +43,23 @@ class SocialAuthController extends Controller
         $this->validateProvider($provider);
 
         $socialAccount = Socialite::driver($provider)->user();
+        $exists = User::where('email', $socialAccount->getEmail())->exists();
 
-        $user = User::where('email', $socialAccount->getEmail())->first();
+        $userData = [
+            'name' => $socialAccount->getName(),
+            'google_id' => $socialAccount->getId(),
+            'avatar' => $socialAccount->getAvatar(),
+        ];
 
-        if ($user) {
-            $user->update([
-                'google_id' => $socialAccount->getId(),
-                'avatar' => $socialAccount->getAvatar(),
-            ]);
-        } else {
-            $user = User::create([
-                'email' => $socialAccount->getEmail(),
-                'name' => $socialAccount->getName(),
-                'google_id' => $socialAccount->getId(),
-                'email_verified_at' => now(),
-                'password' => bcrypt(Str::random(16)),
-                'avatar' => $socialAccount->getAvatar(),
-            ]);
+        if (!$exists) {
+            $userData['email_verified_at'] = now();
+            $userData['password'] = bcrypt(Str::random(16));
         }
+
+        $user = User::updateOrCreate(
+            ['email' => $socialAccount->getEmail()],
+            $userData
+        );
 
         Auth::login($user, true);
 
@@ -77,7 +76,7 @@ class SocialAuthController extends Controller
     protected function validateProvider(string $provider): void
     {
         if (!in_array($provider, $this->allowedProviders)) {
-            abort(403, 'Hanya autentikasi ' . implode(', ', $this->allowedProviders) . ' yang dapat diproses!');
+            abort(403, 'Hanya autentikasi ' . implode(', ', $this->allowedProviders) . ' yang diizinkan!');
         }
     }
 }

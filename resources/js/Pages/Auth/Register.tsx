@@ -1,4 +1,5 @@
 import PasswordMeter from '@/Components/PasswordMeter';
+import SeparatorText from '@/Components/SeparatorText';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -40,6 +41,12 @@ export default function Register() {
           silakan buat akun Anda untuk melanjutkan pengelolaan pesanan Anda.
         </p>
       </div>
+
+      <div className="d-grid">
+        <a className="btn btn-danger btn-lg" href={route("auth.social.redirect", "google")}>Daftar dengan Google</a>
+      </div>
+
+      <SeparatorText label="Atau" wrapperClassName='mb-5 mt-3' />
 
       <form onSubmit={submit}>
         {/* Step 1 - Personal Details */}

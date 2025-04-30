@@ -19,7 +19,7 @@ export default function Dashboard() {
           <Col xs={12} md={8} lg={6}>
             <Card className="shadow-sm">
               <Card.Body className="text-dark">
-                You're logged in!
+                <p>You're logged in!</p>
 
                 <Link method="post" href={route('logout')} as="button" type="button" className="btn btn-primary">Keluar</Link>
               </Card.Body>

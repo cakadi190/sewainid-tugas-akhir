@@ -30,7 +30,7 @@ export default function Guest({ children }: PropsWithChildren) {
         <Col xs={12} md={8} className="p-0">
           <Row className="py-4 mx-0 min-vh-100">
             <Col xs={12} className="px-4 d-flex flex-column justify-content-center">
-              <div className="w-100" style={{ maxWidth: '400px', margin: '0 auto' }}>
+              <div className="w-100" style={{ maxWidth: '480px', margin: '0 auto' }}>
                 <div className="mb-4 text-center">
                   <Link href="/">
                     <ApplicationLogo height={64} />
