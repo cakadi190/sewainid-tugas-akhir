@@ -8,7 +8,7 @@ import { renderSwalModal } from "@/Helpers/swal";
 import Database from "@/types/database";
 import SeparatorText from "@/Components/SeparatorText";
 import ImageUploader from "@/Components/Dropzone";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { getCarRepairStatusLabel } from "@/Helpers/enums/carRepairStatusLabel";
 import { formatDateForInput } from "@/Helpers/dayjs";
 import { CarRepairNoteStatusEnum } from "@/Helpers/enum";
@@ -47,10 +47,17 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
       .then((response) => {
         setCarOptions(response.data.data);
       })
-      .catch(() => {
-        renderSwalModal('error', {
-          title: 'Kesalahan!',
-          text: 'Gagal memuat data kendaraan!',
+      .catch((error: AxiosError) => {
+        if (error.status !== 404) {
+          renderSwalModal('error', {
+            title: 'Kesalahan!',
+            text: 'Gagal memuat data kendaraan!',
+          });
+        }
+
+        renderSwalModal('warning', {
+          title: 'Waduh!',
+          text: 'Data mobilnya masih kosong nih, silahkan tambahkan terlebih dahulu!',
         });
       })
       .finally(() => {
@@ -110,19 +117,19 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
             <form onSubmit={submitData}>
               <div className="mb-3 form-group">
                 <Form.Floating>
-                <Form.Select
-                  value={formData.car_data_id || ''}
-                  onChange={(e) => setData("car_data_id", parseInt(e.target.value) || 0)}
-                  isInvalid={!!errors.car_data_id}
-                  disabled={isLoadingCars}
-                >
-                  <option value="">Pilih Kendaraan</option>
-                  {carOptions.map((car) => (
-                    <option key={car.value} value={car.value}>
-                      {car.label}
-                    </option>
-                  ))}
-                </Form.Select>
+                  <Form.Select
+                    value={formData.car_data_id || ''}
+                    onChange={(e) => setData("car_data_id", parseInt(e.target.value) || 0)}
+                    isInvalid={!!errors.car_data_id}
+                    disabled={isLoadingCars}
+                  >
+                    <option value="">Pilih Kendaraan</option>
+                    {carOptions.map((car) => (
+                      <option key={car.value} value={car.value}>
+                        {car.label}
+                      </option>
+                    ))}
+                  </Form.Select>
                   <Form.Label>Kendaraan</Form.Label>
                   <Form.Control.Feedback type="invalid">{errors.car_data_id}</Form.Control.Feedback>
                 </Form.Floating>

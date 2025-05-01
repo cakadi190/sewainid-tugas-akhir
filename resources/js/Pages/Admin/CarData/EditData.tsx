@@ -100,6 +100,8 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
           ac: data.ac,
           audio: data.audio,
           abs: data.abs,
+          mileage: data.mileage,
+          condition: data.condition,
           child_lock: data.child_lock,
           traction_control: data.traction_control,
           baby_seat: data.baby_seat,
@@ -156,7 +158,7 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
           </Modal.Header>
           <Modal.Body>
             <form onSubmit={submitData}>
-              <Row>
+              <Row className="gx-3">
                 <div className="mb-3 col-md-6 form-group">
                   <Form.Floating>
                     <Form.Control
@@ -245,20 +247,6 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                 <div className="mb-3 col-md-6 form-group">
                   <Form.Floating>
                     <Form.Control
-                      type="text"
-                      placeholder="Warna"
-                      value={formData.color}
-                      onChange={(e) => setData("color", e.target.value)}
-                      isInvalid={!!errors.color}
-                    />
-                    <Form.Label>Warna</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.color}</Form.Control.Feedback>
-                  </Form.Floating>
-                </div>
-
-                <div className="mb-3 col-md-6 form-group">
-                  <Form.Floating>
-                    <Form.Control
                       type="number"
                       placeholder="Tahun Pembuatan"
                       value={formData.year_of_manufacture}
@@ -316,12 +304,12 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                   <Form.Floating>
                     <Form.Control
                       type="date"
-                      placeholder="Tanggal Kadaluarsa Nomor Polisi"
+                      placeholder="Masa Berlaku Nomor Polisi"
                       value={formData.license_plate_expiration}
                       onChange={(e) => setData("license_plate_expiration", e.target.value)}
                       isInvalid={!!errors.license_plate_expiration}
                     />
-                    <Form.Label>Tanggal Kadaluarsa Nomor Polisi</Form.Label>
+                    <Form.Label>Masa Berlaku Nomor Polisi</Form.Label>
                     <Form.Control.Feedback type="invalid">{errors.license_plate_expiration}</Form.Control.Feedback>
                   </Form.Floating>
                 </div>
@@ -344,17 +332,48 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                   <Form.Floating>
                     <Form.Control
                       type="date"
-                      placeholder="Tanggal Kadaluarsa Sertifikat Registrasi Kendaraan"
+                      placeholder="Masa Berlaku Sertifikat Registrasi Kendaraan"
                       value={formData.vehicle_registration_cert_expiration}
                       onChange={(e) => setData("vehicle_registration_cert_expiration", e.target.value)}
                       isInvalid={!!errors.vehicle_registration_cert_expiration}
                     />
-                    <Form.Label>Tanggal Kadaluarsa Sertifikat Registrasi Kendaraan</Form.Label>
+                    <Form.Label>Masa Berlaku Sertifikat Registrasi Kendaraan</Form.Label>
                     <Form.Control.Feedback type="invalid">{errors.vehicle_registration_cert_expiration}</Form.Control.Feedback>
                   </Form.Floating>
                 </div>
 
                 <div className="mb-3 col-md-6 form-group">
+                  <Form.Floating>
+                    <Form.Control
+                      type="text"
+                      placeholder="Warna"
+                      value={formData.color}
+                      onChange={(e) => setData("color", e.target.value)}
+                      isInvalid={!!errors.color}
+                    />
+                    <Form.Label>Warna</Form.Label>
+                    <Form.Control.Feedback type="invalid">{errors.color}</Form.Control.Feedback>
+                  </Form.Floating>
+                </div>
+
+                <div className="mb-3 col-md-6 form-group">
+                  <Form.Floating>
+                    <Form.Control
+                      type="number"
+                      placeholder="0"
+                      value={formData.mileage ?? ''}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value);
+                        setData("mileage", isNaN(value) ? undefined : value);
+                      }}
+                      isInvalid={!!errors.mileage}
+                    />
+                    <Form.Label>Kilometer Berjalan</Form.Label>
+                    <Form.Control.Feedback type="invalid">{errors.mileage}</Form.Control.Feedback>
+                  </Form.Floating>
+                </div>
+
+                <div className="mb-3 col-md-12 form-group">
                   <Form.Floating>
                     <Form.Control
                       type="text"
@@ -388,13 +407,13 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
 
               <div className="mb-3 form-group">
                 <Form.Floating>
-                    <Form.Control
-                      type="number"
-                      placeholder="0"
-                      value={Number.isNaN(formData.rent_price) ? '' : formData.rent_price}
-                      onChange={(e) => setData("rent_price", parseInt(e.target.value))}
-                      isInvalid={!!errors.rent_price}
-                    />
+                  <Form.Control
+                    type="number"
+                    placeholder="0"
+                    value={formData.rent_price}
+                    onChange={(e) => setData("rent_price", parseInt(e.target.value))}
+                    isInvalid={!!errors.rent_price}
+                  />
                   <Form.Label>Harga Sewa Harian</Form.Label>
                   <Form.Control.Feedback type="invalid">{errors.rent_price}</Form.Control.Feedback>
                 </Form.Floating>

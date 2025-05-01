@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Enums\CarConditionEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -47,6 +48,10 @@ class UpdateCarDataRequest extends FormRequest
             'year_of_manufacture' => 'required|integer|digits:4|min:1886', // first cars were made around 1886
             'model' => 'required|in:' . implode(',', \App\Models\CarData::getAllCarModels()->toArray()),
             'status' => 'required|in:' . implode(',', \App\Models\CarData::getAllCarStatuses()->toArray()),
+            'condition' => [
+                'required',
+                Rule::in(CarConditionEnum::cases()),
+            ],
             'description' => 'nullable|string|max:1000',
             'gallery.*' => 'file|mimes:jpeg,png|max:10240', // maksimal 10 MB per file
             'engine_number' => [
@@ -87,6 +92,7 @@ class UpdateCarDataRequest extends FormRequest
             'traction_control' => 'nullable|boolean',
             'baby_seat' => 'nullable|boolean',
             'gps_imei' => 'nullable|string|max:16',
+            'mileage' => 'nullable|integer|min:0',
         ];
     }
 
@@ -143,6 +149,9 @@ class UpdateCarDataRequest extends FormRequest
             'traction_control.required' => 'Kontrol traksi wajib diisi.',
             'baby_seat.required' => 'Kursi bayi wajib diisi.',
             'gps_imei.max' => 'IMEI GPS tidak boleh lebih dari 16 karakter.',
+            'mileage.min' => 'Kilometer berjalan minimal 0.',
+            'condition.in' => 'Kondisi mobil yang dipilih tidak valid.',
+            'condition.required' => 'Kondisi mobil wajib dipilih.',
         ];
     }
 }

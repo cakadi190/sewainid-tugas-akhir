@@ -52,6 +52,7 @@ export interface CarData extends BaseModel {
   condition?: CarConditionEnum;
   rent_price: number;
   doors: number;
+  mileage?: number;
   seats: number;
   max_speed: number;
   big_luggage: number;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Enums\CarConditionEnum;
 use App\Enums\FuelTypeEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -38,6 +39,7 @@ class StoreCarDataRequest extends FormRequest
             'model' => ['required', Rule::in(CarModelEnum::cases())],
             'status' => ['required', Rule::in(CarStatusEnum::cases())],
             'transmission' => ['required', Rule::in(CarTransmissionEnum::cases())],
+            'condition' => ['required', Rule::in(CarConditionEnum::cases())],
             'description' => 'nullable|string|max:1000',
             'gallery' => 'nullable|array|max:3',
             'gallery.*' => 'file|mimes:jpeg,png|max:10240',
@@ -61,6 +63,7 @@ class StoreCarDataRequest extends FormRequest
             'traction_control' => 'nullable|boolean',
             'baby_seat' => 'nullable|boolean',
             'gps_imei' => 'nullable|string|max:16',
+            'mileage' => 'nullable|integer|min:0',
         ];
     }
 
@@ -111,6 +114,9 @@ class StoreCarDataRequest extends FormRequest
             'doors.min' => 'Jumlah pintu minimal 0.',
             'seats.min' => 'Jumlah kursi minimal 0.',
             'max_speed.min' => 'Kecepatan maksimal minimal 0.',
+            'mileage.min' => 'Kilometer berjalan minimal 0.',
+            'condition.in' => 'Kondisi mobil yang dipilih tidak valid.',
+            'condition.required' => 'Kondisi mobil wajib dipilih.',
         ];
     }
 }

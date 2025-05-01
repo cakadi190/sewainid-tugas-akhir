@@ -16,13 +16,17 @@ return new class extends Migration {
             $table->id();
             $table->timestamps();
 
-            $table->unsignedBigInteger('car_data_id')->nullable()->index();
-            $table->unsignedBigInteger('transaction_id')->nullable()->index();
             $table->longText('description')->nullable();
             $table->unsignedBigInteger('mileage')->nullable();
             $table->enum('type', UsageNoteData::getAllType()->toArray())->default(UsageNoteTypeEnum::NORMAL);
 
-            $table->foreign('car_data_id')->references('id')->on('car_data')->nullOnDelete();
+            $table->unsignedInteger('user_id')->nullable()->index();
+            $table->unsignedInteger('car_data_id')->nullable()->index();
+
+            $table->string('transaction_id', 48)->nullable()->index();
+
+            $table->foreign('car_data_id')->references('id')->on('car_data')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
             $table->foreign('transaction_id')->references('id')->on('transactions')->nullOnDelete();
         });
     }
@@ -35,4 +39,3 @@ return new class extends Migration {
         Schema::dropIfExists('usage_note_data');
     }
 };
-

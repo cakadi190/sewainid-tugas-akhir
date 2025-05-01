@@ -91,6 +91,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereVehicleRegistrationCertNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereYearOfManufacture($value)
  * @mixin \Eloquent
+ * @property int $mileage
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereCondition($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereMileage($value)
  */
 	class CarData extends \Eloquent implements \Spatie\MediaLibrary\HasMedia {}
 }
@@ -142,6 +145,20 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Review newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Review query()
  * @mixin \Eloquent
+ * @property int $id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int|null $user_id
+ * @property int|null $car_data_id
+ * @property int $rating Rating antara angka 1 s/d 10
+ * @property string|null $description
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Review whereCarDataId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Review whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Review whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Review whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Review whereRating($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Review whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Review whereUserId($value)
  */
 	class Review extends \Eloquent {}
 }
@@ -189,6 +206,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereUserId($value)
  * @mixin \Eloquent
+ * @property string $rental_status
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereRentalStatus($value)
  */
 	class Transaction extends \Eloquent {}
 }
@@ -228,6 +247,23 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData query()
  * @mixin \Eloquent
+ * @property int $id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $description
+ * @property int|null $mileage
+ * @property int|null $user_id
+ * @property int|null $car_data_id
+ * @property string|null $transaction_id
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData whereCarDataId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData whereMileage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData whereTransactionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData whereUserId($value)
  */
 	class UsageNoteData extends \Eloquent {}
 }

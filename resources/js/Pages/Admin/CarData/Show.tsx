@@ -11,12 +11,12 @@ import { MediaLibrary } from "@/types/medialibrary";
 import ImageGallery from "@/Components/ImageGallery";
 import { GridContainer, GridItem } from "@/InternalBorderGrid";
 import { PiBabyCarriage, PiCarProfileDuotone, PiLock, PiMusicNote, PiPalette, PiSeat, PiShield, PiSnowflake, PiSpeedometer, PiTag, PiTire } from "react-icons/pi";
-import { getCarFuelTypeLabel, getCarModelLabel, getCarStatusColor, getCarStatusIcon, getCarStatusLabel, getCarTransmissionLabel } from "@/Helpers/EnumHelper";
+import { getCarConditionLabel, getCarFuelTypeLabel, getCarModelLabel, getCarStatusColor, getCarStatusIcon, getCarStatusLabel, getCarTransmissionLabel } from "@/Helpers/EnumHelper";
 import { GiGearStickPattern } from "react-icons/gi";
 import LabelValue from "@/Components/LabelValue";
 import EditData from "./EditData";
 import { twMerge } from "tailwind-merge";
-import { CarModelEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum } from "@/Helpers/enum";
+import { CarConditionEnum, CarModelEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum } from "@/Helpers/enum";
 
 interface ShowProps {
   car_data: Database['CarData'];
@@ -219,7 +219,7 @@ const CarStatus: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
         </div>
         <div className="d-flex justify-content-between">
           <div className="text-muted">Kondisi Kendaraan</div>
-          <div className="fw-bold">Sangat Baik</div>
+          <div className="fw-bold">{getCarConditionLabel(carData.condition as CarConditionEnum)}</div>
         </div>
         <div className="d-flex justify-content-between">
           <div className="text-muted">Terakhir Digunakan</div>
@@ -238,7 +238,7 @@ const CarStatus: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
               <Card.Text className="mb-0">Nomor Polisi</Card.Text>
             </div>
             <div className="d-flex align-items-end flex-column">
-              <small className="mb-1 d-flex">Kadaluarsa</small>
+              <small className="mb-1 d-flex">Masa Berlaku</small>
               <Badge bg="light" text="dark" className="border">
                 {dayjs(carData.license_plate_expiration).format('DD MMM YYYY')}
               </Badge>
@@ -268,7 +268,7 @@ const CarStatus: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
               <Card.Text className="mb-0">Nomor STNK</Card.Text>
             </div>
             <div className="d-flex align-items-end flex-column">
-              <small className="mb-1 d-flex">Kadaluarsa</small>
+              <small className="mb-1 d-flex">Masa Berlaku</small>
               <Badge bg="light" text="dark" className="border">
                 {dayjs(carData.vehicle_registration_cert_expiration).format('DD MMM YYYY')}
               </Badge>
@@ -493,13 +493,13 @@ const CarRegistration = ({ carData }: { carData: Database['CarData'] }) => {
 
       <Row className="g-1">
         <Col md="6" xxl="4">
-          <LabelValue label="Nomor Rangka" value={carData.frame_number} bottomBorder={false} />
+          <LabelValue label="Nomor Rangka" value={<span className="font-mono">{carData.frame_number}</span>} bottomBorder={false} />
         </Col>
         <Col md="6" xxl="4">
-          <LabelValue label="Nomor Mesin" value={carData.engine_number} bottomBorder={false} />
+          <LabelValue label="Nomor Mesin" value={<span className="font-mono">{carData.engine_number}</span>} bottomBorder={false} />
         </Col>
         <Col md="6" xxl="4">
-          <LabelValue label="Nomor Polisi / TNKB" value={carData.license_plate || '-'} bottomBorder={false} />
+          <LabelValue label="Nomor Polisi / TNKB" value={<span className="font-mono">{carData.license_plate || '-'}</span>} bottomBorder={false} />
         </Col>
         <Col md="6" xxl="4">
           <LabelValue
@@ -511,7 +511,7 @@ const CarRegistration = ({ carData }: { carData: Database['CarData'] }) => {
         <Col md="6" xxl="4">
           <LabelValue
             label="Nomor STNK"
-            value={carData.vehicle_registration_cert_number}
+            value={<span className="font-mono">{carData.vehicle_registration_cert_number}</span>}
             bottomBorder={false}
           />
         </Col>
@@ -548,76 +548,76 @@ const CarHistory = () => {
   return (
     <div>
       <div className="gap-3 d-flex flex-column">
-      {[1, 2, 3].map((i) => (
-        <Card key={i} className="mb-0">
-          <Card.Header className="bg-white d-flex justify-content-between align-items-center">
-            <div className="gap-3 d-flex align-items-center">
-              <div className="overflow-hidden rounded-circle" style={{ width: '40px', height: '40px' }}>
-                <img
-                  src={`https://placehold.co/40/6c757d/ffffff?text=U${i}`}
-                  alt="User"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = `https://placehold.co/40/6c757d/ffffff?text=U${i}`;
-                  }}
-                  width={40}
-                  height={40}
-                />
+        {[1, 2, 3].map((i) => (
+          <Card key={i} className="mb-0">
+            <Card.Header className="bg-white d-flex justify-content-between align-items-center">
+              <div className="gap-3 d-flex align-items-center">
+                <div className="overflow-hidden rounded-circle" style={{ width: '40px', height: '40px' }}>
+                  <img
+                    src={`https://placehold.co/40/6c757d/ffffff?text=U${i}`}
+                    alt="User"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = `https://placehold.co/40/6c757d/ffffff?text=U${i}`;
+                    }}
+                    width={40}
+                    height={40}
+                  />
+                </div>
+                <div>
+                  <p className="mb-0 fw-semibold">Budi Santoso</p>
+                  <p className="mb-0 text-muted small">ID: RS-2023-{1000 + i}</p>
+                </div>
               </div>
+              <Badge bg="light" text="dark" className="border">Selesai</Badge>
+            </Card.Header>
+
+            <Card.Body>
+              <Row>
+                <Col xs={12} sm={4} className="mb-3 mb-sm-0">
+                  <div className="gap-2 d-flex">
+                    <FaCalendar size={16} className="mt-1 text-muted" />
+                    <div>
+                      <p className="mb-0 text-muted small fw-medium">Periode Sewa</p>
+                      <p className="mb-0 small">12 Apr - 15 Apr 2023</p>
+                      <p className="mb-0 text-muted small">3 hari</p>
+                    </div>
+                  </div>
+                </Col>
+                <Col xs={12} sm={4} className="mb-3 mb-sm-0">
+                  <div className="gap-2 d-flex">
+                    <FaMapPin size={16} className="mt-1 text-muted" />
+                    <div>
+                      <p className="mb-0 text-muted small fw-medium">Lokasi</p>
+                      <p className="mb-0 small">Kota Surakarta</p>
+                    </div>
+                  </div>
+                </Col>
+                <Col xs={12} sm={4}>
+                  <div className="gap-2 d-flex">
+                    <FaUser size={16} className="mt-1 text-muted" />
+                    <div>
+                      <p className="mb-0 text-muted small fw-medium">Pengemudi</p>
+                      <p className="mb-0 small">Dengan Pengemudi</p>
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+            </Card.Body>
+
+            <Card.Footer className="bg-white d-flex justify-content-between align-items-center">
               <div>
-                <p className="mb-0 fw-semibold">Budi Santoso</p>
-                <p className="mb-0 text-muted small">ID: RS-2023-{1000 + i}</p>
+                <p className="mb-0 small fw-medium">Total Pembayaran</p>
+                <p className="mb-0 fw-bold">{currencyFormat(1050000)}</p>
               </div>
-            </div>
-            <Badge bg="light" text="dark" className="border">Selesai</Badge>
-          </Card.Header>
-
-          <Card.Body>
-            <Row>
-              <Col xs={12} sm={4} className="mb-3 mb-sm-0">
-                <div className="gap-2 d-flex">
-                  <FaCalendar size={16} className="mt-1 text-muted" />
-                  <div>
-                    <p className="mb-0 text-muted small fw-medium">Periode Sewa</p>
-                    <p className="mb-0 small">12 Apr - 15 Apr 2023</p>
-                    <p className="mb-0 text-muted small">3 hari</p>
-                  </div>
-                </div>
-              </Col>
-              <Col xs={12} sm={4} className="mb-3 mb-sm-0">
-                <div className="gap-2 d-flex">
-                  <FaMapPin size={16} className="mt-1 text-muted" />
-                  <div>
-                    <p className="mb-0 text-muted small fw-medium">Lokasi</p>
-                    <p className="mb-0 small">Kota Surakarta</p>
-                  </div>
-                </div>
-              </Col>
-              <Col xs={12} sm={4}>
-                <div className="gap-2 d-flex">
-                  <FaUser size={16} className="mt-1 text-muted" />
-                  <div>
-                    <p className="mb-0 text-muted small fw-medium">Pengemudi</p>
-                    <p className="mb-0 small">Dengan Pengemudi</p>
-                  </div>
-                </div>
-              </Col>
-            </Row>
-          </Card.Body>
-
-          <Card.Footer className="bg-white d-flex justify-content-between align-items-center">
-            <div>
-              <p className="mb-0 small fw-medium">Total Pembayaran</p>
-              <p className="mb-0 fw-bold">{currencyFormat(1050000)}</p>
-            </div>
-            <Button variant="light" size="sm" className="gap-1 d-flex align-items-center">
-              Detail
-              <FaChevronRight size={16} />
-            </Button>
-          </Card.Footer>
-        </Card>
-      ))}
-    </div>
+              <Button variant="light" size="sm" className="gap-1 d-flex align-items-center">
+                Detail
+                <FaChevronRight size={16} />
+              </Button>
+            </Card.Footer>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };

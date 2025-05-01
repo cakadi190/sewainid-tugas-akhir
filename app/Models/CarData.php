@@ -116,6 +116,7 @@ class CarData extends Model implements HasMedia
         'vehicle_registration_cert_number',
         'vehicle_registration_cert_expiration',
         'color',
+        'condition',
         'year_of_manufacture',
         'transmission',
         'model',
