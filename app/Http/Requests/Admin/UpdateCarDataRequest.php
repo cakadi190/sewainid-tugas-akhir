@@ -61,6 +61,17 @@ class UpdateCarDataRequest extends FormRequest
                 'max:255',
                 Rule::unique('car_data')->ignore($this->route('car_datum')),
             ],
+            'vehicle_ownership_book_number' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('car_data', 'vehicle_ownership_book_number')->ignore($this->route('car_datum')),
+            ],
+            'rent_price' => 'required|integer|min:0',
+            'fuel_type' => [
+                'required',
+                Rule::in(\App\Enums\FuelTypeEnum::cases()),
+            ],
             'vehicle_registration_cert_expiration' => 'required|date',
             'license_plate_expiration' => 'required|date',
             'big_luggage' => 'required|integer|min:0',
@@ -110,8 +121,15 @@ class UpdateCarDataRequest extends FormRequest
             'engine_number.unique' => 'Nomor mesin ini sudah terdaftar.',
             'vehicle_registration_cert_number.required' => 'STNK wajib diisi.',
             'vehicle_registration_cert_number.unique' => 'STNK ini sudah terdaftar.',
+            'vehicle_ownership_book_number.required' => 'Nomor BPKB wajib diisi.',
+            'vehicle_ownership_book_number.unique' => 'Nomor BPKB ini sudah terdaftar.',
+            'rent_price.required' => 'Harga sewa wajib diisi.',
+            'rent_price.integer' => 'Harga sewa harus berupa angka.',
+            'rent_price.min' => 'Harga sewa tidak boleh negatif.',
+            'fuel_type.required' => 'Jenis bahan bakar wajib dipilih.',
+            'fuel_type.in' => 'Jenis bahan bakar yang dipilih tidak valid.',
             'vehicle_registration_cert_expiration.required' => 'Tanggal kadaluarsa STNK wajib diisi.',
-            'license_plate_expiration.required' => 'Tanggal kadaluarsa plat nomor wajib diisi.',
+            'license_plate_expiration.required' => 'Tanggal kadaluarsa nomor polisi wajib diisi.',
             'doors.required' => 'Jumlah pintu wajib diisi.',
             'seats.required' => 'Jumlah kursi wajib diisi.',
             'max_speed.required' => 'Kecepatan maksimal wajib diisi.',
@@ -128,4 +146,3 @@ class UpdateCarDataRequest extends FormRequest
         ];
     }
 }
-

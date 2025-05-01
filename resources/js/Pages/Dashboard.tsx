@@ -8,9 +8,9 @@ import Card from 'react-bootstrap/Card';
 export default function Dashboard() {
   return (
     <AuthenticatedLayout
-      // header={
-      //   <h2 className="mb-0 h4 text-dark">Dashboard</h2> // Use Bootstrap text classes
-      // }
+      header={
+        <h2 className="mb-0 h4 text-dark">Dashboard</h2>
+      }
     >
       <Head title="Dashboard" />
 

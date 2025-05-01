@@ -21,7 +21,8 @@ export enum CarStatusEnum {
 
 export enum CarTransmissionEnum {
   MT = 'manual',
-  AT = 'automatic'
+  AT = 'automatic',
+  SMT = 'semi_manual',
 }
 
 export enum CarRepairNoteStatusEnum {
@@ -31,14 +32,44 @@ export enum CarRepairNoteStatusEnum {
   CANCELED = 'canceled',
 }
 
-enum GenderUser {
+export enum FuelEnum {
+  GASOLINE = 'gasoline',
+  DIESEL = 'diesel',
+  ELECTRIC = 'electric',
+  LPG = 'lpg',
+  CNG = 'cng',
+  BIOFUEL = 'biofuel',
+  HYDROGEN = 'hydrogen',
+  HYBRID = 'hybrid',
+  PLUGIN_HYBRID = 'plugin_hybrid',
+  OTHER = 'other',
+}
+
+export enum GenderUser {
   MALE = 'male',
   FEMALE = 'female',
 }
 
-enum RoleUser {
+export enum RoleUser {
   ADMIN = 'admin',
   MONETARY = 'monetary',
   DRIVER = 'driver',
   USER = 'user',
+}
+
+export enum CarConditionEnum {
+  EXCELLENT = 'excellent',
+  GOOD = 'good',
+  FAIR = 'fair',
+  POOR = 'poor',
+  DAMAGED = 'damaged',
+  UNDER_REPAIR = 'under_repair',
+}
+
+export enum RentalStatusEnum {
+  DRAFT = 'draft',
+  PENDING = 'pending',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  CANCELED = 'canceled',
 }

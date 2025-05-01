@@ -24,6 +24,8 @@ const NavbarWrapperStyle = styled(Navbar, {
   left: 20rem;
   padding-top: 1.75rem;
   padding-bottom: 1.5rem;
+  padding-inline-start: 1rem;
+  padding-inline-end: 1rem;
   transition: all .2s;
   right: 0;
 
@@ -31,6 +33,17 @@ const NavbarWrapperStyle = styled(Navbar, {
     width: 100%;
     left: 0;
   `}
+
+  @media (992px <= width <= 1400px) {
+    left: 18rem;
+    width: calc(100% - 18rem);
+
+    ${({ isToggled }) => !isToggled && `
+      margin-left: 0;
+      left: 0;
+      width: 100%;
+    `}
+  }
 
   @media (width <= 992px) {
     width: 100%;

@@ -12,7 +12,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
- * 
+ * Maintenance Record Model
  *
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at

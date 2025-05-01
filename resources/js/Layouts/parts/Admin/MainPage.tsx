@@ -15,9 +15,19 @@ flex-direction: column;
 overflow-x: hidden;
 
 ${({ isToggled }) => !isToggled && `
-margin-left: 0;
-width: 100%;
+  margin-left: 0;
+  width: 100%;
 `}
+
+@media (992px <= width <= 1400px) {
+  margin-left: 18rem;
+  width: calc(100% - 18rem);
+
+  ${({ isToggled }) => !isToggled && `
+    margin-left: 0;
+    width: 100%;
+  `}
+}
 
 @media (width <= 992px) {
   width: 100%;
@@ -29,7 +39,9 @@ width: 100%;
 `;
 
 const MainPageInnerStyled = styled.div`
-margin-bottom: 1rem;`;
+margin-bottom: 1rem;
+padding: 0 1rem;
+`;
 
 export default function MainPage({ children }: PropsWithChildren) {
   const { isOpen } = useSidebar();

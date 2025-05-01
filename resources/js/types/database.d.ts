@@ -1,4 +1,4 @@
-import { CarModelEnum, CarRepairNoteStatusEnum, CarStatusEnum, CarTransmissionEnum } from "./enum";
+import { CarConditionEnum } from "@/Helpers/enum";
 
 // Base Interfaces
 export interface DeleteColumns {
@@ -42,11 +42,15 @@ export interface CarData extends BaseModel {
   vehicle_registration_cert_number: string;
   vehicle_registration_cert_expiration: string;
   color: string;
+  vehicle_ownership_book_number: string;
   year_of_manufacture: number;
   transmission?: CarTransmissionEnum;
   model?: CarModelEnum;
+  fuel_type?: FuelEnum;
   status?: CarStatusEnum;
   description?: string;
+  condition?: CarConditionEnum;
+  rent_price: number;
   doors: number;
   seats: number;
   max_speed: number;

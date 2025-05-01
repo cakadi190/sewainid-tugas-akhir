@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Enums\FuelTypeEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Enums\CarModelEnum;
@@ -43,6 +44,9 @@ class StoreCarDataRequest extends FormRequest
             'engine_number' => 'required|string|max:255|unique:car_data,engine_number',
             'vehicle_registration_cert_number' => 'required|string|max:255|unique:car_data,vehicle_registration_cert_number',
             'vehicle_registration_cert_expiration' => 'required|date',
+            'vehicle_ownership_book_number' => 'required|string|max:255|unique:car_data,vehicle_ownership_book_number',
+            'rent_price' => 'required|integer|min:0',
+            'fuel_type' => ['required', Rule::in(FuelTypeEnum::cases())],
             'license_plate_expiration' => 'required|date',
             'big_luggage' => 'required|integer|min:0',
             'med_luggage' => 'required|integer|min:0',
@@ -91,7 +95,7 @@ class StoreCarDataRequest extends FormRequest
             'vehicle_registration_cert_number.required' => 'STNK wajib diisi.',
             'vehicle_registration_cert_number.unique' => 'STNK ini sudah terdaftar.',
             'vehicle_registration_cert_expiration.required' => 'Tanggal kadaluarsa STNK wajib diisi.',
-            'license_plate_expiration.required' => 'Tanggal kadaluarsa plat nomor wajib diisi.',
+            'license_plate_expiration.required' => 'Tanggal kadaluarsa nomor polisi wajib diisi.',
             'big_luggage.required' => 'Kapasitas bagasi besar wajib diisi.',
             'med_luggage.required' => 'Kapasitas bagasi sedang wajib diisi.',
             'small_luggage.required' => 'Kapasitas bagasi kecil wajib diisi.',
@@ -102,6 +106,12 @@ class StoreCarDataRequest extends FormRequest
             'traction_control.required' => 'Kontrol traksi wajib diisi.',
             'baby_seat.required' => 'Kursi bayi wajib diisi.',
             'gps_imei.max' => 'IMEI GPS tidak boleh lebih dari 16 karakter.',
+            'description.max' => 'Deskripsi mobil tidak boleh lebih dari 1000 karakter.',
+            'rent_price.min' => 'Harga sewa minimal 0.',
+            'doors.min' => 'Jumlah pintu minimal 0.',
+            'seats.min' => 'Jumlah kursi minimal 0.',
+            'max_speed.min' => 'Kecepatan maksimal minimal 0.',
         ];
     }
 }
+

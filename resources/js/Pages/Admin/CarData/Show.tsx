@@ -1,412 +1,693 @@
-import axios from "axios";
-import SeparatorText from "@/Components/SeparatorText";
-import ImageGallery from "@/Components/ImageGallery";
+import { compactCurrencyFormat, currencyFormat, mileageFormat, speedFormat } from "@/Helpers/number";
+import { AuthenticatedAdmin } from "@/Layouts/AuthenticatedLayout";
 import Database from "@/types/database";
-import { getCarModelLabel, getCarStatusLabel } from "@/Helpers/EnumHelper";
-import { CarModelEnum, CarStatusEnum } from "@/types/enum";
-import { faEye } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useForm } from "@inertiajs/react";
-import { useState } from "react";
-import { Button, Card, Form, Modal, Spinner } from "react-bootstrap";
-import { createPortal } from "react-dom";
+import { Head, Link } from "@inertiajs/react";
+import { Badge, Breadcrumb, BreadcrumbItem, Button, Card, Col, Nav, Row, Tab } from "react-bootstrap";
+import { FaChevronRight, FaExclamationTriangle, FaMapPin, FaUser } from "react-icons/fa";
+import { FaArrowLeft, FaCalendar, FaClock, FaGasPump, FaTag } from "react-icons/fa6";
+import dayjs from "@/Helpers/dayjs";
+import { parseAntiXss } from "@/Helpers/string";
 import { MediaLibrary } from "@/types/medialibrary";
+import ImageGallery from "@/Components/ImageGallery";
+import { GridContainer, GridItem } from "@/InternalBorderGrid";
+import { PiBabyCarriage, PiCarProfileDuotone, PiLock, PiMusicNote, PiPalette, PiSeat, PiShield, PiSnowflake, PiSpeedometer, PiTag, PiTire } from "react-icons/pi";
+import { getCarFuelTypeLabel, getCarModelLabel, getCarStatusColor, getCarStatusIcon, getCarStatusLabel, getCarTransmissionLabel } from "@/Helpers/EnumHelper";
+import { GiGearStickPattern } from "react-icons/gi";
+import LabelValue from "@/Components/LabelValue";
+import EditData from "./EditData";
+import { twMerge } from "tailwind-merge";
+import { CarModelEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum } from "@/Helpers/enum";
 
-export default function Show({ id }: { id: number }) {
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [galleryData, setGalleryData] = useState<MediaLibrary[] | null | undefined>(null);
+interface ShowProps {
+  car_data: Database['CarData'];
+}
 
-  const onOpen = () => setShowModal(true);
-  const onClose = () => setShowModal(false);
+// Komponen Header
+const CarDetailHeader: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
+  return (
+    <div className="gap-2 d-flex flex-column flex-lg-row justify-content-between position-relative" style={{ zIndex: 500 }}>
+      <div className="gap-2 d-flex flex-column flex-lg-row">
+        <div>
+          <Link href={route('administrator.car-data.index')} className="gap-2 btn btn-light d-flex align-items-center"><FaArrowLeft /><span className="d-lg-none">Kembali Ke Beranda</span></Link>
+        </div>
 
-  const { data: formData, setData, processing, reset, clearErrors } = useForm<Omit<Database['CarData'], 'deleted_at' | 'created_at' | 'id' | 'updated_at'> & { gallery: File[]; _method: string }>({
-    _method: 'put',
-    car_name: '',
-    brand: '',
-    frame_number: '',
-    engine_number: '',
-    license_plate: '',
-    license_plate_expiration: '',
-    vehicle_registration_cert_number: '',
-    vehicle_registration_cert_expiration: '',
-    color: '',
-    year_of_manufacture: 0,
-    transmission: undefined,
-    model: undefined,
-    status: undefined,
-    description: '',
-    doors: 0,
-    seats: 0,
-    max_speed: 0,
-    big_luggage: 0,
-    med_luggage: 0,
-    small_luggage: 0,
-    ac: true,
-    audio: true,
-    abs: true,
-    child_lock: true,
-    traction_control: true,
-    baby_seat: true,
-    gallery: [],
-    gps_imei: ''
-  });
+        <div className="flex-column d-flex">
+          <h3 className="h4 fw-semibold">{carData.brand} {carData.car_name}</h3>
+          <Breadcrumb className="m-0" bsPrefix="m-0 breadcrumb">
+            <BreadcrumbItem linkAs={Link} href={route('administrator.home')}>Dasbor Beranda</BreadcrumbItem>
+            <BreadcrumbItem linkAs={Link} href={route('administrator.car-data.index')}>Data Kendaraan</BreadcrumbItem>
+            <BreadcrumbItem active>Detail Kendaraan <strong>{carData.brand} {carData.car_name}</strong></BreadcrumbItem>
+          </Breadcrumb>
+        </div>
+      </div>
 
-  const onCloseModal = () => {
-    reset();
-    onClose();
-    clearErrors()
-  };
+      <div className="gap-2 d-flex align-items-center">
+        <div className={'text-' + getCarStatusColor(carData.status as CarStatusEnum)}>{getCarStatusIcon(carData.status as CarStatusEnum)}</div>
+        <Card.Title className="mb-0">{getCarStatusLabel(carData.status as CarStatusEnum)}</Card.Title>
+      </div>
+    </div>
+  );
+};
 
-  const onClickModal = () => {
-    setLoading(true);
+// Komponen Info Card
+const InfoCard: React.FC<{ icon: React.ReactNode, title: string, value: string }> = ({ icon, title, value }) => {
+  return (
+    <GridItem>
+      {icon}
+      <Card.Text className="mt-2 mb-1">{title}</Card.Text>
+      <Card.Title className="mb-0 fw-bold">{value}</Card.Title>
+    </GridItem>
+  );
+};
 
-    axios.get(route('v1.admin.car-data.show', id))
-      .then((result) => {
-        const { data } = result.data;
-        onOpen();
+// Komponen Kartu Info Kendaraan
+const CarInfoCards: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
+  return (
+    <div className="mt-4">
+      {/* Tampilan untuk ukuran layar extra small hingga large */}
+      <div className="d-block d-xxl-none">
+        <GridContainer cols={2} textAlign="center">
+          <InfoCard
+            icon={<FaTag size={"32"} />}
+            title="Nomor Polisi"
+            value={carData.license_plate}
+          />
+          <InfoCard
+            icon={<FaCalendar size={"32"} />}
+            title="Tahun Pembuatan"
+            value={carData.year_of_manufacture.toString()}
+          />
+          <InfoCard
+            icon={<FaClock size={"32"} />}
+            title="Kilometer Berjalan"
+            value={mileageFormat(0)}
+          />
+          <InfoCard
+            icon={<FaGasPump size={"32"} />}
+            title="Bahan Bakar"
+            value={getCarFuelTypeLabel(carData.fuel_type as FuelEnum)}
+          />
+        </GridContainer>
+      </div>
 
-        setGalleryData(data.gallery);
+      {/* Tampilan untuk ukuran layar extra large ke atas */}
+      <div className="d-none d-xxl-block">
+        <GridContainer cols={4} textAlign="center">
+          <InfoCard
+            icon={<FaTag size={"32"} />}
+            title="Nomor Polisi"
+            value={carData.license_plate}
+          />
+          <InfoCard
+            icon={<FaCalendar size={"32"} />}
+            title="Tahun Pembuatan"
+            value={carData.year_of_manufacture.toString()}
+          />
+          <InfoCard
+            icon={<FaClock size={"32"} />}
+            title="Kilometer Berjalan"
+            value={mileageFormat(0)}
+          />
+          <InfoCard
+            icon={<FaGasPump size={"32"} />}
+            title="Bahan Bakar"
+            value={getCarFuelTypeLabel(carData.fuel_type as FuelEnum)}
+          />
+        </GridContainer>
+      </div>
+    </div>
+  );
+};
 
-        setData({
-          _method: 'PUT',
-          car_name: data.car_name,
-          brand: data.brand,
-          frame_number: data.frame_number,
-          engine_number: data.engine_number,
-          license_plate: data.license_plate,
-          license_plate_expiration: data.license_plate_expiration,
-          vehicle_registration_cert_number: data.vehicle_registration_cert_number,
-          vehicle_registration_cert_expiration: data.vehicle_registration_cert_expiration,
-          color: data.color,
-          year_of_manufacture: data.year_of_manufacture,
-          transmission: data.transmission,
-          model: data.model,
-          status: data.status,
-          description: data.description,
-          doors: data.doors,
-          seats: data.seats,
-          max_speed: data.max_speed,
-          big_luggage: data.big_luggage,
-          med_luggage: data.med_luggage,
-          small_luggage: data.small_luggage,
-          ac: data.ac,
-          audio: data.audio,
-          abs: data.abs,
-          child_lock: data.child_lock,
-          traction_control: data.traction_control,
-          baby_seat: data.baby_seat,
-          gallery: [],
-          gps_imei: data.gps_imei
-        });
-      })
-      .finally(() => setLoading(false));
-  };
+// Komponen Kartu Harga
+const PriceCard: React.FC<{ label: string, price: number }> = ({ label, price }) => {
+  return (
+    <Col md="4">
+      <Card body className="text-center bg-light">
+        <Card.Title className="mb-0 fw-bold">{compactCurrencyFormat(price)}</Card.Title>
+        <Card.Text className="mb-0">{label}</Card.Text>
+      </Card>
+    </Col>
+  );
+};
+
+// Komponen Informasi Harga
+const PricingInfo: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
+  return (
+    <Card body>
+      <div className="mb-3 d-flex justify-content-between">
+        <Card.Title className="mb-0">Informasi Harga Sewa</Card.Title>
+        <EditData id={carData.id} label="Ubah Data" />
+      </div>
+
+      <Row className="g-3">
+        <PriceCard label="Harian" price={carData.rent_price} />
+        <PriceCard label="Mingguan" price={carData.rent_price * 7} />
+        <PriceCard label="Bulanan" price={carData.rent_price * 30} />
+      </Row>
+    </Card>
+  );
+};
+
+// Komponen Detail Utama Mobil
+const CarMainDetails: React.FC<{ carData: Database['CarData'] & { media?: MediaLibrary[] } }> = ({ carData }) => {
+  return (
+    <Card body className="rounded-4">
+      <div className="p-4 rounded-3 bg-light d-flex justify-content-center align-items-center" style={{ width: '100%', height: '300px' }}>
+        <Button variant="dark">Lacak Posisi Kendaraan</Button>
+      </div>
+
+      {(carData.media && carData.media?.length > 0) && (
+        <div className="py-3 my-3 border-top border-bottom">
+          <h6>Galeri Foto Kendaraan</h6>
+          <ImageGallery readOnly initialData={carData.media as unknown as MediaLibrary[]} />
+        </div>
+      )}
+
+      <CarInfoCards carData={carData} />
+
+      <Card body className="mb-4">
+        <strong>Deskripsi</strong>
+        <p className="mt-2 mb-0" dangerouslySetInnerHTML={{ __html: parseAntiXss(carData.description || '-') }} />
+      </Card>
+
+      <PricingInfo carData={carData} />
+    </Card>
+  );
+};
+
+// Komponen Status Mobil
+const CarStatus: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
+  const plateDaysRemaining = dayjs(carData.license_plate_expiration).diff(dayjs(), 'day');
+  const certDaysRemaining = dayjs(carData.vehicle_registration_cert_expiration).diff(dayjs(), 'day');
+  const lastUsage = dayjs().diff('2025-04-01', 'day');
 
   return (
+    <Card body className="rounded-4">
+      <Card.Title>Status Kendaraan</Card.Title>
+
+      <div className="pt-4 pb-3 mb-4 justify-content-between d-flex border-bottom">
+        <div className="gap-2 d-flex align-items-center">
+          <div className={'text-' + getCarStatusColor(carData.status as CarStatusEnum)}>{getCarStatusIcon(carData.status as CarStatusEnum)}</div>
+          <Card.Title className="mb-0">{getCarStatusLabel(carData.status as CarStatusEnum)}</Card.Title>
+        </div>
+
+        <div>
+          <EditData id={carData.id} label="Ubah Status" />
+        </div>
+      </div>
+
+      <div className="gap-2 pb-3 mb-2 d-flex flex-column">
+        <div className="d-flex justify-content-between">
+          <div className="text-muted">Posisi Saat Ini</div>
+          <div className="fw-bold">{(() => {
+            switch (carData.status) {
+              case CarStatusEnum.BORROWED:
+                return 'Dipinjam';
+              case CarStatusEnum.READY:
+                return 'Diam Di Garasi';
+              case CarStatusEnum.SOLD:
+                return 'Sudah Dijual';
+              case CarStatusEnum.MISSING:
+                return 'Sedang Dicari';
+              case CarStatusEnum.REPAIR:
+                return 'Di Bengkel';
+              case CarStatusEnum.CRASH:
+                return 'Diam Di Garasi';
+            }
+          })()}</div>
+        </div>
+        <div className="d-flex justify-content-between">
+          <div className="text-muted">Kondisi Kendaraan</div>
+          <div className="fw-bold">Sangat Baik</div>
+        </div>
+        <div className="d-flex justify-content-between">
+          <div className="text-muted">Terakhir Digunakan</div>
+          <div className="fw-bold">{lastUsage} hari yang lalu</div>
+        </div>
+      </div>
+
+      <div className="py-4 mb-3 border-top border-bottom">
+        <Card.Title className="mb-3">Dokumen Penting</Card.Title>
+
+        {/* Nomor Polisi */}
+        <Card className="mb-3 bg-light">
+          <Card.Body className="flex-wrap d-flex justify-content-between">
+            <div className="gap-1 d-flex flex-column">
+              <Card.Title className="mb-0 fw-bold h6">{carData.license_plate}</Card.Title>
+              <Card.Text className="mb-0">Nomor Polisi</Card.Text>
+            </div>
+            <div className="d-flex align-items-end flex-column">
+              <small className="mb-1 d-flex">Kadaluarsa</small>
+              <Badge bg="light" text="dark" className="border">
+                {dayjs(carData.license_plate_expiration).format('DD MMM YYYY')}
+              </Badge>
+            </div>
+            {((plateDaysRemaining <= 31 && plateDaysRemaining >= 0) || plateDaysRemaining < 0) && (
+              <div className="mt-1 flex-grow-1" style={{ flexBasis: '100%' }}>
+                {plateDaysRemaining <= 31 && plateDaysRemaining >= 0 && (
+                  <small className="gap-1 text-danger">
+                    <FaExclamationTriangle />&nbsp;&nbsp;Segera diperpanjang karena masa berlaku akan habis!
+                  </small>
+                )}
+                {plateDaysRemaining < 0 && (
+                  <small className="gap-1 text-danger">
+                    <FaExclamationTriangle />&nbsp;&nbsp;Sudah kadaluarsa! Segera perpanjang.
+                  </small>
+                )}
+              </div>
+            )}
+          </Card.Body>
+        </Card>
+
+        {/* TNKB */}
+        <Card className="bg-light">
+          <Card.Body className="flex-wrap d-flex justify-content-between">
+            <div className="gap-1 d-flex flex-column">
+              <Card.Title className="mb-0 fw-bold h6">{carData.vehicle_registration_cert_number}</Card.Title>
+              <Card.Text className="mb-0">Nomor STNK</Card.Text>
+            </div>
+            <div className="d-flex align-items-end flex-column">
+              <small className="mb-1 d-flex">Kadaluarsa</small>
+              <Badge bg="light" text="dark" className="border">
+                {dayjs(carData.vehicle_registration_cert_expiration).format('DD MMM YYYY')}
+              </Badge>
+            </div>
+            {((certDaysRemaining <= 31 && certDaysRemaining >= 0) || certDaysRemaining < 0) && (
+              <div className="mt-1 flex-grow-1" style={{ flexBasis: '100%' }}>
+                {certDaysRemaining <= 31 && certDaysRemaining >= 0 && (
+                  <small className="gap-1 text-danger">
+                    <FaExclamationTriangle />&nbsp;&nbsp;Segera diperpanjang karena masa berlaku akan habis!
+                  </small>
+                )}
+                {certDaysRemaining < 0 && (
+                  <small className="gap-1 text-danger">
+                    <FaExclamationTriangle />&nbsp;&nbsp;Sudah kadaluarsa! Segera perpanjang.
+                  </small>
+                )}
+              </div>
+            )}
+          </Card.Body>
+        </Card>
+      </div>
+
+      {/* Jadwal Reservasi */}
+      <div className="mb-0">
+        <Card.Title className="mb-3">Jadwal Reservasi</Card.Title>
+
+        <div className="gap-3 d-flex flex-column">
+          <Card className="bg-light">
+            <Card.Body className="d-flex justify-content-between align-items-start">
+              <div className="gap-1 d-flex flex-column">
+                <Card.Title className="mb-0 fw-bold h6">{dayjs('2025-07-15').format('DD MMM YYYY')}</Card.Title>
+                <Card.Text className="mb-0">Penyewa: Agus Dwi Setyawan</Card.Text>
+              </div>
+              <Badge as="div" bg="light" text="dark" className="border">Akan Datang</Badge>
+            </Card.Body>
+          </Card>
+
+          <Card className="bg-light">
+            <Card.Body className="d-flex justify-content-between align-items-start">
+              <div className="gap-1 d-flex flex-column">
+                <Card.Title className="mb-0 fw-bold h6">{dayjs('2025-07-01').format('DD MMM YYYY')}</Card.Title>
+                <Card.Text className="mb-0">Penyewa: Rudi Wicaksono</Card.Text>
+              </div>
+              <Badge as="div" bg="light" text="dark" className="border">Akan Datang</Badge>
+            </Card.Body>
+          </Card>
+
+          <Card className="bg-light">
+            <Card.Body className="d-flex justify-content-between align-items-start">
+              <div className="gap-1 d-flex flex-column">
+                <Card.Title className="mb-0 fw-bold h6">{dayjs('2025-04-01').format('DD MMM YYYY')}</Card.Title>
+                <Card.Text className="mb-0">Penyewa: Ahmad Syariffuddin</Card.Text>
+              </div>
+              <Badge as="div" bg="success">Selesai</Badge>
+            </Card.Body>
+          </Card>
+        </div>
+      </div>
+    </Card>
+  );
+};
+
+// Component CarSpecification
+const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
+  return (
     <>
-      <Button
-        variant="primary"
-        style={{ height: '32px', width: '32px' }}
-        className="d-flex justify-content-center align-items-center"
-        size="sm"
-        onClick={onClickModal}
-      >
-        {(loading || processing) ? <Spinner size="sm" /> : <FontAwesomeIcon icon={faEye} />}
-      </Button>
+      <h4 className="mb-1 fw-bold">Spesifikasi Kendaraan</h4>
+      <p>Detail teknis dan fitur kendaraan</p>
 
-      {createPortal((
-        <Modal show={showModal} size="lg" onHide={onCloseModal}>
-          <Modal.Header closeButton>
-            <Modal.Title as="h5">Data Kendaraan</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="mb-3 form-group">
-              <Form.Floating>
-                <Form.Control
-                  type="text"
-                  placeholder="Nama"
-                  value={formData.car_name}
-                  readOnly
-                />
-                <Form.Label>Nama</Form.Label>
-              </Form.Floating>
+      <div className="pb-4 mb-4 border-bottom">
+        <GridContainer textAlign="left" cols={3}>
+          <GridItem>
+            <div className="gap-3 d-flex">
+              <PiCarProfileDuotone size={24} />
+              <div>
+                <h6 className="mb-0 fw-bold">Jenama</h6>
+                <p className="mb-0">{carData.brand}</p>
+              </div>
             </div>
-
-            <div className="mb-3 form-group">
-              <Form.Floating>
-                <Form.Control
-                  type="text"
-                  placeholder="Brand"
-                  value={formData.brand}
-                  readOnly
-                />
-                <Form.Label>Brand / Merk</Form.Label>
-              </Form.Floating>
+          </GridItem>
+          <GridItem>
+            <div className="gap-3 d-flex">
+              <PiTag size={24} />
+              <div>
+                <h6 className="mb-0 fw-bold">Model</h6>
+                <p className="mb-0">{getCarModelLabel(carData.model as CarModelEnum)}</p>
+              </div>
             </div>
-
-            <div className="mb-3 form-group">
-              <Form.Floating>
-                <Form.Control
-                  type="text"
-                  placeholder="Nomor Rangka"
-                  value={formData.frame_number}
-                  readOnly
-                />
-                <Form.Label>Nomor Rangka</Form.Label>
-              </Form.Floating>
+          </GridItem>
+          <GridItem>
+            <div className="gap-3 d-flex">
+              <GiGearStickPattern size={24} />
+              <div>
+                <h6 className="mb-0 fw-bold">Transmisi</h6>
+                <p className="mb-0">{getCarTransmissionLabel(carData.transmission as CarTransmissionEnum)}</p>
+              </div>
             </div>
-
-            <div className="mb-3 form-group">
-              <Form.Floating>
-                <Form.Control
-                  type="text"
-                  placeholder="Plat Nomor"
-                  value={formData.license_plate}
-                  readOnly
-                />
-                <Form.Label>Plat Nomor</Form.Label>
-              </Form.Floating>
+          </GridItem>
+          <GridItem>
+            <div className="gap-3 d-flex">
+              <PiPalette size={24} />
+              <div>
+                <h6 className="mb-0 fw-bold">Warna</h6>
+                <p className="mb-0">{carData.color}</p>
+              </div>
             </div>
-
-            <div className="mb-3 form-group">
-              <Form.Floating>
-                <Form.Control
-                  type="text"
-                  placeholder="Warna"
-                  value={formData.color}
-                  readOnly
-                />
-                <Form.Label>Warna</Form.Label>
-              </Form.Floating>
+          </GridItem>
+          <GridItem>
+            <div className="gap-3 d-flex">
+              <PiSeat size={24} />
+              <div>
+                <h6 className="mb-0 fw-bold">Penumpang</h6>
+                <p className="mb-0">{carData.seats} Penumpang</p>
+              </div>
             </div>
-
-            <div className="mb-3 form-group">
-              <Form.Floating>
-                <Form.Control
-                  type="number"
-                  placeholder="Tahun Pembuatan"
-                  value={formData.year_of_manufacture}
-                  readOnly
-                />
-                <Form.Label>Tahun Pembuatan</Form.Label>
-              </Form.Floating>
+          </GridItem>
+          <GridItem>
+            <div className="gap-3 d-flex">
+              <PiSpeedometer size={24} />
+              <div>
+                <h6 className="mb-0 fw-bold">Kecepatan Maksimum</h6>
+                <p className="mb-0">{speedFormat(carData.max_speed)}</p>
+              </div>
             </div>
+          </GridItem>
+        </GridContainer>
+      </div>
 
-            <div className="mb-3 form-group">
-              <Form.Floating>
-                <Form.Select
-                  value={formData.model}
-                  disabled
-                >
-                  <option value="">Pilih Model Kendaraan</option>
-                  {Object.values(CarModelEnum).map((model) => (
-                    <option key={model} value={model}>
-                      {getCarModelLabel(model as CarModelEnum)}
-                    </option>
-                  ))}
-                </Form.Select>
-                <Form.Label>Model</Form.Label>
-              </Form.Floating>
-            </div>
+      <div className="pb-4 mb-4 border-bottom">
+        <h5 className="mb-4 fw-bold">Kapasitas Bagasi</h5>
+        <Row>
+          <Col>
+            <Card body className="text-center">
+              <Card.Text className="mb-1">Bagasi Besar</Card.Text>
+              <h4 className="mb-0 fw-bold">{carData.big_luggage}</h4>
+            </Card>
+          </Col>
+          <Col>
+            <Card body className="text-center">
+              <Card.Text className="mb-1">Bagasi Sedang</Card.Text>
+              <h4 className="mb-0 fw-bold">{carData.med_luggage}</h4>
+            </Card>
+          </Col>
+          <Col>
+            <Card body className="text-center">
+              <Card.Text className="mb-1">Bagasi Kecil</Card.Text>
+              <h4 className="mb-0 fw-bold">{carData.small_luggage}</h4>
+            </Card>
+          </Col>
+        </Row>
+      </div>
 
-            <div className="mb-3 form-group">
-              <Form.Floating>
-                <Form.Select
-                  value={formData.status}
-                  disabled
-                >
-                  <option value="">Pilih Status Kendaraan</option>
-                  {Object.values(CarStatusEnum).map((status) => (
-                    <option key={status} value={status}>
-                      {getCarStatusLabel(status as CarStatusEnum)}
-                    </option>
-                  ))}
-                </Form.Select>
-                <Form.Label>Status</Form.Label>
-              </Form.Floating>
-            </div>
-
-            <div className="mb-3 form-group">
-              <Form.Floating>
-                <Form.Control
-                  as="textarea"
-                  placeholder="Deskripsi"
-                  value={String(formData.description || '')}
-                  readOnly
-                />
-                <Form.Label>Deskripsi</Form.Label>
-              </Form.Floating>
-            </div>
-
-            <div className="mb-3 form-group">
-              <Form.Floating>
-                <Form.Control
-                  type="number"
-                  placeholder="Jumlah Pintu"
-                  value={formData.doors}
-                  readOnly
-                />
-                <Form.Label>Jumlah Pintu</Form.Label>
-              </Form.Floating>
-            </div>
-
-            <div className="mb-3 form-group">
-              <Form.Floating>
-                <Form.Control
-                  type="number"
-                  placeholder="Jumlah Kursi"
-                  value={formData.seats}
-                  readOnly
-                />
-                <Form.Label>Jumlah Kursi</Form.Label>
-              </Form.Floating>
-            </div>
-
-            <div className="mb-3 form-group">
-              <Form.Floating>
-                <Form.Control
-                  type="number"
-                  placeholder="Kecepatan Maksimal"
-                  value={formData.max_speed}
-                  readOnly
-                />
-                <Form.Label>Kecepatan Maksimal</Form.Label>
-              </Form.Floating>
-            </div>
-
-            <div className="mb-3 form-group">
-              <Form.Floating>
-                <Form.Control
-                  type="number"
-                  placeholder="Kapasitas Bagasi Besar"
-                  value={formData.big_luggage}
-                  readOnly
-                />
-                <Form.Label>Kapasitas Bagasi Besar</Form.Label>
-              </Form.Floating>
-            </div>
-
-            <div className="mb-3 form-group">
-              <Form.Floating>
-                <Form.Control
-                  type="number"
-                  placeholder="Kapasitas Bagasi Sedang"
-                  value={formData.med_luggage}
-                  readOnly
-                />
-                <Form.Label>Kapasitas Bagasi Sedang</Form.Label>
-              </Form.Floating>
-            </div>
-
-            <div className="mb-3 form-group">
-              <Form.Floating>
-                <Form.Control
-                  type="number"
-                  placeholder="Kapasitas Bagasi Kecil"
-                  value={formData.small_luggage}
-                  readOnly
-                />
-                <Form.Label>Kapasitas Bagasi Kecil</Form.Label>
-              </Form.Floating>
-            </div>
-
-            <SeparatorText align="start" label="Fitur Kendaraan" />
-
-            <div className="pt-3 mb-3 form-group">
-              <Form.Check
-                type="checkbox"
-                label="AC"
-                checked={formData.ac}
-                disabled
-              />
-            </div>
-
-            <div className="mb-3 form-group">
-              <Form.Check
-                type="checkbox"
-                label="Audio"
-                checked={formData.audio}
-                disabled
-              />
-            </div>
-
-            <div className="mb-3 form-group">
-              <Form.Check
-                type="checkbox"
-                label="ABS"
-                checked={formData.abs}
-                disabled
-              />
-            </div>
-
-            <div className="mb-3 form-group">
-              <Form.Check
-                type="checkbox"
-                label="Kunci Anak"
-                checked={formData.child_lock}
-                disabled
-              />
-            </div>
-
-            <div className="mb-3 form-group">
-              <Form.Check
-                type="checkbox"
-                label="Kontrol Traksi"
-                checked={formData.traction_control}
-                disabled
-              />
-            </div>
-
-            <div className="mb-3 form-group">
-              <Form.Check
-                type="checkbox"
-                label="Kursi Bayi"
-                checked={formData.baby_seat}
-                disabled
-              />
-            </div>
-
-            <SeparatorText align="start" label="Data GPS" />
-
-            <div className="pt-3 mb-3 form-group">
-              <Form.Floating>
-                <Form.Control
-                  type="text"
-                  placeholder="Nomor IMEI Pada GPS"
-                  value={formData.gps_imei || ''}
-                  readOnly
-                  onChange={(e) => setData("gps_imei", e.target.value)}
-                />
-                <Form.Label>Nomor IMEI Pada GPS</Form.Label>
-              </Form.Floating>
-            </div>
-
-            <div className="mb-3">
-              <small className="fw-bold">Foto Kendaraan</small>
-
-              {(galleryData && galleryData?.length > 0) ? (
-                <Card body className="mb-3">
-                  <h6>Yang Sudah Diunggah</h6>
-                  <ImageGallery readOnly initialData={galleryData as unknown as MediaLibrary[]} />
-                </Card>
-              ) : (
-                <span>Tidak Ada</span>
-              )}
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="secondary"
-              type="button"
-              disabled={processing}
-              onClick={onCloseModal}
-            >
-              Tutup
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      ), document.body)}
+      <div>
+        <h5 className="mb-4 fw-bold">Fitur Kendaraan</h5>
+        <Row className="g-3">
+          <Col md={4}>
+            <Card>
+              <Card.Body className="flex-row gap-2 align-items-center d-flex">
+                <PiSnowflake size={24} />
+                <strong className="mb-0 fw-bold">Air Conditioner (AC)</strong>
+                <Badge className={twMerge("ms-auto border", carData.ac ? 'text-white' : 'text-dark')} bg={carData.ac ? 'dark' : 'white'}>{carData.ac ? 'Ada' : 'Tidak Ada'}</Badge>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={4}>
+            <Card>
+              <Card.Body className="flex-row gap-2 align-items-center d-flex">
+                <PiMusicNote size={24} />
+                <strong className="mb-0 fw-bold">Audio Entertainment</strong>
+                <Badge className={twMerge("ms-auto border", carData.audio ? 'text-white' : 'text-dark')} bg={carData.audio ? 'dark' : 'white'}>{carData.audio ? 'Ada' : 'Tidak Ada'}</Badge>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={4}>
+            <Card>
+              <Card.Body className="flex-row gap-2 align-items-center d-flex">
+                <PiShield size={24} />
+                <strong className="mb-0 fw-bold">ABS</strong>
+                <Badge className={twMerge("ms-auto border", carData.abs ? 'text-white' : 'text-dark')} bg={carData.abs ? 'dark' : 'white'}>{carData.abs ? 'Ada' : 'Tidak Ada'}</Badge>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={4}>
+            <Card>
+              <Card.Body className="flex-row gap-2 align-items-center d-flex">
+                <PiLock size={24} />
+                <strong className="mb-0 fw-bold">Child-Lock</strong>
+                <Badge className={twMerge("ms-auto border", carData.child_lock ? 'text-white' : 'text-dark')} bg={carData.child_lock ? 'dark' : 'white'}>{carData.child_lock ? 'Ada' : 'Tidak Ada'}</Badge>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={4}>
+            <Card>
+              <Card.Body className="flex-row gap-2 align-items-center d-flex">
+                <PiTire size={24} />
+                <strong className="mb-0 fw-bold">Traction Control</strong>
+                <Badge className={twMerge("ms-auto border", carData.traction_control ? 'text-white' : 'text-dark')} bg={carData.traction_control ? 'dark' : 'white'}>{carData.traction_control ? 'Ada' : 'Tidak Ada'}</Badge>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={4}>
+            <Card>
+              <Card.Body className="flex-row gap-2 align-items-center d-flex">
+                <PiBabyCarriage size={24} />
+                <strong className="mb-0 fw-bold">Kursi Bayi</strong>
+                <Badge className={twMerge("ms-auto border", carData.baby_seat ? 'text-white' : 'text-dark')} bg={carData.baby_seat ? 'dark' : 'white'}>{carData.baby_seat ? 'Ada' : 'Tidak Ada'}</Badge>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </div>
     </>
+  );
+};
+
+// Component CarRegistration
+const CarRegistration = ({ carData }: { carData: Database['CarData'] }) => {
+  return (
+    <>
+      <h4 className="mb-1 fw-bold">Data Registrasi</h4>
+      <p>Informasi registrasi dan dokumen kendaraan</p>
+
+      <Row className="g-1">
+        <Col md="6" xxl="4">
+          <LabelValue label="Nomor Rangka" value={carData.frame_number} bottomBorder={false} />
+        </Col>
+        <Col md="6" xxl="4">
+          <LabelValue label="Nomor Mesin" value={carData.engine_number} bottomBorder={false} />
+        </Col>
+        <Col md="6" xxl="4">
+          <LabelValue label="Nomor Polisi / TNKB" value={carData.license_plate || '-'} bottomBorder={false} />
+        </Col>
+        <Col md="6" xxl="4">
+          <LabelValue
+            label="Masa Berlaku Nomor Polisi"
+            value={dayjs(carData.license_plate_expiration).format('DD MMMM YYYY')}
+            bottomBorder={false}
+          />
+        </Col>
+        <Col md="6" xxl="4">
+          <LabelValue
+            label="Nomor STNK"
+            value={carData.vehicle_registration_cert_number}
+            bottomBorder={false}
+          />
+        </Col>
+        <Col md="6" xxl="4">
+          <LabelValue
+            label="Masa Berlaku Nomor STNK"
+            value={dayjs(carData.vehicle_registration_cert_expiration).format('DD MMMM YYYY')}
+            bottomBorder={false}
+          />
+        </Col>
+      </Row>
+
+      <Row className="g-0">
+        <Col md={12}>
+          <Card bg="light">
+            <Card.Body className="w-full">
+              <div className="w-full d-flex justify-content-between align-items-center">
+                <div>
+                  <Card.Title className="fw-bold">IMEI GPS</Card.Title>
+                  <Card.Text>{carData.gps_imei ?? 'Belum diatur'}</Card.Text>
+                </div>
+                <div><Button>Lacak</Button></div>
+              </div>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </>
+  );
+};
+
+// Component CarHistory
+const CarHistory = () => {
+  return (
+    <div>
+      <div className="gap-3 d-flex flex-column">
+      {[1, 2, 3].map((i) => (
+        <Card key={i} className="mb-0">
+          <Card.Header className="bg-white d-flex justify-content-between align-items-center">
+            <div className="gap-3 d-flex align-items-center">
+              <div className="overflow-hidden rounded-circle" style={{ width: '40px', height: '40px' }}>
+                <img
+                  src={`https://placehold.co/40/6c757d/ffffff?text=U${i}`}
+                  alt="User"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = `https://placehold.co/40/6c757d/ffffff?text=U${i}`;
+                  }}
+                  width={40}
+                  height={40}
+                />
+              </div>
+              <div>
+                <p className="mb-0 fw-semibold">Budi Santoso</p>
+                <p className="mb-0 text-muted small">ID: RS-2023-{1000 + i}</p>
+              </div>
+            </div>
+            <Badge bg="light" text="dark" className="border">Selesai</Badge>
+          </Card.Header>
+
+          <Card.Body>
+            <Row>
+              <Col xs={12} sm={4} className="mb-3 mb-sm-0">
+                <div className="gap-2 d-flex">
+                  <FaCalendar size={16} className="mt-1 text-muted" />
+                  <div>
+                    <p className="mb-0 text-muted small fw-medium">Periode Sewa</p>
+                    <p className="mb-0 small">12 Apr - 15 Apr 2023</p>
+                    <p className="mb-0 text-muted small">3 hari</p>
+                  </div>
+                </div>
+              </Col>
+              <Col xs={12} sm={4} className="mb-3 mb-sm-0">
+                <div className="gap-2 d-flex">
+                  <FaMapPin size={16} className="mt-1 text-muted" />
+                  <div>
+                    <p className="mb-0 text-muted small fw-medium">Lokasi</p>
+                    <p className="mb-0 small">Kota Surakarta</p>
+                  </div>
+                </div>
+              </Col>
+              <Col xs={12} sm={4}>
+                <div className="gap-2 d-flex">
+                  <FaUser size={16} className="mt-1 text-muted" />
+                  <div>
+                    <p className="mb-0 text-muted small fw-medium">Pengemudi</p>
+                    <p className="mb-0 small">Dengan Pengemudi</p>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+          </Card.Body>
+
+          <Card.Footer className="bg-white d-flex justify-content-between align-items-center">
+            <div>
+              <p className="mb-0 small fw-medium">Total Pembayaran</p>
+              <p className="mb-0 fw-bold">{currencyFormat(1050000)}</p>
+            </div>
+            <Button variant="light" size="sm" className="gap-1 d-flex align-items-center">
+              Detail
+              <FaChevronRight size={16} />
+            </Button>
+          </Card.Footer>
+        </Card>
+      ))}
+    </div>
+    </div>
+  );
+};
+
+// Component CarComments
+const CarComments = () => {
+  return (
+    <Row className="g-0">
+      <Col md={12}>
+        <Card bg="light">
+          <Card.Body>
+            <Card.Title>Komentar</Card.Title>
+          </Card.Body>
+        </Card>
+      </Col>
+    </Row>
+  );
+};
+
+// Component utama
+export default function Show({ car_data }: ShowProps) {
+  return (
+    <AuthenticatedAdmin header={<CarDetailHeader carData={car_data} />}>
+      <Head title={`Detail Kendaraan ${car_data.brand} ${car_data.car_name}`} />
+
+      <Row className="py-4 position-relative gy-4">
+        <Col md={8}>
+          <CarMainDetails carData={car_data} />
+        </Col>
+        <Col md={4} className="position-relative">
+          <CarStatus carData={car_data} />
+        </Col>
+      </Row>
+
+      <Tab.Container defaultActiveKey="spesifikasi">
+        <Card>
+          <Card.Header className="bg-white">
+            <Nav variant="tabs">
+              <Nav.Item>
+                <Nav.Link eventKey="spesifikasi">Spesifikasi</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="registrasi">Registrasi Kendaraan</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="riwayat">Riwayat Sewa</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="komentar">Komentar dan Penilaian</Nav.Link>
+              </Nav.Item>
+            </Nav>
+          </Card.Header>
+          <Card.Body>
+            <Tab.Content>
+              <Tab.Pane eventKey="spesifikasi">
+                <CarSpecification carData={car_data} />
+              </Tab.Pane>
+              <Tab.Pane eventKey="registrasi">
+                <CarRegistration carData={car_data} />
+              </Tab.Pane>
+              <Tab.Pane eventKey="riwayat">
+                <CarHistory />
+              </Tab.Pane>
+              <Tab.Pane eventKey="komentar">
+                <CarComments />
+              </Tab.Pane>
+            </Tab.Content>
+          </Card.Body>
+        </Card>
+      </Tab.Container>
+    </AuthenticatedAdmin>
   );
 }

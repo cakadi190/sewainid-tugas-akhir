@@ -49,6 +49,14 @@ const SidebarStyle = styled.aside<{ isToggled: boolean }>`
   backdrop-filter: blur(1rem);
   border-right: 1px solid var(--bs-border-color);
 
+  @media (992px <= width <= 1400px) {
+    width: 18rem;
+
+    ${({ isToggled }) => !isToggled && `
+      margin-left: -18rem;
+    `}
+  }
+
   @media (width <= 992px) {
     margin-left: 0;
   }
@@ -347,17 +355,15 @@ export default function Sidebar() {
       href: route('administrator.car-data.index'),
     },
     {
-      label: 'Catatan Perbaikan',
-      href: route('administrator.car-repair.index'),
-      type: 'menu',
-      icon: faWrench,
-    },
-    {
       label: 'Manajemen Pengguna',
       type: 'menu',
       href: '#',
       icon: faUsers,
       child: [
+        {
+          label: 'Semua Data',
+          href: '#',
+        },
         {
           label: 'Pelanggan',
           href: '#',
@@ -430,6 +436,20 @@ export default function Sidebar() {
       href: '#',
       icon: faChartLine,
     },
+
+    {
+      label: 'Catatan Perbaikan',
+      href: route('administrator.car-repair.index'),
+      type: 'menu',
+      icon: faWrench,
+    },
+    {
+      label: 'Catatan Penggunaan',
+      href: route('administrator.car-repair.index'),
+      type: 'menu',
+      icon: faClipboardList,
+    },
+
     { label: 'Pengaturan', type: 'heading' },
     {
       label: 'Persyaratan & Ketentuan',

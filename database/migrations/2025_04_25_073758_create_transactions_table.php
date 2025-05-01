@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\RentalStatusEnum;
 use App\Enums\TransactionStatusEnum;
 use App\Models\Transaction;
 use Illuminate\Database\Migrations\Migration;
@@ -17,25 +18,30 @@ return new class extends Migration
             $table->string('id', 48)->primary();
 
             $table->enum('status', Transaction::getAllStatus()->toArray())->default(TransactionStatusEnum::UNPAID);
+            $table->enum('rental_status', Transaction::getAllRentalStatus()->toArray())->default(RentalStatusEnum::DRAFT);
 
             $table->timestamp('confirmed_at')->nullable();
             $table->string('payment_channel', 8)->nullable();
             $table->string('payment_references', 128)->nullable();
+            $table->timestamp('expired_at')->nullable();
 
             $table->integer('total_price')->default(0);
             $table->integer('total_pay')->default(0);
 
             $table->timestamp('pickup_date')->nullable();
             $table->timestamp('return_date')->nullable();
-            $table->timestamp('expired_at')->nullable();
+
+            $table->string('place_name');
+            $table->decimal('longitude', 10, 8)->default(0.00000000);
+            $table->decimal('latitude', 10, 8)->default(0.00000000);
 
             $table->timestamps();
 
-            $table->unsignedInteger('car_data_id')->nullable()->index();
             $table->unsignedInteger('user_id')->nullable()->index();
+            $table->unsignedInteger('car_data_id')->nullable()->index();
 
-            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
             $table->foreign('car_data_id')->references('id')->on('car_data')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
         });
     }
 

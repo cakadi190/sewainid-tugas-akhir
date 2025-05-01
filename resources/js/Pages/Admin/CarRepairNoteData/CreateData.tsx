@@ -9,9 +9,9 @@ import Database from "@/types/database";
 import SeparatorText from "@/Components/SeparatorText";
 import ImageUploader from "@/Components/Dropzone";
 import axios from "axios";
-import { CarRepairNoteStatusEnum } from "@/types/enum";
 import { getCarRepairStatusLabel } from "@/Helpers/enums/carRepairStatusLabel";
 import { formatDateForInput } from "@/Helpers/dayjs";
+import { CarRepairNoteStatusEnum } from "@/Helpers/enum";
 
 interface CarData {
   value: number;
@@ -240,7 +240,7 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
               <div className="mb-3">
                 <Form.Label>Unggah Foto Perbaikan</Form.Label>
                 <ImageUploader
-                  name="gallery"
+                  name="repair-gallery"
                   id="upload-create"
                   form={{
                     data: formData,

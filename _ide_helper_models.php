@@ -24,13 +24,15 @@ namespace App\Models{
  * @property string $engine_number
  * @property string $license_plate
  * @property string $license_plate_expiration
- * @property string $vehicle_registration_cert_number
+ * @property string|null $vehicle_registration_cert_number
+ * @property string|null $vehicle_ownership_book_number
  * @property string $vehicle_registration_cert_expiration
  * @property string $color
  * @property int $year_of_manufacture
- * @property string $transmission
+ * @property CarTransmissionEnum $transmission
  * @property CarModelEnum $model
  * @property CarStatusEnum $status
+ * @property FuelTypeEnum $fuel_type
  * @property string|null $description
  * @property int $doors
  * @property int $seats
@@ -44,9 +46,13 @@ namespace App\Models{
  * @property int $child_lock
  * @property int $traction_control
  * @property int $baby_seat
- * @property string|null $deleted_at
+ * @property int $rent_price
+ * @property string|null $gps_imei
+ * @property CarConditionEnum $condition
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, Media> $media
  * @property-read int|null $media_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Review> $review
+ * @property-read int|null $review_count
  * @method static \Database\Factories\CarDataFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData newQuery()
@@ -61,44 +67,38 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereChildLock($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereColor($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereDoors($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereEngineNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereFrameNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereFuelType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereGpsImei($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereLicensePlate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereLicensePlateExpiration($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereMaxSpeed($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereMedLuggage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereModel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereRentPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereSeats($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereSmallLuggage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereTractionControl($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereTransmission($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereVehicleOwnershipBookNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereVehicleRegistrationCertExpiration($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereVehicleRegistrationCertNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereYearOfManufacture($value)
  * @mixin \Eloquent
- * @property int $rent_price
- * @property string|null $gps_imei
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereGpsImei($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereRentPrice($value)
  */
 	class CarData extends \Eloquent implements \Spatie\MediaLibrary\HasMedia {}
 }
 
 namespace App\Models{
 /**
- * 
+ * Maintenance Record Model
  *
- * @method static \Database\Factories\CarRepairNoteDataFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData query()
- * @mixin \Eloquent
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -111,8 +111,12 @@ namespace App\Models{
  * @property string|null $notes
  * @property int|null $car_data_id
  * @property-read \App\Models\CarData|null $carData
- * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, Media> $media
  * @property-read int|null $media_count
+ * @method static \Database\Factories\CarRepairNoteDataFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereCarDataId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereCost($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereCreatedAt($value)
@@ -124,6 +128,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereRepairDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 	class CarRepairNoteData extends \Eloquent implements \Spatie\MediaLibrary\HasMedia {}
 }
@@ -131,6 +136,19 @@ namespace App\Models{
 namespace App\Models{
 /**
  * 
+ *
+ * @method static \Database\Factories\ReviewFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Review newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Review newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Review query()
+ * @mixin \Eloquent
+ */
+	class Review extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * Transaction Model
  *
  * @property int $id
  * @property string $status
@@ -142,6 +160,9 @@ namespace App\Models{
  * @property string|null $pickup_date
  * @property string|null $return_date
  * @property string|null $expired_at
+ * @property string $place_name
+ * @property string $longitude
+ * @property string $latitude
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int|null $car_data_id
@@ -155,22 +176,26 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereExpiredAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereLatitude($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereLongitude($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction wherePaymentChannel($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction wherePaymentReferences($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction wherePickupDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction wherePlaceName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereReturnDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereTotalPay($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereTotalPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereUserId($value)
+ * @mixin \Eloquent
  */
 	class Transaction extends \Eloquent {}
 }
 
 namespace App\Models{
 /**
- * 
+ * Transaction Confirmation Model
  *
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -188,8 +213,23 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TransactionConfirmation whereTransactionReceipt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TransactionConfirmation whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TransactionConfirmation whereUserId($value)
+ * @mixin \Eloquent
  */
 	class TransactionConfirmation extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * Note Data after Rental
+ *
+ * @property UsageNoteTypeEnum $type
+ * @method static \Database\Factories\UsageNoteDataFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData query()
+ * @mixin \Eloquent
+ */
+	class UsageNoteData extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -204,15 +244,15 @@ namespace App\Models{
  * @property string|null $dbirth
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
- * @property string $password
+ * @property string|null $password
  * @property string $avatar
  * @property string|null $nik Encrypted Data
  * @property string|null $kk Encrypted Data
  * @property string|null $sim Encrypted Data
+ * @property string|null $google_id
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
@@ -222,10 +262,10 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereAvatar($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereDbirth($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmailVerifiedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereGender($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereGoogleId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereKk($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereName($value)
@@ -237,8 +277,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereSim($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property string|null $google_id
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereGoogleId($value)
  */
 	class User extends \Eloquent implements \Illuminate\Contracts\Auth\MustVerifyEmail {}
 }

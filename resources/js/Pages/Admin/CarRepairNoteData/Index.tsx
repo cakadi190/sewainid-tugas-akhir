@@ -10,7 +10,7 @@ import DeleteData from "@/Components/crud/DeleteData";
 import CreateData from "./CreateData";
 import AlertPage from "@/Components/AlertPage";
 import Show from "./Show";
-import { currencyFormat } from "@/Helpers/currency";
+import { currencyFormat } from "@/Helpers/number";
 import { getCarRepairStatusColor, getCarRepairStatusLabel } from "@/Helpers/enums/carRepairStatusLabel";
 import dayjs from "dayjs";
 
@@ -59,7 +59,7 @@ export default function Index() {
       name: 'id',
       title: 'Aksi',
       sortable: false,
-      render(value: string, row: Database['CarRepairNoteData']) {
+      render(value: number, row: Database['CarRepairNoteData']) {
         return (
           <div className="gap-2 d-flex flex-nowrap">
             <Show
@@ -84,11 +84,11 @@ export default function Index() {
       header={
         <div className="d-flex justify-content-between">
           <div className="flex-column d-flex">
-            <h3 className="h4 fw-semibold">Catatan Perbaikan dan Pemakaian Kendaraan</h3>
+            <h3 className="h4 fw-semibold">Catatan Perbaikan</h3>
             <Breadcrumb className="m-0" bsPrefix="m-0 breadcrumb">
               <BreadcrumbItem linkAs={Link} href={route('administrator.home')}>Dasbor Beranda</BreadcrumbItem>
               <BreadcrumbItem linkAs={Link} href={route('administrator.car-data.index')}>Data Kendaraan</BreadcrumbItem>
-              <BreadcrumbItem active>Catatan Perbaikan dan Pemakaian Kendaraan</BreadcrumbItem>
+              <BreadcrumbItem active>Catatan Perbaikan</BreadcrumbItem>
             </Breadcrumb>
           </div>
 
@@ -96,7 +96,7 @@ export default function Index() {
         </div>
       }
     >
-      <Head title="Catatan Perbaikan dan Pemakaian Kendaraan" />
+      <Head title="Catatan Perbaikan" />
 
       <AlertPage />
 

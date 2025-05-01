@@ -20,8 +20,12 @@
 import dayjs from 'dayjs';
 import 'dayjs/locale/id';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(localizedFormat);
+dayjs.extend(relativeTime);
+dayjs.extend(duration);
 dayjs.locale('id');
 
 export default dayjs;

@@ -1,8 +1,10 @@
 <?php
 
+use App\Enums\CarConditionEnum;
 use App\Enums\CarModelEnum;
 use App\Enums\CarStatusEnum;
 use App\Enums\CarTransmissionEnum;
+use App\Enums\FuelTypeEnum;
 use App\Models\CarData;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -25,13 +27,16 @@ return new class extends Migration
             $table->string('engine_number', 20)->unique()->index();
             $table->string('license_plate', 20)->unique()->index();
             $table->date('license_plate_expiration')->useCurrent()->useCurrentOnUpdate();
-            $table->string('vehicle_registration_cert_number', 20)->unique()->index();
+            $table->string('vehicle_registration_cert_number', 20)->unique()->index()->nullable();
+            $table->string('vehicle_ownership_book_number', 10)->unique()->index()->nullable();
             $table->date('vehicle_registration_cert_expiration')->useCurrent()->useCurrentOnUpdate();
             $table->string('color', 20);
             $table->unsignedInteger('year_of_manufacture')->default(0);
             $table->enum('transmission', CarData::getAllCarTransmission()->toArray())->default(CarTransmissionEnum::MT->value);
             $table->enum('model', CarData::getAllCarModels()->toArray())->default(CarModelEnum::SUV->value);
             $table->enum('status', CarData::getAllCarStatuses()->toArray())->default(CarStatusEnum::READY->value);
+            $table->enum('fuel_type', CarData::getAllCarFuelEnum()->toArray())->default(FuelTypeEnum::GASOLINE->value);
+            $table->enum('condition', CarData::getAllCarCondition()->toArray())->default(CarConditionEnum::EXCELLENT->value);
             $table->text('description')->nullable();
             $table->unsignedInteger('doors')->default(0);
             $table->unsignedInteger('seats')->default(0);
@@ -39,6 +44,7 @@ return new class extends Migration
             $table->unsignedInteger('big_luggage')->default(0);
             $table->unsignedInteger('med_luggage')->default(0);
             $table->unsignedInteger('small_luggage')->default(0);
+            $table->unsignedInteger('mileage')->default(0);
             $table->boolean('ac')->default(true);
             $table->boolean('audio')->default(true);
             $table->boolean('abs')->default(true);

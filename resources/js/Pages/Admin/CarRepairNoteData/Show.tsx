@@ -2,17 +2,18 @@ import axios from "axios";
 import SeparatorText from "@/Components/SeparatorText";
 import Database from "@/types/database";
 import { getCarRepairStatusLabel } from "@/Helpers/EnumHelper";
-import { CarRepairNoteStatusEnum } from "@/types/enum";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "@inertiajs/react";
 import { useState } from "react";
-import { Button, Card, Form, Modal, Spinner } from "react-bootstrap";
+import { Button, Card, Modal, Spinner } from "react-bootstrap";
 import { createPortal } from "react-dom";
 import dayjs from "dayjs";
 import { parseAntiXss } from "@/Helpers/string";
 import { MediaLibrary } from "@/types/medialibrary";
 import ImageGallery from "@/Components/ImageGallery";
+import { mileageFormat } from "@/Helpers/number";
+import { CarRepairNoteStatusEnum } from "@/Helpers/enum";
 
 export default function RepairShow({ id }: { id: number }) {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -115,12 +116,12 @@ export default function RepairShow({ id }: { id: number }) {
 
             <div className="pt-3 mb-3 border-bottom">
               <div className="mb-2"><small className="fw-bold">Kilometer Terakhir</small></div>
-              <p dangerouslySetInnerHTML={{ __html: parseAntiXss(String(formData.last_mileage ?? 'Tidak Diisi')) }} />
+              <p dangerouslySetInnerHTML={{ __html: parseAntiXss(String(mileageFormat(formData.last_mileage || 0, 'km')?? 'Tidak Diisi')) }} />
             </div>
 
             <div className="mb-3">
               <div className="mb-2"><small className="fw-bold">Kilometer Sekarang</small></div>
-              <p dangerouslySetInnerHTML={{ __html: parseAntiXss(String(formData.current_mileage ?? 'Tidak Diisi')) }} />
+              <p dangerouslySetInnerHTML={{ __html: parseAntiXss(String(mileageFormat(formData.current_mileage || 0, 'km') ?? 'Tidak Diisi')) }} />
             </div>
 
             <SeparatorText align="start" label="Biaya dan Status" />

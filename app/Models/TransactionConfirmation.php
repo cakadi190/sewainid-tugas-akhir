@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
+ * Transaction Confirmation Model
  *
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at

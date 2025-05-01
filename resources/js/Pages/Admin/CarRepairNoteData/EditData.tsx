@@ -11,15 +11,15 @@ import { Button, Card, Form, Modal, Spinner } from "react-bootstrap";
 import { createPortal } from "react-dom";
 import { MediaLibrary } from "@/types/medialibrary";
 import { renderSwalModal } from "@/Helpers/swal";
-import { CarRepairNoteStatusEnum } from "@/types/enum";
 import { getCarRepairStatusLabel } from "@/Helpers/enums/carRepairStatusLabel";
+import { CarRepairNoteStatusEnum } from "@/Helpers/enum";
 
 interface CarData {
   value: number;
   label: string;
 }
 
-export default function EditData({ id, onSuccess: onSuccessAction }: { id: string; onSuccess?: () => void }) {
+export default function EditData({ id, onSuccess: onSuccessAction }: { id: number; onSuccess?: () => void }) {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [galleryData, setGalleryData] = useState<MediaLibrary[] | null | undefined>(null);
@@ -34,6 +34,8 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: strin
     repair_date: '',
     description: '',
     cost: 0,
+    last_mileage: 0,
+    current_mileage: 0,
     status: CarRepairNoteStatusEnum.PENDING,
     notes: '',
     car_data_id: 0,
@@ -74,7 +76,8 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: strin
 
     post(route('v1.admin.car-repair.update', id), {
       forceFormData: true,
-      onSuccess() {
+      onSuccess(result: any) {
+        console.log(result)
         reset();
         onClose();
         onSuccessAction?.();
@@ -97,13 +100,15 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: strin
         const { data } = result.data;
         onOpen();
 
-        setGalleryData(data.gallery);
+        setGalleryData(data['repair-gallery']);
 
         setData({
           _method: 'PUT',
           repair_date: data.repair_date,
           description: data.description,
           cost: data.cost,
+          current_mileage: data.current_mileage,
+          last_mileage: data.last_mileage,
           status: data.status,
           notes: data.notes,
           car_data_id: data.car_data_id,
@@ -272,7 +277,7 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: strin
                 )}
 
                 <ImageUploader
-                  name="gallery"
+                  name="repair-gallery"
                   id={`upload-edit-${id}`}
                   form={{
                     data: formData,
@@ -316,3 +321,4 @@ export default function EditData({ id, onSuccess: onSuccessAction }: { id: strin
     </>
   );
 }
+

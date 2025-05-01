@@ -1,7 +1,7 @@
 import DataTable from "@/Components/DataTable";
 import { useDataTable } from "@/Hooks/useDatatables";
 import { AuthenticatedAdmin } from "@/Layouts/AuthenticatedLayout";
-import { Breadcrumb, BreadcrumbItem } from "react-bootstrap";
+import { Badge, Breadcrumb, BreadcrumbItem } from "react-bootstrap";
 import { Head, Link } from "@inertiajs/react";
 import { parseAntiXss } from "@/Helpers/string";
 import type Database from "@/types/database";
@@ -11,22 +11,24 @@ import RestoreData from "@/Components/crud/RestoreData";
 import ForceDeleteData from "@/Components/crud/ForceDeleteData";
 import CreateData from "./CreateData";
 import AlertPage from "@/Components/AlertPage";
-import Show from "./Show";
+import { CarModelEnum, CarStatusEnum } from "@/Helpers/enum";
+import { FaEye } from "react-icons/fa6";
+import { getCarModelColor, getCarModelLabel, getCarStatusColor, getCarStatusIcon, getCarStatusLabel } from "@/Helpers/EnumHelper";
 
 export default function Index() {
   const { dataTableRef, refetch } = useDataTable();
 
   const columns = [
     {
+      data: 'brand',
+      name: 'brand',
+      title: 'Brand / Merk',
+    },
+    {
       data: 'car_name',
       name: 'car_name',
       title: 'Nama',
       render: (value: string) => <span dangerouslySetInnerHTML={{ __html: parseAntiXss(value) }} />,
-    },
-    {
-      data: 'brand',
-      name: 'brand',
-      title: 'Brand / Merk',
     },
     {
       data: 'license_plate',
@@ -48,16 +50,19 @@ export default function Index() {
       data: 'model',
       name: 'model',
       title: 'Model Kendaraan',
-      render: (value: { label: string; color: string }) => (
-        <span className={`badge bg-${value.color}`}>{value.label}</span>
+      render: (value: string) => (
+        <Badge bg={getCarModelColor(value as CarModelEnum)}>{getCarModelLabel(value as CarModelEnum)}</Badge>
       )
     },
     {
       data: 'status',
       name: 'status',
       title: 'Status Kendaraan',
-      render: (value: { label: string; color: string }) => (
-        <span className={`badge bg-${value.color}`}>{value.label}</span>
+      render: (value: string) => (
+        <div className="gap-2 d-flex align-items-center">
+          <span className={`text-${getCarStatusColor(value as CarStatusEnum)}`}>{getCarStatusIcon(value as CarStatusEnum)}</span>
+          {getCarStatusLabel(value as CarStatusEnum)}
+        </div>
       )
     },
     {
@@ -81,9 +86,9 @@ export default function Index() {
               </>
             ) : (
               <>
-                <Show
-                  id={Number(value)}
-                />
+                <Link className="btn btn-sm btn-primary" href={route('administrator.car-data.show', row.id)}>
+                  <FaEye />
+                </Link>
                 <EditData
                   onSuccess={refetch}
                   id={Number(value)}

@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\CarConditionEnum;
 use App\Traits\WithTrashedRouteBinding;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\CarModelEnum;
 use App\Enums\CarStatusEnum;
 use App\Enums\CarTransmissionEnum;
+use App\Enums\FuelTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -27,13 +29,15 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property string $engine_number
  * @property string $license_plate
  * @property string $license_plate_expiration
- * @property string $vehicle_registration_cert_number
+ * @property string|null $vehicle_registration_cert_number
+ * @property string|null $vehicle_ownership_book_number
  * @property string $vehicle_registration_cert_expiration
  * @property string $color
  * @property int $year_of_manufacture
- * @property string $transmission
+ * @property CarTransmissionEnum $transmission
  * @property CarModelEnum $model
  * @property CarStatusEnum $status
+ * @property FuelTypeEnum $fuel_type
  * @property string|null $description
  * @property int $doors
  * @property int $seats
@@ -49,8 +53,11 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property int $baby_seat
  * @property int $rent_price
  * @property string|null $gps_imei
+ * @property CarConditionEnum $condition
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, Media> $media
  * @property-read int|null $media_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Review> $review
+ * @property-read int|null $review_count
  * @method static \Database\Factories\CarDataFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData newQuery()
@@ -69,6 +76,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereDoors($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereEngineNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereFrameNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereFuelType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereGpsImei($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereLicensePlate($value)
@@ -83,6 +91,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereTractionControl($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereTransmission($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereVehicleOwnershipBookNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereVehicleRegistrationCertExpiration($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereVehicleRegistrationCertNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereYearOfManufacture($value)
@@ -124,7 +133,11 @@ class CarData extends Model implements HasMedia
         'child_lock',
         'traction_control',
         'baby_seat',
-        'gps_imei'
+        'gps_imei',
+        'fuel_type',
+        'rent_price',
+        'vehicle_ownership_book_number',
+        'mileage',
     ];
 
     /**
@@ -135,6 +148,9 @@ class CarData extends Model implements HasMedia
     protected $casts = [
         'model' => CarModelEnum::class,
         'status' => CarStatusEnum::class,
+        'condition' => CarConditionEnum::class,
+        'transmission' => CarTransmissionEnum::class,
+        'fuel_type' => FuelTypeEnum::class,
     ];
 
     /**
@@ -165,6 +181,36 @@ class CarData extends Model implements HasMedia
     public static function getAllCarTransmission(): \Illuminate\Support\Collection
     {
         return collect(value: CarTransmissionEnum::cases())->pluck('value');
+    }
+
+    /**
+     * Mengambil semua jenis bahan bakar mobil yang ada dalam FuelTypeEnum.
+     *
+     * @return \Illuminate\Support\Collection Koleksi dari semua nilai jenis bahan bakar mobil.
+     */
+    public static function getAllCarFuelEnum(): \Illuminate\Support\Collection
+    {
+        return collect(FuelTypeEnum::cases())->pluck('value');
+    }
+
+    /**
+     * Retrieve a collection of all possible car conditions.
+     *
+     * @return \Illuminate\Support\Collection A collection of CarConditionEnum values.
+     */
+    public static function getAllCarCondition(): \Illuminate\Support\Collection
+    {
+        return collect(CarConditionEnum::cases())->pluck('value');
+    }
+
+    /**
+     * Relasi dengan model Review.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Review>
+     */
+    public function review(): HasMany
+    {
+        return $this->hasMany(Review::class);
     }
 
     /**

@@ -47,7 +47,7 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@types/fslightbox-react": "^1.7.8",
     "@types/leaflet": "^1.9.14",
-    "bootstrap": "5.3.3",
+    "bootstrap": "5.3.5",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.13",
     "fslightbox-react": "^1.7.6",
