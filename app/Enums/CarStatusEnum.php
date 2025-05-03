@@ -63,8 +63,8 @@ enum CarStatusEnum: string
     public function label(): string
     {
         return match ($this) {
-            self::READY => 'Siap Dipinjamkan',
-            self::BORROWED => 'Sudah Disewakan',
+            self::READY => 'Siap Dipinjam',
+            self::BORROWED => 'Sudah Disewa',
             self::CRASH => 'Rusak',
             self::REPAIR => 'Direparasi',
             self::MISSING => 'Hilang',

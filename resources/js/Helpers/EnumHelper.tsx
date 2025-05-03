@@ -111,8 +111,8 @@ const carTransmissionColors: { [key in CarTransmissionEnum]: string } = {
  * Mapping of CarStatusEnum values to human-readable labels in Indonesian
  */
 const carStatusLabels: { [key in CarStatusEnum]: string } = {
-  [CarStatusEnum.READY]: 'Siap Dipinjamkan',
-  [CarStatusEnum.BORROWED]: 'Sudah Disewakan',
+  [CarStatusEnum.READY]: 'Siap Dipinjam',
+  [CarStatusEnum.BORROWED]: 'Sudah Disewa',
   [CarStatusEnum.CRASH]: 'Rusak',
   [CarStatusEnum.REPAIR]: 'Direparasi',
   [CarStatusEnum.MISSING]: 'Hilang',

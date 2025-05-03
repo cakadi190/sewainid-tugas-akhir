@@ -2,7 +2,7 @@ import { compactCurrencyFormat, currencyFormat, mileageFormat, speedFormat } fro
 import { AuthenticatedAdmin } from "@/Layouts/AuthenticatedLayout";
 import Database from "@/types/database";
 import { Head, Link } from "@inertiajs/react";
-import { Badge, Breadcrumb, BreadcrumbItem, Button, Card, Col, Nav, Row, Tab } from "react-bootstrap";
+import { Badge, Breadcrumb, BreadcrumbItem, Button, Card, Col, Modal, Nav, Row, Tab } from "react-bootstrap";
 import { FaChevronRight, FaExclamationTriangle, FaMapPin, FaUser } from "react-icons/fa";
 import { FaArrowLeft, FaCalendar, FaClock, FaGasPump, FaTag } from "react-icons/fa6";
 import dayjs from "@/Helpers/dayjs";
@@ -17,9 +17,23 @@ import LabelValue from "@/Components/LabelValue";
 import EditData from "./EditData";
 import { twMerge } from "tailwind-merge";
 import { CarConditionEnum, CarModelEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum } from "@/Helpers/enum";
+import { ShowModalTrackProvider, useShowModalTrack } from "@/Context/TrackingModalContext";
 
 interface ShowProps {
   car_data: Database['CarData'];
+}
+
+const ModalTrackingMap = () => {
+  const { showModalTrack, setShowModalTrack } = useShowModalTrack();
+
+  return (
+    <Modal show={showModalTrack} onHide={() => setShowModalTrack(false)} fullscreen centered>
+      <Modal.Header closeButton>
+        <Modal.Title>Lacak Posisi Kendaraan</Modal.Title>
+      </Modal.Header>
+      <Modal.Body></Modal.Body>
+    </Modal>
+  )
 }
 
 // Komponen Header
@@ -151,10 +165,12 @@ const PricingInfo: React.FC<{ carData: Database['CarData'] }> = ({ carData }) =>
 
 // Komponen Detail Utama Mobil
 const CarMainDetails: React.FC<{ carData: Database['CarData'] & { media?: MediaLibrary[] } }> = ({ carData }) => {
+  const { showModalTrack, setShowModalTrack } = useShowModalTrack();
+
   return (
     <Card body className="rounded-4">
       <div className="p-4 rounded-3 bg-light d-flex justify-content-center align-items-center" style={{ width: '100%', height: '300px' }}>
-        <Button variant="dark">Lacak Posisi Kendaraan</Button>
+        <Button variant="dark" onClick={() => setShowModalTrack(!showModalTrack)}>Lacak Posisi Kendaraan</Button>
       </div>
 
       {(carData.media && carData.media?.length > 0) && (
@@ -486,6 +502,8 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
 
 // Component CarRegistration
 const CarRegistration = ({ carData }: { carData: Database['CarData'] }) => {
+  const { showModalTrack, setShowModalTrack } = useShowModalTrack();
+
   return (
     <>
       <h4 className="mb-1 fw-bold">Data Registrasi</h4>
@@ -533,7 +551,7 @@ const CarRegistration = ({ carData }: { carData: Database['CarData'] }) => {
                   <Card.Title className="fw-bold">IMEI GPS</Card.Title>
                   <Card.Text>{carData.gps_imei ?? 'Belum diatur'}</Card.Text>
                 </div>
-                <div><Button>Lacak</Button></div>
+                <div><Button variant="dark" onClick={() => setShowModalTrack(!showModalTrack)}>Lacak</Button></div>
               </div>
             </Card.Body>
           </Card>
@@ -643,51 +661,55 @@ export default function Show({ car_data }: ShowProps) {
     <AuthenticatedAdmin header={<CarDetailHeader carData={car_data} />}>
       <Head title={`Detail Kendaraan ${car_data.brand} ${car_data.car_name}`} />
 
-      <Row className="py-4 position-relative gy-4">
-        <Col md={8}>
-          <CarMainDetails carData={car_data} />
-        </Col>
-        <Col md={4} className="position-relative">
-          <CarStatus carData={car_data} />
-        </Col>
-      </Row>
+      <ShowModalTrackProvider>
+        <Row className="py-4 position-relative gy-4">
+          <Col md={8}>
+            <CarMainDetails carData={car_data} />
+          </Col>
+          <Col md={4} className="position-relative">
+            <CarStatus carData={car_data} />
+          </Col>
+        </Row>
 
-      <Tab.Container defaultActiveKey="spesifikasi">
-        <Card>
-          <Card.Header className="bg-white">
-            <Nav variant="tabs">
-              <Nav.Item>
-                <Nav.Link eventKey="spesifikasi">Spesifikasi</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="registrasi">Registrasi Kendaraan</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="riwayat">Riwayat Sewa</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="komentar">Komentar dan Penilaian</Nav.Link>
-              </Nav.Item>
-            </Nav>
-          </Card.Header>
-          <Card.Body>
-            <Tab.Content>
-              <Tab.Pane eventKey="spesifikasi">
-                <CarSpecification carData={car_data} />
-              </Tab.Pane>
-              <Tab.Pane eventKey="registrasi">
-                <CarRegistration carData={car_data} />
-              </Tab.Pane>
-              <Tab.Pane eventKey="riwayat">
-                <CarHistory />
-              </Tab.Pane>
-              <Tab.Pane eventKey="komentar">
-                <CarComments />
-              </Tab.Pane>
-            </Tab.Content>
-          </Card.Body>
-        </Card>
-      </Tab.Container>
+        <Tab.Container defaultActiveKey="spesifikasi">
+          <Card>
+            <Card.Header className="bg-white">
+              <Nav variant="tabs">
+                <Nav.Item>
+                  <Nav.Link eventKey="spesifikasi">Spesifikasi</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="registrasi">Registrasi Kendaraan</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="riwayat">Riwayat Sewa</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="komentar">Komentar dan Penilaian</Nav.Link>
+                </Nav.Item>
+              </Nav>
+            </Card.Header>
+            <Card.Body>
+              <Tab.Content>
+                <Tab.Pane eventKey="spesifikasi">
+                  <CarSpecification carData={car_data} />
+                </Tab.Pane>
+                <Tab.Pane eventKey="registrasi">
+                  <CarRegistration carData={car_data} />
+                </Tab.Pane>
+                <Tab.Pane eventKey="riwayat">
+                  <CarHistory />
+                </Tab.Pane>
+                <Tab.Pane eventKey="komentar">
+                  <CarComments />
+                </Tab.Pane>
+              </Tab.Content>
+            </Card.Body>
+          </Card>
+        </Tab.Container>
+
+        <ModalTrackingMap />
+      </ShowModalTrackProvider>
     </AuthenticatedAdmin>
   );
 }
