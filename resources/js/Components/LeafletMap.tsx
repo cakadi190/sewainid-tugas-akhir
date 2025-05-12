@@ -10,13 +10,34 @@ import React, { useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 
-L.Icon.Default.imagePath = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/';
+L.Icon.Default.imagePath = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/';
 
 /**
  * Tipe data untuk posisi koordinat
  * @typedef {number[] | [number, number]} PositionType
  */
 type PositionType = number[] | [number, number];
+
+/**
+ * Interface untuk kustomisasi marker
+ * @interface MarkerCustomizationInterface
+ * @property {string} [iconUrl] - URL untuk icon marker
+ * @property {string} [iconRetinaUrl] - URL untuk icon marker retina
+ * @property {string} [shadowUrl] - URL untuk shadow marker
+ * @property {[number, number]} [iconSize] - Ukuran icon [width, height]
+ * @property {[number, number]} [iconAnchor] - Anchor point icon [x, y]
+ * @property {[number, number]} [popupAnchor] - Anchor point popup [x, y]
+ * @property {[number, number]} [shadowSize] - Ukuran shadow [width, height]
+ */
+interface MarkerCustomizationInterface {
+  iconUrl?: string;
+  iconRetinaUrl?: string;
+  shadowUrl?: string;
+  iconSize?: [number, number];
+  iconAnchor?: [number, number];
+  popupAnchor?: [number, number];
+  shadowSize?: [number, number];
+}
 
 /**
  * Memastikan format posisi koordinat valid
@@ -32,37 +53,35 @@ const ensurePosition = (pos: PositionType): [number, number] => {
 
 /**
  * Interface untuk data lokasi tunggal
- * @interface SingleLocation
+ * @interface LeafletLocationInterface
  * @property {PositionType} position - Koordinat lokasi
  * @property {string} name - Nama lokasi
  * @property {string} address - Alamat lokasi
+ * @property {MarkerCustomizationInterface} [markerCustomization] - Kustomisasi marker untuk lokasi ini
  */
-interface SingleLocation {
+export interface LeafletLocationInterface {
   position: PositionType;
   name: string;
   address: string;
+  markerCustomization?: MarkerCustomizationInterface;
 }
 
 /**
  * Interface untuk props komponen peta lokasi tunggal
  * @interface LeafletSingleProps
- * @extends {Omit<SingleLocation, 'position'>}
+ * @extends {Omit<LeafletLocationInterface, 'position'>}
  * @property {PositionType} position - Koordinat lokasi
  * @property {string|number} [height='400px'] - Tinggi peta
  * @property {string|number} [width='100%'] - Lebar peta
- * @property {string} [iconUrl='https://...'] - URL untuk icon marker
- * @property {string} [iconRetinaUrl='https://...'] - URL untuk icon marker retina
- * @property {string} [shadowUrl='https://...'] - URL untuk shadow marker
+ * @property {MarkerCustomizationInterface} [markerCustomization] - Kustomisasi marker
  * @property {boolean} [disableZoom=true] - Menonaktifkan zoom peta
  * @property {boolean} [disableDrag=true] - Menonaktifkan drag peta
  */
-interface LeafletSingleProps extends Omit<SingleLocation, 'position'> {
+interface LeafletSingleProps extends Omit<LeafletLocationInterface, 'position' | 'markerCustomization'> {
   position: PositionType;
   height?: string | number;
   width?: string | number;
-  iconUrl?: string;
-  iconRetinaUrl?: string;
-  shadowUrl?: string;
+  markerCustomization?: MarkerCustomizationInterface;
   disableZoom?: boolean;
   disableDrag?: boolean;
 }
@@ -70,29 +89,54 @@ interface LeafletSingleProps extends Omit<SingleLocation, 'position'> {
 /**
  * Interface untuk props komponen peta multi lokasi
  * @interface MultiLeafletMapProps
- * @property {SingleLocation[]} locations - Array lokasi yang akan ditampilkan
+ * @property {LeafletLocationInterface[]} locations - Array lokasi yang akan ditampilkan
  * @property {string|number} [height='400px'] - Tinggi peta
  * @property {string|number} [width='100%'] - Lebar peta
  * @property {number} [initialZoom=12] - Level zoom awal
  * @property {boolean} [showAllMarkers=true] - Menampilkan semua marker dalam viewport
- * @property {string} [iconUrl='https://...'] - URL untuk icon marker
- * @property {string} [iconRetinaUrl='https://...'] - URL untuk icon marker retina
- * @property {string} [shadowUrl='https://...'] - URL untuk shadow marker
+ * @property {MarkerCustomizationInterface} [defaultMarkerCustomization] - Kustomisasi default untuk semua marker
  * @property {boolean} [disableZoom=true] - Menonaktifkan zoom peta
  * @property {boolean} [disableDrag=true] - Menonaktifkan drag peta
  */
 interface MultiLeafletMapProps {
-  locations: SingleLocation[];
+  locations: LeafletLocationInterface[];
   height?: string | number;
   width?: string | number;
   initialZoom?: number;
   showAllMarkers?: boolean;
-  iconUrl?: string;
-  iconRetinaUrl?: string;
-  shadowUrl?: string;
+  defaultMarkerCustomization?: MarkerCustomizationInterface;
   disableZoom?: boolean;
   disableDrag?: boolean;
 }
+
+/**
+ * Fungsi untuk membuat icon marker berdasarkan konfigurasi
+ * @param {MarkerCustomizationInterface} customization - Konfigurasi marker
+ * @returns {L.Icon} Icon Leaflet
+ */
+const createCustomIcon = (customization?: MarkerCustomizationInterface): L.Icon => {
+  const defaultCustomization = {
+    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+    iconSize: [25, 41] as [number, number],
+    iconAnchor: [12, 41] as [number, number],
+    popupAnchor: [1, -34] as [number, number],
+    shadowSize: [41, 41] as [number, number]
+  };
+
+  const config = { ...defaultCustomization, ...customization };
+
+  return L.icon({
+    iconUrl: config.iconUrl,
+    iconRetinaUrl: config.iconRetinaUrl,
+    shadowUrl: config.shadowUrl,
+    iconSize: config.iconSize,
+    iconAnchor: config.iconAnchor,
+    popupAnchor: config.popupAnchor,
+    shadowSize: config.shadowSize
+  });
+};
 
 /**
  * Komponen untuk menampilkan peta dengan satu marker
@@ -106,22 +150,12 @@ export const LeafletSingle: React.FC<LeafletSingleProps> = ({
   address,
   height = '400px',
   width = '100%',
-  iconUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  iconRetinaUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  shadowUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  markerCustomization,
   disableZoom = true,
   disableDrag = true
 }) => {
   const validPosition = ensurePosition(position);
-  const customIcon = L.icon({
-    iconUrl,
-    iconRetinaUrl,
-    shadowUrl,
-    iconSize: [48, 48],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
-  });
+  const customIcon = createCustomIcon(markerCustomization);
 
   return (
     <div style={{ height, width }} className="overflow-hidden rounded-lg shadow-md">
@@ -163,9 +197,7 @@ export const MultiLeafletMapPin: React.FC<MultiLeafletMapProps> = ({
   width = '100%',
   initialZoom = 12,
   showAllMarkers = true,
-  iconUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  iconRetinaUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  shadowUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  defaultMarkerCustomization,
   disableZoom = true,
   disableDrag = true
 }) => {
@@ -190,15 +222,7 @@ export const MultiLeafletMapPin: React.FC<MultiLeafletMapProps> = ({
     return bounds;
   }, [locations, showAllMarkers]);
 
-  const customIcon = L.icon({
-    iconUrl,
-    iconRetinaUrl,
-    shadowUrl,
-    iconSize: [25, 41], // Ukuran icon
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41] // Ukuran shadow
-  });
+  const defaultIcon = createCustomIcon(defaultMarkerCustomization);
 
   return (
     <div style={{ height, width }} className="overflow-hidden rounded-lg shadow-md">
@@ -218,13 +242,15 @@ export const MultiLeafletMapPin: React.FC<MultiLeafletMapProps> = ({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {locations.map(({ name, address, position }, index) => {
+        {locations.map(({ name, address, position, markerCustomization }, index) => {
           const validPosition = ensurePosition(position);
+          const icon = markerCustomization ? createCustomIcon(markerCustomization) : defaultIcon;
+
           return (
             <Marker
               key={`${name}-${index}`}
               position={validPosition}
-              icon={customIcon}
+              icon={icon}
             >
               <Popup>
                 <div className="p-2">
