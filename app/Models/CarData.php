@@ -9,6 +9,7 @@ use App\Enums\CarModelEnum;
 use App\Enums\CarStatusEnum;
 use App\Enums\CarTransmissionEnum;
 use App\Enums\FuelTypeEnum;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -16,6 +17,8 @@ use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 
 /**
  * Car Data model
@@ -25,6 +28,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string $car_name
  * @property string $brand Misal: Toyota, Suzuki, Honda, Mercy
+ * @property string|null $slug
  * @property string $frame_number
  * @property string $engine_number
  * @property string $license_plate
@@ -38,6 +42,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property CarModelEnum $model
  * @property CarStatusEnum $status
  * @property FuelTypeEnum $fuel_type
+ * @property CarConditionEnum $condition
  * @property string|null $description
  * @property int $doors
  * @property int $seats
@@ -45,6 +50,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property int $big_luggage
  * @property int $med_luggage
  * @property int $small_luggage
+ * @property int $mileage
  * @property int $ac
  * @property int $audio
  * @property int $abs
@@ -53,7 +59,6 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property int $baby_seat
  * @property int $rent_price
  * @property string|null $gps_imei
- * @property CarConditionEnum $condition
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, Media> $media
  * @property-read int|null $media_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Review> $review
@@ -71,6 +76,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereCarName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereChildLock($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereCondition($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereDoors($value)
@@ -83,9 +89,11 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereLicensePlateExpiration($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereMaxSpeed($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereMedLuggage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereMileage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereModel($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereRentPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereSeats($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereSmallLuggage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereTractionControl($value)
@@ -99,7 +107,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  */
 class CarData extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia;
+    use HasFactory, InteractsWithMedia, HasSlug;
 
     /**
      * The attributes that are mass assignable.
@@ -142,6 +150,18 @@ class CarData extends Model implements HasMedia
     ];
 
     /**
+     * Get the full name of the car by combining the brand and car name.
+     *
+     * @return string The full name of the car.
+     */
+    public function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => "{$this->brand} {$this->car_name}",
+        );
+    }
+
+    /**
      * The attributes that should be cast.
      *
      * @var array<string, string>
@@ -153,6 +173,17 @@ class CarData extends Model implements HasMedia
         'transmission' => CarTransmissionEnum::class,
         'fuel_type' => FuelTypeEnum::class,
     ];
+
+    /**
+     * Get the options for generating the slug.
+     */
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom(['brand', 'car_name'])
+            ->saveSlugsTo('slug')
+            ->slugsShouldBeNoLongerThan(128);
+    }
 
     /**
      * Mengambil semua model mobil yang ada dalam CarModelEnum.

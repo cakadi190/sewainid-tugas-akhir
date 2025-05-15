@@ -13,6 +13,20 @@
         href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
         rel="stylesheet">
 
+    @isset($schemas)
+    @if(is_array($schemas))
+    @foreach($schemas as $schema)
+    <script type="application/ld+json">
+        {!! json_encode($schema, JSON_PRETTY_PRINT) !!}
+    </script>
+    @endforeach
+    @else
+    <script type="application/ld+json">
+        {!! json_encode($schemas, JSON_PRETTY_PRINT) !!}
+    </script>
+    @endif
+    @endif
+
     <!-- Scripts -->
     @routes
     @viteReactRefresh

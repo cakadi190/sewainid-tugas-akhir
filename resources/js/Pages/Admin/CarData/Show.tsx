@@ -36,7 +36,6 @@ const ModalTrackingMap = () => {
   )
 }
 
-// Komponen Header
 const CarDetailHeader: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
   return (
     <div className="gap-2 d-flex flex-column flex-lg-row justify-content-between position-relative" style={{ zIndex: 500 }}>
@@ -63,7 +62,6 @@ const CarDetailHeader: React.FC<{ carData: Database['CarData'] }> = ({ carData }
   );
 };
 
-// Komponen Info Card
 const InfoCard: React.FC<{ icon: React.ReactNode, title: string, value: string }> = ({ icon, title, value }) => {
   return (
     <GridItem>
@@ -74,7 +72,6 @@ const InfoCard: React.FC<{ icon: React.ReactNode, title: string, value: string }
   );
 };
 
-// Komponen Kartu Info Kendaraan
 const CarInfoCards: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
   return (
     <div className="mt-4">
@@ -94,7 +91,7 @@ const CarInfoCards: React.FC<{ carData: Database['CarData'] }> = ({ carData }) =
           <InfoCard
             icon={<FaClock size={"32"} />}
             title="Kilometer Berjalan"
-            value={mileageFormat(0)}
+            value={mileageFormat(carData.mileage || 0)}
           />
           <InfoCard
             icon={<FaGasPump size={"32"} />}
@@ -120,7 +117,7 @@ const CarInfoCards: React.FC<{ carData: Database['CarData'] }> = ({ carData }) =
           <InfoCard
             icon={<FaClock size={"32"} />}
             title="Kilometer Berjalan"
-            value={mileageFormat(0)}
+            value={mileageFormat(carData.mileage || 0)}
           />
           <InfoCard
             icon={<FaGasPump size={"32"} />}
@@ -133,7 +130,6 @@ const CarInfoCards: React.FC<{ carData: Database['CarData'] }> = ({ carData }) =
   );
 };
 
-// Komponen Kartu Harga
 const PriceCard: React.FC<{ label: string, price: number }> = ({ label, price }) => {
   return (
     <Col md="4">
@@ -145,7 +141,6 @@ const PriceCard: React.FC<{ label: string, price: number }> = ({ label, price })
   );
 };
 
-// Komponen Informasi Harga
 const PricingInfo: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
   return (
     <Card body>
@@ -163,7 +158,6 @@ const PricingInfo: React.FC<{ carData: Database['CarData'] }> = ({ carData }) =>
   );
 };
 
-// Komponen Detail Utama Mobil
 const CarMainDetails: React.FC<{ carData: Database['CarData'] & { media?: MediaLibrary[] } }> = ({ carData }) => {
   const { showModalTrack, setShowModalTrack } = useShowModalTrack();
 
@@ -192,7 +186,6 @@ const CarMainDetails: React.FC<{ carData: Database['CarData'] & { media?: MediaL
   );
 };
 
-// Komponen Status Mobil
 const CarStatus: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
   const plateDaysRemaining = dayjs(carData.license_plate_expiration).diff(dayjs(), 'day');
   const certDaysRemaining = dayjs(carData.vehicle_registration_cert_expiration).diff(dayjs(), 'day');
@@ -347,7 +340,6 @@ const CarStatus: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
   );
 };
 
-// Component CarSpecification
 const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
   return (
     <>
@@ -500,7 +492,6 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
   );
 };
 
-// Component CarRegistration
 const CarRegistration = ({ carData }: { carData: Database['CarData'] }) => {
   const { showModalTrack, setShowModalTrack } = useShowModalTrack();
 
@@ -561,7 +552,6 @@ const CarRegistration = ({ carData }: { carData: Database['CarData'] }) => {
   );
 };
 
-// Component CarHistory
 const CarHistory = () => {
   return (
     <div>
@@ -640,7 +630,6 @@ const CarHistory = () => {
   );
 };
 
-// Component CarComments
 const CarComments = () => {
   return (
     <Row className="g-0">
@@ -655,7 +644,6 @@ const CarComments = () => {
   );
 };
 
-// Component utama
 export default function Show({ car_data }: ShowProps) {
   return (
     <AuthenticatedAdmin header={<CarDetailHeader carData={car_data} />}>

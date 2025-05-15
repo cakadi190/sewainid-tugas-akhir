@@ -2,4 +2,4 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'Dashboard')->name('dashboard');
+Route::inertia('/', 'Dashboard/Home')->name('dashboard');

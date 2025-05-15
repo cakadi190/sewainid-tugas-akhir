@@ -14,21 +14,22 @@ use Illuminate\Support\Str;
  *
  * @property int $id
  * @property string $status
+ * @property string $rental_status
  * @property string|null $confirmed_at
  * @property string|null $payment_channel
  * @property string|null $payment_references
+ * @property string|null $expired_at
  * @property int $total_price
  * @property int $total_pay
  * @property string|null $pickup_date
  * @property string|null $return_date
- * @property string|null $expired_at
  * @property string $place_name
  * @property string $longitude
  * @property string $latitude
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int|null $car_data_id
  * @property int|null $user_id
+ * @property int|null $car_data_id
  * @method static \Database\Factories\TransactionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction newQuery()
@@ -44,6 +45,7 @@ use Illuminate\Support\Str;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction wherePaymentReferences($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction wherePickupDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction wherePlaceName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereRentalStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereReturnDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereTotalPay($value)

@@ -7,6 +7,7 @@ import FsLightbox from "fslightbox-react";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 import { router } from "@inertiajs/react";
+import { wrapOptimizeUrl } from "@/Helpers/url";
 
 interface ImageGalleryInterface {
   initialData: MediaLibrary[];
@@ -262,7 +263,7 @@ export default function ImageGallery({ initialData, readOnly }: ImageGalleryInte
                 <FontAwesomeIcon icon={faTrash} />
               </RemoveButton>
             )}
-            <Image src={item.url} alt={item.name} />
+            <Image src={wrapOptimizeUrl(item.url)} alt={item.name} />
           </ImageGalleryWrap>
         ))}
       </ImageGalleryWrapper>

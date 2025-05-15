@@ -32,23 +32,11 @@ class CarDataController extends Controller
         }
 
         return DataTables::of($query)
-            // ->addColumn('model', function (CarData $model) {
-            //     return [
-            //         'label' => $model->getAttribute('model')->label(),
-            //         'color' => $model->getAttribute('model')->color(),
-            //     ];
-            // })
-            // ->addColumn('status', function (CarData $model) {
-            //     return [
-            //         'label' => $model->getAttribute('status')->label(),
-            //         'color' => $model->getAttribute('status')->color(),
-            //     ];
-            // })
-            ->orderColumn('name', '-name $1') // Order by name, descending
+            ->orderColumn('name', '-name $1')
             ->setRowId(function (CarData $model) {
-                return $model->id; // Set a unique row ID if needed
+                return $model->id;
             })
-            ->make(true); // Return JSON response
+            ->make(true);
     }
 
     /**

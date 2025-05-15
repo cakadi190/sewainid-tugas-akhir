@@ -1,0 +1,394 @@
+import { compactCurrencyFormat, currencyFormat, mileageFormat, speedFormat } from "@/Helpers/number";
+import AuthenticatedUser from "@/Layouts/AuthenticatedLayout";
+import Database from "@/types/database";
+import { Head } from "@inertiajs/react";
+import { Badge, Button, Card, Col, Nav, Row, Tab } from "react-bootstrap";
+import { FaChevronRight, FaExclamationTriangle, FaMapPin, FaUser } from "react-icons/fa";
+import { FaCalendar, FaClock, FaGasPump, FaTag } from "react-icons/fa6";
+import dayjs from "@/Helpers/dayjs";
+import { parseAntiXss } from "@/Helpers/string";
+import { MediaLibrary } from "@/types/medialibrary";
+import ImageGallery from "@/Components/ImageGallery";
+import { GridContainer, GridItem } from "@/InternalBorderGrid";
+import { PiBabyCarriage, PiCarProfileDuotone, PiLock, PiMusicNote, PiPalette, PiSeat, PiShield, PiSnowflake, PiSpeedometer, PiTag, PiTire } from "react-icons/pi";
+import { getCarConditionLabel, getCarFuelTypeLabel, getCarModelLabel, getCarStatusColor, getCarStatusIcon, getCarStatusLabel, getCarTransmissionLabel } from "@/Helpers/EnumHelper";
+import { GiGearStickPattern } from "react-icons/gi";
+import LabelValue from "@/Components/LabelValue";
+import { twMerge } from "tailwind-merge";
+import { CarConditionEnum, CarModelEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum } from "@/Helpers/enum";
+import HeaderArmadaDetail from "./Partials/HeaderArmadaDetail";
+
+const InfoCard: React.FC<{ icon: React.ReactNode, title: string, value: string }> = ({ icon, title, value }) => {
+  return (
+    <GridItem>
+      {icon}
+      <Card.Text className="mt-2 mb-1">{title}</Card.Text>
+      <Card.Title className="mb-0 fw-bold">{value}</Card.Title>
+    </GridItem>
+  );
+};
+
+const CarInfoCards: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
+  return (
+    <div className="mt-4">
+      {/* Tampilan untuk ukuran layar extra small hingga large */}
+      <div className="d-block d-xxl-none">
+        <GridContainer cols={2} textAlign="center">
+          <InfoCard
+            icon={<FaTag size={"32"} />}
+            title="Nomor Polisi"
+            value={carData.license_plate}
+          />
+          <InfoCard
+            icon={<FaCalendar size={"32"} />}
+            title="Tahun Pembuatan"
+            value={carData.year_of_manufacture.toString()}
+          />
+          <InfoCard
+            icon={<FaClock size={"32"} />}
+            title="Kilometer Berjalan"
+            value={mileageFormat(carData.mileage || 0)}
+          />
+          <InfoCard
+            icon={<FaGasPump size={"32"} />}
+            title="Bahan Bakar"
+            value={getCarFuelTypeLabel(carData.fuel_type as FuelEnum)}
+          />
+        </GridContainer>
+      </div>
+
+      {/* Tampilan untuk ukuran layar extra large ke atas */}
+      <div className="d-none d-xxl-block">
+        <GridContainer cols={4} textAlign="center">
+          <InfoCard
+            icon={<FaTag size={"32"} />}
+            title="Nomor Polisi"
+            value={carData.license_plate}
+          />
+          <InfoCard
+            icon={<FaCalendar size={"32"} />}
+            title="Tahun Pembuatan"
+            value={carData.year_of_manufacture.toString()}
+          />
+          <InfoCard
+            icon={<FaClock size={"32"} />}
+            title="Kilometer Berjalan"
+            value={mileageFormat(carData.mileage || 0)}
+          />
+          <InfoCard
+            icon={<FaGasPump size={"32"} />}
+            title="Bahan Bakar"
+            value={getCarFuelTypeLabel(carData.fuel_type as FuelEnum)}
+          />
+        </GridContainer>
+      </div>
+    </div>
+  );
+};
+
+const PriceCard: React.FC<{ label: string, price: number }> = ({ label, price }) => {
+  return (
+    <Col md="4">
+      <Card body className="text-center bg-light">
+        <Card.Title className="mb-0 fw-bold">{compactCurrencyFormat(price)}</Card.Title>
+        <Card.Text className="mb-0">{label}</Card.Text>
+      </Card>
+    </Col>
+  );
+};
+
+const PricingInfo: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
+  return (
+    <Card body>
+      <div className="mb-3 d-flex justify-content-between">
+        <Card.Title className="mb-0">Informasi Harga Sewa</Card.Title>
+      </div>
+
+      <Row className="g-3">
+        <PriceCard label="Harian" price={carData.rent_price} />
+        <PriceCard label="Mingguan" price={carData.rent_price * 7} />
+        <PriceCard label="Bulanan" price={carData.rent_price * 30} />
+      </Row>
+    </Card>
+  );
+};
+
+const CarMainDetails: React.FC<{ carData: Database['CarData'] & { media?: MediaLibrary[] } }> = ({ carData }) => {
+  return (
+    <Card body className="rounded-4">
+      {(carData.media && carData.media?.length > 0) &&
+        <ImageGallery readOnly initialData={carData.media as unknown as MediaLibrary[]} />}
+
+      <CarInfoCards carData={carData} />
+
+      <Card body className="mb-4">
+        <strong>Deskripsi</strong>
+        <p className="mt-2 mb-0" dangerouslySetInnerHTML={{ __html: parseAntiXss(carData.description || '-') }} />
+      </Card>
+
+      <PricingInfo carData={carData} />
+    </Card>
+  );
+};
+
+const CarStatus: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
+  const plateDaysRemaining = dayjs(carData.license_plate_expiration).diff(dayjs(), 'day');
+  const certDaysRemaining = dayjs(carData.vehicle_registration_cert_expiration).diff(dayjs(), 'day');
+  const lastUsage = dayjs().diff('2025-04-01', 'day');
+
+  return (
+    <Card body className="rounded-4">
+      <Card.Title>Status Kendaraan</Card.Title>
+
+      <div className="pt-4 pb-3 mb-4 justify-content-between d-flex border-bottom">
+        <div className="gap-2 d-flex align-items-center">
+          <div className={'text-' + getCarStatusColor(carData.status as CarStatusEnum)}>{getCarStatusIcon(carData.status as CarStatusEnum)}</div>
+          <Card.Title className="mb-0">{getCarStatusLabel(carData.status as CarStatusEnum)}</Card.Title>
+        </div>
+      </div>
+
+      <div className="gap-2 d-flex flex-column">
+        <div className="d-flex justify-content-between">
+          <div className="text-muted">Posisi Saat Ini</div>
+          <div className="fw-bold">{(() => {
+            switch (carData.status) {
+              case CarStatusEnum.BORROWED:
+                return 'Dipinjam';
+              case CarStatusEnum.READY:
+                return 'Diam Di Garasi';
+              case CarStatusEnum.SOLD:
+                return 'Sudah Dijual';
+              case CarStatusEnum.MISSING:
+                return 'Sedang Dicari';
+              case CarStatusEnum.REPAIR:
+                return 'Di Bengkel';
+              case CarStatusEnum.CRASH:
+                return 'Diam Di Garasi';
+            }
+          })()}</div>
+        </div>
+        <div className="d-flex justify-content-between">
+          <div className="text-muted">Kondisi Kendaraan</div>
+          <div className="fw-bold">{getCarConditionLabel(carData.condition as CarConditionEnum)}</div>
+        </div>
+        <div className="d-flex justify-content-between">
+          <div className="text-muted">Terakhir Digunakan</div>
+          <div className="fw-bold">{lastUsage} hari yang lalu</div>
+        </div>
+      </div>
+    </Card>
+  );
+};
+
+const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
+  return (
+    <>
+      <h4 className="mb-1 fw-bold">Spesifikasi Kendaraan</h4>
+      <p>Detail teknis dan fitur kendaraan</p>
+
+      <div className="pb-4 mb-4 border-bottom">
+        <GridContainer textAlign="left" cols={3}>
+          <GridItem>
+            <div className="gap-3 d-flex">
+              <PiCarProfileDuotone size={24} />
+              <div>
+                <h6 className="mb-0 fw-bold">Jenama</h6>
+                <p className="mb-0">{carData.brand}</p>
+              </div>
+            </div>
+          </GridItem>
+          <GridItem>
+            <div className="gap-3 d-flex">
+              <PiTag size={24} />
+              <div>
+                <h6 className="mb-0 fw-bold">Model</h6>
+                <p className="mb-0">{getCarModelLabel(carData.model as CarModelEnum)}</p>
+              </div>
+            </div>
+          </GridItem>
+          <GridItem>
+            <div className="gap-3 d-flex">
+              <GiGearStickPattern size={24} />
+              <div>
+                <h6 className="mb-0 fw-bold">Transmisi</h6>
+                <p className="mb-0">{getCarTransmissionLabel(carData.transmission as CarTransmissionEnum)}</p>
+              </div>
+            </div>
+          </GridItem>
+          <GridItem>
+            <div className="gap-3 d-flex">
+              <PiPalette size={24} />
+              <div>
+                <h6 className="mb-0 fw-bold">Warna</h6>
+                <p className="mb-0">{carData.color}</p>
+              </div>
+            </div>
+          </GridItem>
+          <GridItem>
+            <div className="gap-3 d-flex">
+              <PiSeat size={24} />
+              <div>
+                <h6 className="mb-0 fw-bold">Penumpang</h6>
+                <p className="mb-0">{carData.seats} Penumpang</p>
+              </div>
+            </div>
+          </GridItem>
+          <GridItem>
+            <div className="gap-3 d-flex">
+              <PiSpeedometer size={24} />
+              <div>
+                <h6 className="mb-0 fw-bold">Kecepatan Maksimum</h6>
+                <p className="mb-0">{speedFormat(carData.max_speed)}</p>
+              </div>
+            </div>
+          </GridItem>
+        </GridContainer>
+      </div>
+
+      <div className="pb-4 mb-4 border-bottom">
+        <h5 className="mb-4 fw-bold">Kapasitas Bagasi</h5>
+        <Row>
+          <Col>
+            <Card body className="text-center">
+              <Card.Text className="mb-1">Bagasi Besar</Card.Text>
+              <h4 className="mb-0 fw-bold">{carData.big_luggage}</h4>
+            </Card>
+          </Col>
+          <Col>
+            <Card body className="text-center">
+              <Card.Text className="mb-1">Bagasi Sedang</Card.Text>
+              <h4 className="mb-0 fw-bold">{carData.med_luggage}</h4>
+            </Card>
+          </Col>
+          <Col>
+            <Card body className="text-center">
+              <Card.Text className="mb-1">Bagasi Kecil</Card.Text>
+              <h4 className="mb-0 fw-bold">{carData.small_luggage}</h4>
+            </Card>
+          </Col>
+        </Row>
+      </div>
+
+      <div>
+        <h5 className="mb-4 fw-bold">Fitur Kendaraan</h5>
+        <Row className="g-3">
+          <Col md={4}>
+            <Card>
+              <Card.Body className="flex-row gap-2 align-items-center d-flex">
+                <PiSnowflake size={24} />
+                <strong className="mb-0 fw-bold">Air Conditioner (AC)</strong>
+                <Badge className={twMerge("ms-auto border", carData.ac ? 'text-white' : 'text-dark')} bg={carData.ac ? 'dark' : 'white'}>{carData.ac ? 'Ada' : 'Tidak Ada'}</Badge>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={4}>
+            <Card>
+              <Card.Body className="flex-row gap-2 align-items-center d-flex">
+                <PiMusicNote size={24} />
+                <strong className="mb-0 fw-bold">Audio Entertainment</strong>
+                <Badge className={twMerge("ms-auto border", carData.audio ? 'text-white' : 'text-dark')} bg={carData.audio ? 'dark' : 'white'}>{carData.audio ? 'Ada' : 'Tidak Ada'}</Badge>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={4}>
+            <Card>
+              <Card.Body className="flex-row gap-2 align-items-center d-flex">
+                <PiShield size={24} />
+                <strong className="mb-0 fw-bold">ABS</strong>
+                <Badge className={twMerge("ms-auto border", carData.abs ? 'text-white' : 'text-dark')} bg={carData.abs ? 'dark' : 'white'}>{carData.abs ? 'Ada' : 'Tidak Ada'}</Badge>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={4}>
+            <Card>
+              <Card.Body className="flex-row gap-2 align-items-center d-flex">
+                <PiLock size={24} />
+                <strong className="mb-0 fw-bold">Child-Lock</strong>
+                <Badge className={twMerge("ms-auto border", carData.child_lock ? 'text-white' : 'text-dark')} bg={carData.child_lock ? 'dark' : 'white'}>{carData.child_lock ? 'Ada' : 'Tidak Ada'}</Badge>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={4}>
+            <Card>
+              <Card.Body className="flex-row gap-2 align-items-center d-flex">
+                <PiTire size={24} />
+                <strong className="mb-0 fw-bold">Traction Control</strong>
+                <Badge className={twMerge("ms-auto border", carData.traction_control ? 'text-white' : 'text-dark')} bg={carData.traction_control ? 'dark' : 'white'}>{carData.traction_control ? 'Ada' : 'Tidak Ada'}</Badge>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={4}>
+            <Card>
+              <Card.Body className="flex-row gap-2 align-items-center d-flex">
+                <PiBabyCarriage size={24} />
+                <strong className="mb-0 fw-bold">Kursi Bayi</strong>
+                <Badge className={twMerge("ms-auto border", carData.baby_seat ? 'text-white' : 'text-dark')} bg={carData.baby_seat ? 'dark' : 'white'}>{carData.baby_seat ? 'Ada' : 'Tidak Ada'}</Badge>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </div>
+    </>
+  );
+};
+
+const CarComments = () => {
+  return (
+    <Row className="g-0">
+      <Col md={12}>
+        <Card bg="light">
+          <Card.Body>
+            <Card.Title>Komentar</Card.Title>
+          </Card.Body>
+        </Card>
+      </Col>
+    </Row>
+  );
+};
+
+interface ShowProps {
+  car_data: Database['CarData'] & { review: Database['Review'] };
+}
+
+export default function Show({ car_data }: ShowProps) {
+  return (
+    <AuthenticatedUser header={<HeaderArmadaDetail carData={car_data} />}>
+      <Head title={`Detail Kendaraan ${car_data.brand} ${car_data.car_name}`} />
+
+      <Row className="py-4 position-relative gy-4">
+        <Col md={8}>
+          <CarMainDetails carData={car_data} />
+        </Col>
+        <Col md={4} className="position-relative">
+          <CarStatus carData={car_data} />
+        </Col>
+      </Row>
+
+      <Tab.Container defaultActiveKey="spesifikasi">
+        <Card>
+          <Card.Header className="bg-white">
+            <Nav variant="tabs">
+              <Nav.Item>
+                <Nav.Link eventKey="spesifikasi">Spesifikasi</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="komentar">Komentar dan Penilaian</Nav.Link>
+              </Nav.Item>
+            </Nav>
+          </Card.Header>
+          <Card.Body>
+            <Tab.Content>
+              <Tab.Pane eventKey="spesifikasi">
+                <CarSpecification carData={car_data} />
+              </Tab.Pane>
+              <Tab.Pane eventKey="komentar">
+                <CarComments />
+              </Tab.Pane>
+            </Tab.Content>
+          </Card.Body>
+        </Card>
+      </Tab.Container>
+    </AuthenticatedUser>
+  );
+}
+

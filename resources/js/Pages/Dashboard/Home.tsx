@@ -4,13 +4,12 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
+import HeaderDashboard from './Partials/Header';
 
 export default function Dashboard() {
   return (
     <AuthenticatedLayout
-      header={
-        <h2 className="mb-0 h4 text-dark">Dashboard</h2>
-      }
+      header={<HeaderDashboard />}
     >
       <Head title="Dashboard" />
 

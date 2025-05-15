@@ -312,7 +312,7 @@ const MenuItemComponent = ({
 
 const SidebarHeader: FC<{ toggle: () => void }> = ({ toggle }) => (
   <HeaderSidebar>
-    <LogoLink href={'#'}>
+    <LogoLink href={'/'}>
       <ApplicationLogo fill="#000" height={36} />
     </LogoLink>
     <Button variant="link" className="p-0" onClick={toggle}>

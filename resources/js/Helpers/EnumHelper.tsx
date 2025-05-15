@@ -1,6 +1,16 @@
 import { FaCheckCircle, FaCircle, FaExclamation, FaExclamationTriangle, FaMinusCircle, FaMoneyBill, FaQuestionCircle, FaThumbsUp, FaTimesCircle, FaTools, FaWrench } from "react-icons/fa";
 import { CarConditionEnum, CarModelEnum, CarRepairNoteStatusEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum, RentalStatusEnum } from "./enum";
 
+import MiniVanIcon from '@/Assets/Icon/car-type/camper-van.png';
+import HatchbackIcon from '@/Assets/Icon/car-type/hatchback.png';
+import VanIcon from '@/Assets/Icon/car-type/van.png';
+import LuxuryIcon from '@/Assets/Icon/car-type/sport-car.png';
+import SuvIcon from '@/Assets/Icon/car-type/suv.png';
+import CityCarIcon from '@/Assets/Icon/car-type/city-car.png';
+import SedanIcon from '@/Assets/Icon/car-type/sedan.png';
+import MpvIcon from '@/Assets/Icon/car-type/mpv.png';
+import PickupIcon from '@/Assets/Icon/car-type/pickup.png';
+
 /**
  * Mapping of CarConditionEnum values to human-readable labels in Indonesian
  */
@@ -74,6 +84,18 @@ const carModelLabels: { [key in CarModelEnum]: string } = {
   [CarModelEnum.LUXURY_CAR]: 'Luxury Car'
 };
 
+const carModelIcons: { [key in CarModelEnum]: string } = {
+  [CarModelEnum.MINI_VAN]: MiniVanIcon,
+  [CarModelEnum.VAN]: VanIcon,
+  [CarModelEnum.CITY_CAR]: CityCarIcon,
+  [CarModelEnum.HATCHBACK]: HatchbackIcon,
+  [CarModelEnum.SEDAN]: SedanIcon,
+  [CarModelEnum.SUV]: SuvIcon,
+  [CarModelEnum.MPV]: MpvIcon,
+  [CarModelEnum.PICKUP]: PickupIcon,
+  [CarModelEnum.LUXURY_CAR]: LuxuryIcon
+}
+
 /**
  * Mapping of CarModelEnum values to Bootstrap 5 color classes
  */
@@ -93,9 +115,9 @@ const carModelColors: { [key in CarModelEnum]: string } = {
  * Mapping of CarTransmissionEnum values to human-readable labels in Indonesian
  */
 const carTransmissionLabels: { [key in CarTransmissionEnum]: string } = {
-  [CarTransmissionEnum.MT]: 'Manual (MT)',
-  [CarTransmissionEnum.AT]: 'Otomatis (AT)',
-  [CarTransmissionEnum.SMT]: 'Semi-Manual (SMT)',
+  [CarTransmissionEnum.MT]: 'Manual',
+  [CarTransmissionEnum.AT]: 'Auto',
+  [CarTransmissionEnum.SMT]: 'Semi-Auto',
 };
 
 /**
@@ -200,6 +222,22 @@ const carFuelTypeColors: { [key in FuelEnum]: string } = {
 export function getCarModelLabel(model: CarModelEnum): string {
   return carModelLabels[model] || 'Unknown Model';
 }
+
+/**
+ * Retrieves the icon for a car model
+ * @param model - The CarModelEnum value to be converted to an icon
+ * @returns The corresponding icon for the car model, or a blank image if not found
+ */
+export function CarModelIcon({ model, height }: { model: CarModelEnum; height?: number }): JSX.Element {
+  return (
+    <img
+      src={carModelIcons[model]}
+      alt={getCarModelLabel(model)}
+      height={height ?? 'auto'}
+      width="auto"
+    />
+  );
+};
 
 /**
  * Retrieves the corresponding icon for a car status

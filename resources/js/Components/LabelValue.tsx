@@ -8,6 +8,7 @@ interface LabelValueProps {
   className?: string;
   bottomBorder?: boolean;
   icon?: JSX.Element | IconDefinition;
+  noMarginBottom?: boolean;
   iconColor?: string;
   iconSize?: "xs" | "sm" | "lg" | "xl" | "2xl";
 }
@@ -31,11 +32,12 @@ export default function LabelValue({
   value,
   className,
   bottomBorder = true,
+  noMarginBottom = false,
   icon,
   iconSize = "xl"
 }: LabelValueProps) {
   return (
-    <div className={twMerge(className, bottomBorder ? "border-bottom mb-3" : "mb-3", "d-flex gap-2 align-items-center")}>
+    <div className={twMerge(className, bottomBorder ? "border-bottom" : "", "d-flex gap-2 align-items-center")}>
       {icon && (
         <div className="flex-shrink-0 d-flex align-items-center justify-content-center" style={{ aspectRatio: "1/1", minHeight: "40px", minWidth: "40px" }}>
           {isIconDefinition(icon) ? (

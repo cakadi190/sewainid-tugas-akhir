@@ -10,8 +10,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -23,6 +22,7 @@ return new class extends Migration
 
             $table->string('car_name', 50);
             $table->string('brand', 50)->comment('Misal: Toyota, Suzuki, Honda, Mercy')->index();
+            $table->string('slug', 128)->unique()->index()->nullable();
             $table->string('frame_number', 20)->unique()->index();
             $table->string('engine_number', 20)->unique()->index();
             $table->string('license_plate', 20)->unique()->index();

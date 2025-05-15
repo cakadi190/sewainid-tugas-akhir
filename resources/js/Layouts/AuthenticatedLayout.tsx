@@ -2,6 +2,8 @@ import { PropsWithChildren, ReactNode } from 'react';
 import Sidebar from './parts/Admin/Sidebar';
 import MainPage from './parts/Admin/MainPage';
 import Navbar from './parts/Admin/Navbar';
+import NavbarUserMain from './parts/User/Navbar';
+import Footer from './parts/User/Footer';
 
 /**
  * Tipe props untuk komponen Authenticated.
@@ -28,8 +30,11 @@ export default function AuthenticatedUser({
   header
 }: AuthenticatedProps) {
   return (
-    <div className="min-vh-100 bg-light">
+    <div className="min-vh-100">
+      <NavbarUserMain />
+      {header}
       <main className="container py-4">{children}</main>
+      <Footer />
     </div>
   );
 };

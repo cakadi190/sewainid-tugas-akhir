@@ -21,12 +21,10 @@ class RoleMiddleware
         /** @var User|null $user */
         $user = Auth::user();
 
-        // Check if the user is authenticated
         if (!$user) {
             return redirect()->route('login')->with('error', 'Anda belum masuk! Silahkan autentikasikan diri anda terlebih dahulu.');
         }
 
-        // Check if the user's role is not in the allowed roles
         if (!in_array($user->role->value, $roles)) {
             abort(403);
         }

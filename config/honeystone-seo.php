@@ -9,7 +9,7 @@ return [
     'generators' => [
         Generators\MetaGenerator::class => [
             'title' => env('APP_NAME'),
-            'titleTemplate' => '{title} - '.env('APP_NAME'),
+            'titleTemplate' => '{title} - ' . env('APP_NAME'),
             'description' => '',
             'keywords' => [],
             'canonicalEnabled' => true,
@@ -17,8 +17,8 @@ return [
             'robots' => [],
             'custom' => [
                 [
-                    'greeting' => 'Hey, thanks for checking out the source code of our website. '.
-                        'Hopefully you find what you are looking for 👍'
+                    // 'greeting' => 'Hey, thanks for checking out the source code of our website. '.
+                    //     'Hopefully you find what you are looking for 👍'
                 ],
                 [
                     'google-site-verification' => 'xxx',

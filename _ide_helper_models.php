@@ -20,6 +20,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string $car_name
  * @property string $brand Misal: Toyota, Suzuki, Honda, Mercy
+ * @property string|null $slug
  * @property string $frame_number
  * @property string $engine_number
  * @property string $license_plate
@@ -33,6 +34,7 @@ namespace App\Models{
  * @property CarModelEnum $model
  * @property CarStatusEnum $status
  * @property FuelTypeEnum $fuel_type
+ * @property CarConditionEnum $condition
  * @property string|null $description
  * @property int $doors
  * @property int $seats
@@ -40,6 +42,7 @@ namespace App\Models{
  * @property int $big_luggage
  * @property int $med_luggage
  * @property int $small_luggage
+ * @property int $mileage
  * @property int $ac
  * @property int $audio
  * @property int $abs
@@ -48,7 +51,6 @@ namespace App\Models{
  * @property int $baby_seat
  * @property int $rent_price
  * @property string|null $gps_imei
- * @property CarConditionEnum $condition
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, Media> $media
  * @property-read int|null $media_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Review> $review
@@ -66,6 +68,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereCarName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereChildLock($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereCondition($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereDoors($value)
@@ -78,9 +81,11 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereLicensePlateExpiration($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereMaxSpeed($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereMedLuggage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereMileage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereModel($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereRentPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereSeats($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereSmallLuggage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereTractionControl($value)
@@ -91,9 +96,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereVehicleRegistrationCertNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereYearOfManufacture($value)
  * @mixin \Eloquent
- * @property int $mileage
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereCondition($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereMileage($value)
+ * @property-read mixed $full_name
  */
 	class CarData extends \Eloquent implements \Spatie\MediaLibrary\HasMedia {}
 }
@@ -140,11 +143,6 @@ namespace App\Models{
 /**
  * 
  *
- * @method static \Database\Factories\ReviewFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Review newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Review newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Review query()
- * @mixin \Eloquent
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -152,6 +150,10 @@ namespace App\Models{
  * @property int|null $car_data_id
  * @property int $rating Rating antara angka 1 s/d 10
  * @property string|null $description
+ * @method static \Database\Factories\ReviewFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Review newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Review newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Review query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Review whereCarDataId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Review whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Review whereDescription($value)
@@ -159,6 +161,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Review whereRating($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Review whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Review whereUserId($value)
+ * @mixin \Eloquent
  */
 	class Review extends \Eloquent {}
 }
@@ -169,21 +172,22 @@ namespace App\Models{
  *
  * @property int $id
  * @property string $status
+ * @property string $rental_status
  * @property string|null $confirmed_at
  * @property string|null $payment_channel
  * @property string|null $payment_references
+ * @property string|null $expired_at
  * @property int $total_price
  * @property int $total_pay
  * @property string|null $pickup_date
  * @property string|null $return_date
- * @property string|null $expired_at
  * @property string $place_name
  * @property string $longitude
  * @property string $latitude
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int|null $car_data_id
  * @property int|null $user_id
+ * @property int|null $car_data_id
  * @method static \Database\Factories\TransactionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction newQuery()
@@ -199,6 +203,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction wherePaymentReferences($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction wherePickupDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction wherePlaceName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereRentalStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereReturnDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereTotalPay($value)
@@ -206,8 +211,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereUserId($value)
  * @mixin \Eloquent
- * @property string $rental_status
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereRentalStatus($value)
  */
 	class Transaction extends \Eloquent {}
 }
@@ -241,20 +244,19 @@ namespace App\Models{
 /**
  * Note Data after Rental
  *
- * @property UsageNoteTypeEnum $type
- * @method static \Database\Factories\UsageNoteDataFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData query()
- * @mixin \Eloquent
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $description
  * @property int|null $mileage
+ * @property UsageNoteTypeEnum $type
  * @property int|null $user_id
  * @property int|null $car_data_id
  * @property string|null $transaction_id
+ * @method static \Database\Factories\UsageNoteDataFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData whereCarDataId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData whereDescription($value)
@@ -264,6 +266,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData whereUserId($value)
+ * @mixin \Eloquent
  */
 	class UsageNoteData extends \Eloquent {}
 }
@@ -315,5 +318,30 @@ namespace App\Models{
  * @mixin \Eloquent
  */
 	class User extends \Eloquent implements \Illuminate\Contracts\Auth\MustVerifyEmail {}
+}
+
+namespace App\Models{
+/**
+ * Wishlist Model Data
+ *
+ * @method static \Database\Factories\WishlistFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist query()
+ * @mixin \Eloquent
+ * @property int $id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int|null $user_id
+ * @property int|null $car_data_id
+ * @property-read \App\Models\CarData|null $carData
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist whereCarDataId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist whereUserId($value)
+ */
+	class Wishlist extends \Eloquent {}
 }
 

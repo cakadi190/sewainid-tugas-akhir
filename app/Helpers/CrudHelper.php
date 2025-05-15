@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class CrudHelper
@@ -120,7 +121,7 @@ class CrudHelper implements CrudInterface
         return response()->json([
             'data' => $data,
             'status' => 'success',
-            'code' => 200,
+            'code' => Response::HTTP_OK,
             'request' => returnConditionIfFalse(app()->environment('development'), $request->all())
         ]);
     }
@@ -230,3 +231,4 @@ class CrudHelper implements CrudInterface
         }
     }
 }
+

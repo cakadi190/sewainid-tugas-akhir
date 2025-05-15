@@ -1,6 +1,7 @@
 import '../css/app.scss';
 import 'leaflet/dist/leaflet.css';
 import 'react-perfect-scrollbar/dist/css/styles.css';
+import "flatpickr/dist/themes/material_blue.css";
 import './bootstrap';
 
 import { createInertiaApp } from '@inertiajs/react';

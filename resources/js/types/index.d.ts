@@ -20,3 +20,10 @@ export type PageProps<
     url?: string;
   }
 };
+
+export type FetchSuccess<T = {}> = {
+  success: boolean;
+  message: string;
+  data: T;
+};
+

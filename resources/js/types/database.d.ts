@@ -37,6 +37,7 @@ export interface CarData extends BaseModel {
   brand: string;
   frame_number: string;
   engine_number: string;
+  slug?: string;
   license_plate: string;
   license_plate_expiration: string;
   vehicle_registration_cert_number: string;
@@ -79,6 +80,14 @@ export interface CarRepairNoteData extends BaseModel {
   car_data_id: number | string;
 }
 
+export interface Review extends BaseModel {
+  id: number;
+  rating: number;
+  description: string;
+  user_id: number;
+  car_data_id: number;
+}
+
 // Main Database Interface
 export default interface Database {
   User: WithSoftDeletes<User>;
@@ -86,6 +95,7 @@ export default interface Database {
   GarageData: WithSoftDeletes<GarageData>;
   RepairShopData: WithSoftDeletes<RepairShopData>;
   CarRepairNoteData: WithSoftDeletes<CarRepairNoteData>;
+  Review: WithSoftDeletes<Review>;
 }
 
 // Type helpers untuk mengakses model dengan soft delete

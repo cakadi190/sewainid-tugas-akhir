@@ -1,0 +1,15 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('car-listing')->name('car-listing.')->group(function () {
+    Route::get('popular', [\App\Http\Controllers\Api\v1\Home\CarListController::class, 'popularCars'])->name('popular-cars');
+    Route::get('all', [\App\Http\Controllers\Api\v1\Home\CarListController::class, 'allCars'])->name('all-cars');
+});
+
+Route::prefix('checkout')->name('checkout.')->group(function () {
+    Route::post('create', [\App\Http\Controllers\Api\v1\Home\CheckoutController::class, 'add'])->name('add');
+    Route::post('checkout', [\App\Http\Controllers\Api\v1\Home\CheckoutController::class, 'checkout'])->name('checkout');
+});
+
+Route::apiResource('wishlist', \App\Http\Controllers\Api\v1\Home\WishlistController::class)->only(['index', 'store', 'destroy']);

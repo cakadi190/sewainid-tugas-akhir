@@ -5,6 +5,7 @@ import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
 import { Card } from 'react-bootstrap';
 import MainLayout from '@/Layouts/MainLayout';
+import HeaderDashboardProfile from './Partials/Header';
 
 /**
  * Komponen ini digunakan untuk mengedit profil pengguna.
@@ -24,11 +25,7 @@ export default function Edit({
   return (
     <MainLayout
       isAdmin={auth.user.role === 'admin'}
-      header={
-        <h2 className="text-gray-800 h4">
-          Profil Saya
-        </h2>
-      }
+      header={<HeaderDashboardProfile />}
     >
       <Head title="Profil Saya" />
 

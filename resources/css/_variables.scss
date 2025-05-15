@@ -1,4 +1,4 @@
-$white:    #fff !default;
+$white: #fff !default;
 $gray-100: #f8f9fa !default;
 $gray-200: #ecf0f1 !default;
 $gray-300: #dee2e6 !default;
@@ -8,23 +8,25 @@ $gray-600: #95a5a6 !default;
 $gray-700: #7b8a8b !default;
 $gray-800: #343a40 !default;
 $gray-900: #212529 !default;
-$black:    #000 !default;
+$black: #000 !default;
 
-$blue:    #378dfc !default;
-$indigo:  #6610f2 !default;
-$purple:  #6f42c1 !default;
-$pink:    #e83e8c !default;
-$red:     #e74c3c !default;
-$orange:  #fd7e14 !default;
-$yellow:  #f39c12 !default;
-$green:   #18bc9c !default;
-$teal:    #20c997 !default;
-$cyan:    #26baff !default;
+$blue: #378dfc !default;
+$indigo: #6610f2 !default;
+$purple: #6f42c1 !default;
+$pink: #e83e8c !default;
+$red: #e74c3c !default;
+$orange: #fd7e14 !default;
+$yellow: #f39c12 !default;
+$green: #18bc9c !default;
+$teal: #20c997 !default;
+$cyan: #26baff !default;
 
-$min-contrast-ratio:          2.05 !default;
+$min-contrast-ratio: 2.05 !default;
 
-$link-color:                  $gray-700 !default;
-$link-decoration:             none !default;
+$link-color: $gray-700 !default;
+$link-decoration: none !default;
 
-$border-color:                $gray-300 !default;
-$border-color-translucent:    rgba($black, .075) !default;
+$border-color: $gray-300 !default;
+$border-color-translucent: rgba($black, 0.075) !default;
+
+$enable-negative-margins: true !default;

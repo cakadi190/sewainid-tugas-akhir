@@ -15,7 +15,7 @@ class CarDataController extends Controller
      */
     public function index()
     {
-        seo()->title('Data Kendaraan')->generate();
+        seo()->title('Data Armada')->generate();
 
         return inertia('Admin/CarData/Index');
     }
@@ -29,7 +29,7 @@ class CarDataController extends Controller
      */
     public function show(CarData $car_data, Request $request)
     {
-        seo()->title("Detail Kendaraan {$car_data->brand} {$car_data->car_name}")->generate();
+        seo()->title("Detail Armada {$car_data->brand} {$car_data->car_name}")->generate();
 
         $car_data->getMedia('gallery');
 
