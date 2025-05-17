@@ -127,29 +127,15 @@ const NotificationDropdown: FC<ScrolledProps> = ({ scrolled }) => {
   );
 };
 
-const WishlistIcon: FC<ScrolledProps> = ({ scrolled }) => {
-  const { url } = usePage();
-  const textClass = scrolled ? "" : "text-light";
-  const isActive = url === "/wishlist";
-
-  return (
-    <Link
-      title="Daftar Keinginan"
-      className={`nav-link fw-medium ${textClass} ${isActive ? 'active' : ''}`}
-      href="/wishlist"
-    >
-      <FaHeart />
-    </Link>
-  );
-};
-
 const UserDropdown: FC<UserDropdownProps> = ({ user, scrolled }) => {
   const { url } = usePage();
 
   const userItems: NavItem[] = [
     { label: "Dasbor", href: user.role === RoleUser.ADMIN ? "/administrator" : "/dashboard" },
-    { label: "Profil", href: "/profile" },
+    { label: "Pesanan", href: "/checkout" },
+    { label: "Keinginan", href: "/wishlist" },
     { label: "Riwayat Sewa", href: "/history" },
+    { label: "Profil", href: "/profile" },
   ];
 
   const confirmLogout = () => {
@@ -160,7 +146,7 @@ const UserDropdown: FC<UserDropdownProps> = ({ user, scrolled }) => {
       showCancelButton: true,
       reverseButtons: true,
       confirmButtonColor: "#d33",
-      cancelButtonColor: "#d1d1d1",
+      cancelButtonColor: "#838383",
       confirmButtonText: "Keluar",
       cancelButtonText: "Batal",
     }).then((result) => {
@@ -274,7 +260,6 @@ const NavbarUserMain: FC = () => {
             {auth.user ? (
               <>
                 <NotificationDropdown scrolled={scrolled} />
-                <WishlistIcon scrolled={scrolled} />
                 <UserDropdown user={auth.user} scrolled={scrolled} />
               </>
             ) : (

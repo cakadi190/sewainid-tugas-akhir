@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Head, Link } from '@inertiajs/react';
 import { FC } from 'react';
 import { Badge, Card, Col, Nav, Row, Tab } from 'react-bootstrap';
-import { BsFileCheck } from 'react-icons/bs';
 import dayjs from '@/Helpers/dayjs';
 import { FaCheckCircle } from 'react-icons/fa';
 
@@ -22,28 +21,28 @@ const DashboardCard: FC<{
   color,
   link,
 }) => {
-  return (
-    <Col xl={3} md={6} className='mb-4'>
-      <Card border={color} className='h-100'>
-        <Card.Body className='d-flex justify-content-between align-items-center'>
-          <div className='d-flex flex-column'>
-            <h6 className={`text-${color} fw-bold`}>{title}</h6>
-            <h1 className='mb-0 font-weight-bold h3 lh-1'>{value}</h1>
-          </div>
-          <FontAwesomeIcon className={`text-${color}`} icon={icon} size='2xl' />
-        </Card.Body>
-        <Card.Footer
-          className={`border-${color} bg-${color} text-white d-flex justify-content-between`}
-          as={Link}
-          href={link}
-        >
-          <span className='small fw-bold'>Lihat Detail</span>
-          <FontAwesomeIcon icon={faArrowRight} />
-        </Card.Footer>
-      </Card>
-    </Col>
-  );
-};
+    return (
+      <Col xl={3} md={6} className='mb-4'>
+        <Card border={color} className='h-100'>
+          <Card.Body className='d-flex justify-content-between align-items-center'>
+            <div className='d-flex flex-column'>
+              <h6 className={`text-${color} fw-bold`}>{title}</h6>
+              <h1 className='mb-0 font-weight-bold h3 lh-1'>{value}</h1>
+            </div>
+            <FontAwesomeIcon className={`text-${color}`} icon={icon} size='2xl' />
+          </Card.Body>
+          <Card.Footer
+            className={`border-${color} bg-${color} text-white d-flex justify-content-between`}
+            as={Link}
+            href={link}
+          >
+            <span className='small fw-bold'>Lihat Detail</span>
+            <FontAwesomeIcon icon={faArrowRight} />
+          </Card.Footer>
+        </Card>
+      </Col>
+    );
+  };
 
 const SummaryCards = () => {
   return (
@@ -205,9 +204,9 @@ const SummaryTab = () => {
 export default function Dashboard() {
   return (
     <AuthenticatedAdmin
-    header={
-      <h2 className="mb-0 h4 text-dark">Beranda</h2>
-    }>
+      header={
+        <h2 className="mb-0 h4 text-dark">Beranda</h2>
+      }>
       <Head title='Beranda Admin' />
 
       <SummaryCards />

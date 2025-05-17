@@ -37,6 +37,7 @@ class UserFactory extends Factory
             'nik' => $this->faker->unique()->numerify('################'), // Menggunakan karakter numerik
             'kk' => $this->faker->optional()->numerify('################'), // Menggunakan karakter numerik
             'sim' => $this->faker->optional()->numerify('##############'), // Menggunakan karakter numerik
+            'address' => $this->faker->address,
             'created_at' => now(),
             'updated_at' => now(),
         ];
@@ -47,7 +48,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }

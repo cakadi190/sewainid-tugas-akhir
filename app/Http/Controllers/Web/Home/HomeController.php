@@ -3,11 +3,17 @@
 namespace App\Http\Controllers\Web\Home;
 
 use App\Http\Controllers\Controller;
+use App\Models\CarData;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class HomeController extends Controller
 {
+    public function __construct(
+        protected readonly CarData $_carData
+    ) {
+    }
+
     /**
      * Showing the home page
      *
@@ -38,6 +44,32 @@ class HomeController extends Controller
             ->generate();
 
         return inertia('Home/Wishlist');
+    }
+
+    /**
+     * Showing the checkout page
+     *
+     * @return \Inertia\Response
+     */
+    public function checkout()
+    {
+        seo()
+            ->description('Proses checkout untuk sewa mobil.')
+            ->title('Checkout')
+            ->canonical(route('checkout'));
+
+        $order = session('order');
+        $carData = $this->_carData
+            ->select(['id', 'car_name', 'brand', 'license_plate', 'rent_price', 'slug'])
+            ->find($order['car_id'] ?? null);
+
+        $carThumbnail = $carData?->getMedia('gallery')->first();
+
+        if (!$carData || !session()->has('order')) {
+            return redirect()->route('home');
+        }
+
+        return inertia('Home/Checkout', compact('carData', 'order', 'carThumbnail'));
     }
 }
 

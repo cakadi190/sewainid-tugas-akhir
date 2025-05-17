@@ -57,6 +57,7 @@
     "leaflet": "^1.9.4",
     "lucide-react": "^0.510.0",
     "react-bootstrap": "^2.10.5",
+    "react-bootstrap-range-slider": "^3.0.8",
     "react-datepicker": "^8.3.0",
     "react-flatpickr": "^4.0.10",
     "react-gravatar": "^2.6.3",

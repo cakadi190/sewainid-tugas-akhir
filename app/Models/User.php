@@ -137,6 +137,18 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Memeriksa apakah data identitas pengguna sudah lengkap
+     *
+     * @return bool
+     */
+    public function isIdentityUnfilled(): bool
+    {
+        $requiredFields = ['gender', 'pbirth', 'dbirth', 'nik', 'kk', 'sim'];
+
+        return collect($requiredFields)->every(fn($field) => is_null($this->$field));
+    }
+
+    /**
      * Mendapatkan semua jenis kelamin pengguna yang tersedia.
      *
      * @return Collection

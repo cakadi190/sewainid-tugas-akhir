@@ -40,4 +40,19 @@ return [
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
+
+    'google_maps' => [
+        'key' => env('GOOGLE_MAPS_API_KEY'),
+    ],
+
+    'mapbox' => [
+        'key' => env('MAPBOX_API_KEY'),
+    ],
+
+    'tripay' => [
+        'merchant_code' => env('TRIPAY_MERCHANT_CODE'),
+        'private_key' => env('TRIPAY_PRIVATE_KEY'),
+        'api_key' => env('TRIPAY_API_KEY'),
+        'mode' => env('TRIPAY_MODE'),
+    ]
 ];

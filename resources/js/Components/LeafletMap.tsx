@@ -6,8 +6,8 @@
  * @requires leaflet
  */
 
-import React, { useMemo } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import React, { useMemo, useEffect, useRef } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 
 L.Icon.Default.imagePath = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/';
@@ -139,6 +139,42 @@ const createCustomIcon = (customization?: MarkerCustomizationInterface): L.Icon 
 };
 
 /**
+ * Komponen untuk mengupdate center dan posisi marker pada peta
+ * @component
+ * @param {Object} props - Props komponen
+ * @param {[number, number]} props.position - Posisi untuk center peta
+ * @returns {null} Komponen tidak merender apapun
+ */
+const MapUpdater: React.FC<{ position: [number, number] }> = ({ position }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    map.setView(position, map.getZoom());
+  }, [map, position]);
+
+  return null;
+};
+
+/**
+ * Komponen untuk mengupdate bounds pada multi lokasi
+ * @component
+ * @param {Object} props - Props komponen
+ * @param {L.LatLngBounds} [props.bounds] - Bounds untuk peta
+ * @returns {null} Komponen tidak merender apapun
+ */
+const BoundsUpdater: React.FC<{ bounds?: L.LatLngBounds }> = ({ bounds }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (bounds) {
+      map.fitBounds(bounds, { padding: [50, 50] });
+    }
+  }, [map, bounds]);
+
+  return null;
+};
+
+/**
  * Komponen untuk menampilkan peta dengan satu marker
  * @component
  * @param {LeafletSingleProps} props - Props komponen
@@ -157,6 +193,16 @@ export const LeafletSingle: React.FC<LeafletSingleProps> = ({
   const validPosition = ensurePosition(position);
   const customIcon = createCustomIcon(markerCustomization);
 
+  // Keep track of marker reference untuk update posisi
+  const markerRef = useRef<L.Marker | null>(null);
+
+  useEffect(() => {
+    // Update marker position jika marker sudah dibuat dan posisi berubah
+    if (markerRef.current) {
+      markerRef.current.setLatLng(validPosition);
+    }
+  }, [validPosition]);
+
   return (
     <div style={{ height, width }} className="overflow-hidden rounded-lg shadow-md">
       <MapContainer
@@ -172,7 +218,11 @@ export const LeafletSingle: React.FC<LeafletSingleProps> = ({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={validPosition} icon={customIcon}>
+        <Marker
+          position={validPosition}
+          icon={customIcon}
+          ref={markerRef}
+        >
           <Popup>
             <div className="p-2">
               <h3 className="mb-0 text-lg font-bold h6">{name}</h3>
@@ -180,6 +230,7 @@ export const LeafletSingle: React.FC<LeafletSingleProps> = ({
             </div>
           </Popup>
         </Marker>
+        <MapUpdater position={validPosition} />
       </MapContainer>
     </div>
   );
@@ -224,14 +275,23 @@ export const MultiLeafletMapPin: React.FC<MultiLeafletMapProps> = ({
 
   const defaultIcon = createCustomIcon(defaultMarkerCustomization);
 
+  // Simpan referensi untuk semua marker
+  const markerRefs = useRef<(L.Marker | null)[]>([]);
+
+  // Update refs array size ketika jumlah lokasi berubah
+  useEffect(() => {
+    markerRefs.current = markerRefs.current.slice(0, locations.length);
+    while (markerRefs.current.length < locations.length) {
+      markerRefs.current.push(null);
+    }
+  }, [locations.length]);
+
   return (
     <div style={{ height, width }} className="overflow-hidden rounded-lg shadow-md">
       <MapContainer
         center={center}
         zoom={initialZoom}
         style={{ height: '100%', width: '100%' }}
-        bounds={bounds}
-        boundsOptions={{ padding: [50, 50] }}
         scrollWheelZoom={!disableZoom}
         zoomControl={!disableZoom}
         dragging={!disableDrag}
@@ -246,11 +306,19 @@ export const MultiLeafletMapPin: React.FC<MultiLeafletMapProps> = ({
           const validPosition = ensurePosition(position);
           const icon = markerCustomization ? createCustomIcon(markerCustomization) : defaultIcon;
 
+          // Update marker position jika sudah ada dan posisi berubah
+          useEffect(() => {
+            if (markerRefs.current[index]) {
+              markerRefs.current[index]?.setLatLng(validPosition);
+            }
+          }, [validPosition, index]);
+
           return (
             <Marker
               key={`${name}-${index}`}
               position={validPosition}
               icon={icon}
+              ref={(marker) => { markerRefs.current[index] = marker; }}
             >
               <Popup>
                 <div className="p-2">
@@ -261,6 +329,8 @@ export const MultiLeafletMapPin: React.FC<MultiLeafletMapProps> = ({
             </Marker>
           );
         })}
+
+        {showAllMarkers && bounds && <BoundsUpdater bounds={bounds} />}
       </MapContainer>
     </div>
   );

@@ -23,6 +23,8 @@ const DEFAULT_FILTERS: FilterState = {
   price_max: 0,
   seats: '',
   search: '',
+  pickup_date: '',
+  return_date: '',
 };
 
 const ArmadaListPage: FC = () => {
@@ -69,6 +71,8 @@ const ArmadaListPage: FC = () => {
     const normalizedParams = {
       ...DEFAULT_FILTERS,
       ...rawParams,
+      pickup_date: rawParams.pickupDate ?? '',
+      return_date: rawParams.returnDate ?? '',
       price_min: rawParams.price_min ? parseInt(rawParams.price_min as string) : 0,
       price_max: rawParams.price_max ? parseInt(rawParams.price_max as string) : 0,
       year_from: rawParams.year_from ?? '',

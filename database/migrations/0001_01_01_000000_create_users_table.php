@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->string('pbirth', 60)->nullable()->default(null);
             $table->date('dbirth')->nullable()->default(null);
             $table->string('email', 100)->unique();
+            $table->text('address')->nullable();
             $table->timestamp('email_verified_at')->nullable()->default(null);
             $table->string('password', 255)->nullable()->default(null);
             $table->string('avatar', 255);

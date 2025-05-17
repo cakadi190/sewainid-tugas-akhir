@@ -1,5 +1,5 @@
 import { FaCheckCircle, FaCircle, FaExclamation, FaExclamationTriangle, FaMinusCircle, FaMoneyBill, FaQuestionCircle, FaThumbsUp, FaTimesCircle, FaTools, FaWrench } from "react-icons/fa";
-import { CarConditionEnum, CarModelEnum, CarRepairNoteStatusEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum, RentalStatusEnum } from "./enum";
+import { CarConditionEnum, CarModelEnum, CarRepairNoteStatusEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum, GenderUser, RentalStatusEnum } from "./enum";
 
 import MiniVanIcon from '@/Assets/Icon/car-type/camper-van.png';
 import HatchbackIcon from '@/Assets/Icon/car-type/hatchback.png';
@@ -198,6 +198,11 @@ const carFuelTypeLabels: { [key in FuelEnum]: string } = {
   [FuelEnum.OTHER]: 'Lainnya',
 }
 
+const genderLabels: { [key in GenderUser]: string } = {
+  [GenderUser.MALE]: 'Laki-Laki',
+  [GenderUser.FEMALE]: 'Perempuan',
+}
+
 /**
  * Mapping of FuelEnum values to Bootstrap 5 color classes
  */
@@ -221,6 +226,10 @@ const carFuelTypeColors: { [key in FuelEnum]: string } = {
  */
 export function getCarModelLabel(model: CarModelEnum): string {
   return carModelLabels[model] || 'Unknown Model';
+}
+
+export function getGenderLabel(gender: GenderUser): string {
+  return genderLabels[gender] || 'Unknown Gender';
 }
 
 /**

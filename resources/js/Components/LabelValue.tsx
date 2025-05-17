@@ -22,6 +22,7 @@ interface LabelValueProps {
  * @param {string | number | JSX.Element} props.value - Nilai yang akan ditampilkan
  * @param {string} [props.className] - Kelas CSS tambahan untuk styling
  * @param {boolean} [props.bottomBorder=true] - Menentukan apakah akan menampilkan garis bawah
+ * @param {boolean} [props.noMarginBottom=false] - Menentukan apakah akan menghilangkan margin bawah
  * @param {JSX.Element | IconDefinition} [props.icon] - Ikon yang akan ditampilkan di sebelah label
  * @param {string} [props.iconColor='primary'] - Warna untuk ikon
  * @param {'xs' | 'sm' | 'lg' | 'xl' | '2xl'} [props.iconSize='lg'] - Ukuran untuk ikon
@@ -37,9 +38,14 @@ export default function LabelValue({
   iconSize = "xl"
 }: LabelValueProps) {
   return (
-    <div className={twMerge(className, bottomBorder ? "border-bottom" : "", "d-flex gap-2 align-items-center")}>
+    <div className={twMerge(
+      className,
+      bottomBorder ? "border-bottom" : "",
+      "d-flex gap-2 align-items-center"
+    )}>
       {icon && (
-        <div className="flex-shrink-0 d-flex align-items-center justify-content-center" style={{ aspectRatio: "1/1", minHeight: "40px", minWidth: "40px" }}>
+        <div className="flex-shrink-0 d-flex align-items-center justify-content-center"
+          style={{ aspectRatio: "1/1", minHeight: "40px", minWidth: "40px" }}>
           {isIconDefinition(icon) ? (
             <FontAwesomeIcon
               icon={icon}
@@ -52,7 +58,7 @@ export default function LabelValue({
       )}
       <div className="flex-grow-1">
         <div className="pb-1 fw-bold">{label}</div>
-        <div className="pb-2">{value}</div>
+        <div className={noMarginBottom ? "" : "pb-2"}>{value}</div>
       </div>
     </div>
   );

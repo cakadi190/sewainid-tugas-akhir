@@ -3,7 +3,7 @@ import { Head, usePage } from '@inertiajs/react';
 import DeleteUserForm from './Partials/DeleteUserForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
-import { Card } from 'react-bootstrap';
+import { Card, Tab, Tabs } from 'react-bootstrap';
 import MainLayout from '@/Layouts/MainLayout';
 import HeaderDashboardProfile from './Partials/Header';
 
@@ -30,23 +30,28 @@ export default function Edit({
       <Head title="Profil Saya" />
 
       <div className="pt-4">
-        {auth.user.role !== 'admin' && (
-          <Card className="mb-4" id="profile">
-            <Card.Body>
-              <UpdateProfileInformationForm
-                mustVerifyEmail={mustVerifyEmail}
-                status={status}
-              />
-            </Card.Body>
-          </Card>
-        )}
-
-        <Card className="mb-4" id='password-update'>
+        <Card className="mb-4">
           <Card.Body>
-            <UpdatePasswordForm />
+            <Tabs defaultActiveKey="profile" id="profile-tabs" className="mb-3">
+              {auth.user.role !== 'admin' && (
+                <Tab eventKey="profile" title="Profil">
+                  <UpdateProfileInformationForm
+                    mustVerifyEmail={mustVerifyEmail}
+                    status={status}
+                  />
+                </Tab>
+              )}
+              <Tab eventKey="password" title="Kata Sandi">
+                <UpdatePasswordForm />
+              </Tab>
+              <Tab eventKey="delete" title="Hapus Akun">
+                <DeleteUserForm />
+              </Tab>
+            </Tabs>
           </Card.Body>
         </Card>
       </div>
     </MainLayout>
   );
 }
+

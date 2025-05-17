@@ -13,6 +13,31 @@
 
 namespace App\Models{
 /**
+ * Assign Driver Model
+ *
+ * @property int $id
+ * @property int $transaction_id
+ * @property int $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Transaction $transaction
+ * @property-read \App\Models\User $user
+ * @method static \Database\Factories\AssignDriverFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AssignDriver newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AssignDriver newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AssignDriver query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AssignDriver whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AssignDriver whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AssignDriver whereTransactionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AssignDriver whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AssignDriver whereUserId($value)
+ * @mixin \Eloquent
+ */
+	class AssignDriver extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * Car Data model
  *
  * @property int $id
@@ -211,6 +236,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereUserId($value)
  * @mixin \Eloquent
+ * @property int $with_driver
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereWithDriver($value)
  */
 	class Transaction extends \Eloquent {}
 }
@@ -316,6 +343,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereSim($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string|null $address
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereAddress($value)
  */
 	class User extends \Eloquent implements \Illuminate\Contracts\Auth\MustVerifyEmail {}
 }

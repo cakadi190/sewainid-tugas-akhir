@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import styled from '@emotion/styled';
 import ImageHeader from '@/Assets/Images/Cover-Home.jpg';
 import { Button, Card, Col, Container, FloatingLabel, Form, Row } from "react-bootstrap";
@@ -7,6 +7,8 @@ import Flexbox from "@/Components/Flexbox";
 import { FaCar } from "react-icons/fa6";
 import Flatpickr from "react-flatpickr";
 import { FaThumbsUp } from 'react-icons/fa';
+import { CarModelEnum } from '@/Helpers/enum';
+import { getCarModelLabel } from '@/Helpers/EnumHelper';
 
 const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
@@ -98,7 +100,7 @@ const HeaderHome = () => {
   const tomorrow = new Date(today);
   tomorrow.setDate(today.getDate() + 1);
 
-  const [location, setLocation] = useState("");
+  const [vehicleCategory, setVehicleCategory] = useState("");
   const [pickupDate, setPickupDate] = useState(formatDate(today));
   const [returnDate, setReturnDate] = useState(formatDate(tomorrow));
 
@@ -115,8 +117,8 @@ const HeaderHome = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Search:", { location, pickupDate, returnDate });
-    // Redirect atau panggil logic pencarian di sini
+    console.log("Search:", { vehicleCategory, pickupDate, returnDate });
+    router.get(route('armada.index'), { model: vehicleCategory, pickupDate, returnDate });
   };
 
   return (
@@ -128,12 +130,12 @@ const HeaderHome = () => {
               <span className="flex-shrink-0 icon">
                 <FaThumbsUp />
               </span>
-              <span>Tempat sewa mobil terpercaya di Kabupaten Ngawi.</span>
+              <span>Rental Mobil Terpercaya di Kabupaten Ngawi.</span>
             </HeadingBadge>
 
-            <h1>Sewa Mobil Terbaik untuk Perjalanan Anda</h1>
+            <h1>Rental Mobil Terbaik untuk Perjalanan Anda</h1>
             <h2 className="leading">
-              Temukan berbagai pilihan kendaraan berkualitas dengan harga terjangkau untuk kebutuhan perjalanan Anda.
+              Temukan berbagai kualitas mobil sewa dengan harga terjangkau untuk kebutuhan perjalanan Anda.
             </h2>
           </Col>
           <Col md={12} className="pt-4 mb-n5">
@@ -144,25 +146,30 @@ const HeaderHome = () => {
                   <p className="mb-0">Temukan Armada yang sesuai dengan kebutuhan Anda</p>
                 </div>
 
-                <Link href={'/armada'}>Cari Armada Lain</Link>
+                <Link href={'/armada'}>Cari Armada Lainnya</Link>
               </Flexbox>
 
               <Form onSubmit={handleSubmit} className="mt-3">
                 <Row className="g-3">
                   <Col md={4}>
-                    <FloatingLabel label="Cari Lokasi Tujuan">
-                      <Form.Control
-                        type="text"
-                        placeholder="Masukkan lokasi tujuan"
-                        value={location}
-                        onChange={(e) => setLocation(e.target.value)}
+                    <FloatingLabel label="Kategori Mobil">
+                      <Form.Select
+                        value={vehicleCategory}
+                        onChange={(e) => setVehicleCategory(e.target.value)}
                         required
-                      />
+                      >
+                        <option value="" disabled selected>Pilih Kategori Mobil</option>
+                        {Object.values(CarModelEnum).map((model) => (
+                          <option key={model} value={model}>
+                            {getCarModelLabel(model)}
+                          </option>
+                        ))}
+                      </Form.Select>
                     </FloatingLabel>
                   </Col>
 
                   <Col md={3}>
-                    <FloatingLabel label="Tanggal Jemput">
+                    <FloatingLabel label="Tanggal Ambil">
                       <Flatpickr
                         className="form-control"
                         options={{
@@ -208,3 +215,4 @@ const HeaderHome = () => {
 };
 
 export default HeaderHome;
+

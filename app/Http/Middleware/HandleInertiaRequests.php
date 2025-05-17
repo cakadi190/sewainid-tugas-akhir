@@ -34,6 +34,7 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                'isIdentityUnfilled' => $request->user()?->isIdentityUnfilled(),
             ],
             'alert' => [
                 'success' => session('success'),
@@ -51,3 +52,4 @@ class HandleInertiaRequests extends Middleware
         ];
     }
 }
+

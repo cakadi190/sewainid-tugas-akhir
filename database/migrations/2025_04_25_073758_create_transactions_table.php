@@ -7,8 +7,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -32,6 +31,8 @@ return new class extends Migration
             $table->timestamp('return_date')->nullable();
 
             $table->string('place_name');
+            $table->boolean('with_driver')->default(false);
+
             $table->decimal('longitude', 10, 8)->default(0.00000000);
             $table->decimal('latitude', 10, 8)->default(0.00000000);
 

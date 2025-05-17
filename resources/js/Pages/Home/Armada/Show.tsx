@@ -1,9 +1,8 @@
 import { compactCurrencyFormat, currencyFormat, mileageFormat, speedFormat } from "@/Helpers/number";
 import AuthenticatedUser from "@/Layouts/AuthenticatedLayout";
 import Database from "@/types/database";
-import { Head } from "@inertiajs/react";
-import { Badge, Button, Card, Col, Nav, Row, Tab } from "react-bootstrap";
-import { FaChevronRight, FaExclamationTriangle, FaMapPin, FaUser } from "react-icons/fa";
+import { Head, router, useForm } from "@inertiajs/react";
+import { Badge, Button, Card, Col, Form, InputGroup, ListGroup, Nav, Row, Tab } from "react-bootstrap";
 import { FaCalendar, FaClock, FaGasPump, FaTag } from "react-icons/fa6";
 import dayjs from "@/Helpers/dayjs";
 import { parseAntiXss } from "@/Helpers/string";
@@ -13,10 +12,14 @@ import { GridContainer, GridItem } from "@/InternalBorderGrid";
 import { PiBabyCarriage, PiCarProfileDuotone, PiLock, PiMusicNote, PiPalette, PiSeat, PiShield, PiSnowflake, PiSpeedometer, PiTag, PiTire } from "react-icons/pi";
 import { getCarConditionLabel, getCarFuelTypeLabel, getCarModelLabel, getCarStatusColor, getCarStatusIcon, getCarStatusLabel, getCarTransmissionLabel } from "@/Helpers/EnumHelper";
 import { GiGearStickPattern } from "react-icons/gi";
-import LabelValue from "@/Components/LabelValue";
+import Flatpickr from "react-flatpickr";
 import { twMerge } from "tailwind-merge";
 import { CarConditionEnum, CarModelEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum } from "@/Helpers/enum";
 import HeaderArmadaDetail from "./Partials/HeaderArmadaDetail";
+import { FaTimes } from "react-icons/fa";
+import { calculateRent } from "@/Helpers/rent";
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
 
 const InfoCard: React.FC<{ icon: React.ReactNode, title: string, value: string }> = ({ icon, title, value }) => {
   return (
@@ -132,17 +135,149 @@ const CarMainDetails: React.FC<{ carData: Database['CarData'] & { media?: MediaL
 };
 
 const CarStatus: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
-  const plateDaysRemaining = dayjs(carData.license_plate_expiration).diff(dayjs(), 'day');
-  const certDaysRemaining = dayjs(carData.vehicle_registration_cert_expiration).diff(dayjs(), 'day');
   const lastUsage = dayjs().diff('2025-04-01', 'day');
 
-  return (
-    <Card body className="rounded-4">
-      <Card.Title>Status Kendaraan</Card.Title>
+  const { data, post, processing, setData } = useForm<{
+    pickup_date: string | null;
+    car_id: number;
+    return_date: string | null;
+    with_driver: boolean;
+  }>({
+    car_id: carData.id,
+    pickup_date: null,
+    return_date: null,
+    with_driver: false,
+  });
 
-      <div className="pt-4 pb-3 mb-4 justify-content-between d-flex border-bottom">
+  const onSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    post(route('v1.home.checkout.addOrUpdate'), {
+      onError: (errors: any) => {
+        const textMessage = Object.values(errors).join(', ');
+
+        withReactContent(Swal).fire({
+          title: 'Kesalahan!',
+          text: textMessage,
+          icon: 'error',
+        }).then(() => {
+          if (textMessage.includes('ERR_ALREADY_HAVE_ORDER')) {
+            router.visit('/checkout');
+          }
+        })
+      }
+    });
+  }
+
+  let flatpickrInstance: any = null;
+
+  const clearSelector = () => {
+    if (flatpickrInstance) {
+      flatpickrInstance.clear();
+      setData({
+        car_id: carData.id,
+        pickup_date: null,
+        return_date: null,
+        with_driver: false,
+      });
+    }
+  };
+
+  const { duration, carRentTotal, tax, driverRentTotal, subtotal, total } = calculateRent({
+    pickDate: data.pickup_date || null,
+    returnDate: data.return_date || null,
+    rentPrice: carData.rent_price,
+    withDriver: data.with_driver,
+  });
+
+  return (
+    <Card body className="rounded-4" style={{ position: 'sticky', top: '5rem' }}>
+      <InputGroup>
+        <Form.FloatingLabel label="Tanggal Pengambilan dan Pengembalian">
+          <Flatpickr
+            options={{
+              mode: 'range',
+              dateFormat: 'Y-m-d',
+              minDate: 'today',
+              closeOnSelect: false,
+            }}
+            className="form-control"
+            onChange={(selectedDates: Date[]) => {
+              if (selectedDates && selectedDates.length > 0) {
+                setData('pickup_date', selectedDates[0]?.toISOString() || null);
+                if (selectedDates.length > 1) {
+                  setData('return_date', selectedDates[1]?.toISOString() || null);
+                }
+              }
+            }}
+            onReady={(_, __, fp) => {
+              flatpickrInstance = fp;
+            }}
+            name="dateRange"
+          />
+        </Form.FloatingLabel>
+        {(data.pickup_date || data.return_date) && (
+          <Button variant="outline-secondary" onClick={clearSelector} id="button-addon2">
+            <FaTimes />
+          </Button>
+        )}
+      </InputGroup>
+
+      <Form.Group className="gap-2 my-3 d-flex flex-column flex-lg-row justify-content-between">
+        <Form.Switch
+          id="with_driver"
+          name="with_driver"
+          className="flex-grow flex-shrink-0"
+          label="Dengan Driver"
+          checked={data.with_driver}
+          onChange={(e) => setData('with_driver', e.target.checked)}
+        />
+        <div className="text-end">Tambahan biaya driver: {currencyFormat(250000)}</div>
+      </Form.Group>
+
+      {duration > 0 && (
+        <>
+          <Card body className="mb-4">
+            <ListGroup className="gap-2 d-flex flex-column" variant="flush">
+              <ListGroup.Item className="px-0 pt-0 d-flex justify-content-between">
+                <div className="text-muted">Durasi Sewa</div>
+                <div className="fw-bold">{duration} Hari</div>
+              </ListGroup.Item>
+              <ListGroup.Item className="px-0 d-flex justify-content-between">
+                <div className="text-muted">Harga Sewa</div>
+                <div className="fw-bold">{compactCurrencyFormat(carRentTotal)} / Hari</div>
+              </ListGroup.Item>
+              {data.with_driver && (
+                <ListGroup.Item className="px-0 d-flex justify-content-between">
+                  <div className="text-muted">Harga Sewa Driver</div>
+                  <div className="fw-bold">{compactCurrencyFormat(driverRentTotal)} / Hari</div>
+                </ListGroup.Item>
+              )}
+              <ListGroup.Item className="px-0 d-flex justify-content-between">
+                <div className="text-muted">Subtotal</div>
+                <div className="fw-bold">{compactCurrencyFormat(subtotal)}</div>
+              </ListGroup.Item>
+              <ListGroup.Item className="px-0 d-flex justify-content-between">
+                <div className="text-muted">Pajak</div>
+                <div className="fw-bold">{compactCurrencyFormat(tax)}</div>
+              </ListGroup.Item>
+              <ListGroup.Item className="px-0 pb-0 d-flex justify-content-between">
+                <div className="text-muted fw-bold">Total</div>
+                <div className="fw-bold">{compactCurrencyFormat(total)}</div>
+              </ListGroup.Item>
+            </ListGroup>
+          </Card>
+
+          <Button onClick={onSubmit} disabled={processing} className="w-100" size="lg">Pinjam Sekarang!</Button>
+        </>
+      )}
+
+
+      <div className="py-4 my-4 border-top justify-content-between align-items-center d-flex border-bottom">
+        <Card.Title className="mb-0">Status Kendaraan</Card.Title>
         <div className="gap-2 d-flex align-items-center">
-          <div className={'text-' + getCarStatusColor(carData.status as CarStatusEnum)}>{getCarStatusIcon(carData.status as CarStatusEnum)}</div>
+          <div className={'text-' + getCarStatusColor(carData.status as CarStatusEnum)}>
+            {getCarStatusIcon(carData.status as CarStatusEnum)}
+          </div>
           <Card.Title className="mb-0">{getCarStatusLabel(carData.status as CarStatusEnum)}</Card.Title>
         </div>
       </div>
@@ -164,6 +299,8 @@ const CarStatus: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
                 return 'Di Bengkel';
               case CarStatusEnum.CRASH:
                 return 'Diam Di Garasi';
+              default:
+                return '-';
             }
           })()}</div>
         </div>
@@ -391,4 +528,3 @@ export default function Show({ car_data }: ShowProps) {
     </AuthenticatedUser>
   );
 }
-
