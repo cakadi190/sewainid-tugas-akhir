@@ -1,5 +1,90 @@
 import { CarConditionEnum } from "@/Helpers/enum";
 
+// Enum Types
+export enum GenderUser {
+  MALE = 'male',
+  FEMALE = 'female'
+}
+
+export enum RoleUser {
+  ADMIN = 'admin',
+  MONETARY = 'monetary',
+  DRIVER = 'driver',
+  USER = 'user'
+}
+
+export enum CarTransmissionEnum {
+  MANUAL = 'manual',
+  AUTOMATIC = 'automatic',
+  SEMI_MANUAL = 'semi_manual'
+}
+
+export enum CarModelEnum {
+  MINIVAN = 'minivan',
+  VAN = 'van',
+  CITY_CAR = 'city_car',
+  HATCHBACK = 'hatchback',
+  SEDAN = 'sedan',
+  SUV = 'suv',
+  MPV = 'mpv',
+  PICKUP = 'pickup',
+  LUXURY_CAR = 'luxury_car'
+}
+
+export enum FuelEnum {
+  GASOLINE = 'gasoline',
+  DIESEL = 'diesel',
+  ELECTRIC = 'electric',
+  LPG = 'lpg',
+  CNG = 'cng',
+  BIOFUEL = 'biofuel',
+  HYDROGEN = 'hydrogen',
+  HYBRID = 'hybrid',
+  PLUGIN_HYBRID = 'plugin_hybrid',
+  OTHER = 'other'
+}
+
+export enum CarStatusEnum {
+  READY = 'ready',
+  BORROWED = 'borrowed',
+  CRASH = 'crash',
+  REPAIR = 'repair',
+  MISSING = 'missing',
+  SOLD = 'sold'
+}
+
+export enum CarRepairNoteStatusEnum {
+  PENDING = 'pending',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  CANCELED = 'canceled'
+}
+
+export enum TransactionStatusEnum {
+  UNPAID = 'UNPAID',
+  PAID = 'PAID',
+  EXPIRED = 'EXPIRED',
+  FAILED = 'FAILED',
+  REFUND = 'REFUND'
+}
+
+export enum RentalStatusEnum {
+  DRAFT = 'draft',
+  PENDING = 'pending',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  CANCELED = 'canceled'
+}
+
+export enum UsageNoteTypeEnum {
+  NORMAL = 'normal',
+  LATE = 'late',
+  MINOR_DAMAGE = 'minor_damage',
+  MAJOR_DAMAGE = 'major_damage',
+  PICKED_UP = 'picked_up',
+  MISSING = 'missing'
+}
+
 // Base Interfaces
 export interface DeleteColumns {
   deleted_at?: string;
@@ -23,13 +108,15 @@ export interface User extends BaseModel {
   pbirth?: string;
   dbirth?: string;
   email: string;
+  phone?: string;
   email_verified_at?: string;
-  password: string;
-  avatar: string;
+  password?: string;
+  avatar?: string;
   nik?: string;
   kk?: string;
   sim?: string;
-  rememberToken?: string;
+  google_id?: string;
+  remember_token?: string;
 }
 
 export interface CarData extends BaseModel {
@@ -41,10 +128,10 @@ export interface CarData extends BaseModel {
   slug?: string;
   license_plate: string;
   license_plate_expiration: string;
-  vehicle_registration_cert_number: string;
+  vehicle_registration_cert_number?: string;
   vehicle_registration_cert_expiration: string;
   color: string;
-  vehicle_ownership_book_number: string;
+  vehicle_ownership_book_number?: string;
   year_of_manufacture: number;
   transmission?: CarTransmissionEnum;
   model?: CarModelEnum;
@@ -66,11 +153,11 @@ export interface CarData extends BaseModel {
   child_lock: boolean;
   traction_control: boolean;
   baby_seat: boolean;
-  gps_imei: ?string;
+  gps_imei?: string;
 }
 
 export interface CarRepairNoteData extends BaseModel {
-  id: string;
+  id: number;
   repair_date: string;
   description: string;
   cost: number;
@@ -78,15 +165,98 @@ export interface CarRepairNoteData extends BaseModel {
   last_mileage?: number;
   current_mileage?: number;
   notes?: string;
-  car_data_id: number | string;
+  car_data_id: number;
 }
 
 export interface Review extends BaseModel {
   id: number;
   rating: number;
-  description: string;
+  description?: string;
+  user_id?: number;
+  car_data_id?: number;
+}
+
+export interface Transaction extends BaseModel {
+  id: string;
+  status: TransactionStatusEnum;
+  rental_status: RentalStatusEnum;
+  confirmed_at?: string;
+  payment_channel?: string;
+  payment_references?: string;
+  expired_at?: string;
+  total_price: number;
+  total_pay: number;
+  pickup_date?: string;
+  return_date?: string;
+  place_name: string;
+  with_driver: boolean;
+  longitude: number;
+  latitude: number;
+  user_id?: number;
+  car_data_id?: number;
+}
+
+export interface TransactionConfirmation extends BaseModel {
+  id: number;
+  transaction_receipt: string;
+  transaction_id: string;
+  user_id?: number;
+}
+
+export interface UsageNoteData extends BaseModel {
+  id: number;
+  description?: string;
+  mileage?: number;
+  type: UsageNoteTypeEnum;
+  user_id?: number;
+  car_data_id?: number;
+  transaction_id?: string;
+}
+
+export interface Wishlist extends BaseModel {
+  id: number;
+  user_id?: number;
+  car_data_id?: number;
+}
+
+export interface AssignDriver extends BaseModel {
+  id: number;
+  transaction_id: string;
   user_id: number;
-  car_data_id: number;
+}
+
+export interface Media extends BaseModel {
+  id: number;
+  model_type: string;
+  model_id: number;
+  uuid?: string;
+  collection_name: string;
+  name: string;
+  file_name: string;
+  mime_type?: string;
+  disk: string;
+  conversions_disk?: string;
+  size: number;
+  manipulations?: any;
+  custom_properties?: any;
+  generated_conversions?: any;
+  responsive_images?: any;
+  order_column?: number;
+}
+
+// Missing structures for GarageData and RepairShopData since they weren't in the SQL
+export interface GarageData extends BaseModel {
+  id: number;
+  name: string;
+  address: string;
+  // Add other fields as needed once we have more info
+}
+
+export interface RepairShopData extends BaseModel {
+  id: number;
+  name: string;
+  address: string;
+  // Add other fields as needed once we have more info
 }
 
 // Main Database Interface
@@ -97,6 +267,12 @@ export default interface Database {
   RepairShopData: WithSoftDeletes<RepairShopData>;
   CarRepairNoteData: WithSoftDeletes<CarRepairNoteData>;
   Review: WithSoftDeletes<Review>;
+  Transaction: WithSoftDeletes<Transaction>;
+  TransactionConfirmation: WithSoftDeletes<TransactionConfirmation>;
+  UsageNoteData: WithSoftDeletes<UsageNoteData>;
+  Wishlist: WithSoftDeletes<Wishlist>;
+  AssignDriver: WithSoftDeletes<AssignDriver>;
+  Media: WithSoftDeletes<Media>;
 }
 
 // Type helpers untuk mengakses model dengan soft delete

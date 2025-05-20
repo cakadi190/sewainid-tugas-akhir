@@ -5,7 +5,7 @@ import { Card, Col, Row, Button, Form, ListGroup, Badge, Image, Modal } from "re
 import { MediaLibraryType, PageProps } from "@/types";
 import { Alert } from "react-bootstrap";
 import Database from "@/types/database";
-import { createContext, useContext, useState, ReactNode, FormEvent, useEffect, useRef } from "react";
+import { createContext, useContext, useState, ReactNode, FormEvent, useEffect, useRef, FC } from "react";
 import dayjs from "@/Helpers/dayjs";
 import { wrapOptimizeUrl } from "@/Helpers/url";
 import LabelValue from "@/Components/LabelValue";
@@ -30,6 +30,7 @@ interface CheckoutProps {
     pickup_location?: string;
     return_location?: string;
   };
+  forbiddenDate?: string[];
   carThumbnail: MediaLibraryType;
 }
 
@@ -76,7 +77,6 @@ interface FormData {
   destination_name: string;
   destination_address: string;
   payment_method: string;
-  notes: string;
   agree_terms: boolean;
 }
 
@@ -120,6 +120,7 @@ interface CheckoutProviderProps {
 interface ModalProps {
   show: boolean;
   onHide: () => void;
+  forbiddenDate?: string[];
 }
 
 // Styled components
@@ -229,14 +230,15 @@ const CheckoutProvider = ({ children, carData, order, carThumbnail }: CheckoutPr
     pickup_date: order.pickup_date,
     return_date: order.return_date,
     with_driver: order.with_driver,
-    destination_latitude: selectedLocation?.latitude || 0.0,
-    destination_longitude: selectedLocation?.longitude || 0.0,
-    destination_name: selectedLocation?.name || "",
-    destination_address: selectedLocation?.address || "",
-    payment_method: selectedPaymentChannel?.code || paymentMethod,
-    notes: "",
+    destination_latitude: 0.0,
+    destination_longitude: 0.0,
+    destination_name: "",
+    destination_address: "",
+    payment_method: "",
     agree_terms: false,
   });
+
+  console.log(formData);
 
   // Function to update dates
   const updateDates = (startDate: Date, endDate: Date) => {
@@ -245,36 +247,68 @@ const CheckoutProvider = ({ children, carData, order, carThumbnail }: CheckoutPr
 
     setFormData('pickup_date', formattedStartDate);
     setFormData('return_date', formattedEndDate);
-
-    // Update the order object to maintain consistency
-    order.pickup_date = formattedStartDate;
-    order.return_date = formattedEndDate;
   };
+
+  // Update form data when location changes
+  useEffect(() => {
+    if (selectedLocation) {
+      setFormData(formValue => ({
+        ...formValue,
+        destination_latitude: selectedLocation.latitude,
+        destination_longitude: selectedLocation.longitude,
+        destination_name: selectedLocation.name,
+        destination_address: selectedLocation.address
+      }));
+    }
+  }, [selectedLocation]);
+
+  // Update form data when payment channel changes
+  useEffect(() => {
+    if (selectedPaymentChannel) {
+      setFormData('payment_method', selectedPaymentChannel.code);
+    } else {
+      setFormData('payment_method', paymentMethod);
+    }
+  }, [selectedPaymentChannel, paymentMethod]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Mencegah submit jika belum menyetujui syarat dan ketentuan
-    // dan belum mengisi identitas
+    // Prevent submission if terms are not agreed to or identity is unfilled
     if (!formData.agree_terms || isIdentityUnfilled) {
       setIsLoading(false);
       return;
     }
 
-    // Update location data before submitting
-    setFormData('destination_latitude', selectedLocation?.latitude || 0);
-    setFormData('destination_longitude', selectedLocation?.longitude || 0);
-    setFormData('destination_name', selectedLocation?.name || "");
-    setFormData('destination_address', selectedLocation?.address || "");
-    setFormData('payment_method', selectedPaymentChannel?.code || paymentMethod);
+    // Ensure form data is up-to-date before submission
+    const updatedFormData = {
+      ...formData,
+      destination_latitude: selectedLocation?.latitude || 0,
+      destination_longitude: selectedLocation?.longitude || 0,
+      destination_name: selectedLocation?.name || "",
+      destination_address: selectedLocation?.address || "",
+      payment_method: selectedPaymentChannel?.code || paymentMethod
+    };
 
-    post(route('order.store'), {
-      onSuccess: () => {
-        // Navigate to order confirmation page
-      },
-      onFinish: () => setIsLoading(false),
+    // Update the form data with the latest values
+    Object.entries(updatedFormData).forEach(([key, value]) => {
+      setFormData(key as keyof FormData, value);
     });
+
+    // Short delay to ensure state updates before submission
+    setTimeout(() => {
+      post(route('v1.home.checkout.checkout'), {
+        onSuccess: (data: any) => {
+          console.log(data)
+          // Navigate to order confirmation page
+        },
+        onError: (error: any) => {
+          console.error("Checkout error:", error);
+        },
+        onFinish: () => setIsLoading(false),
+      });
+    }, 100);
   };
 
   function formatRupiah(amount: number) {
@@ -284,11 +318,6 @@ const CheckoutProvider = ({ children, carData, order, carThumbnail }: CheckoutPr
       minimumFractionDigits: 0,
     }).format(amount);
   }
-
-  // Update payment fee when selected payment channel changes
-  useEffect(() => {
-    // This will trigger a re-render with the new payment fee calculation
-  }, [selectedPaymentChannel]);
 
   const value: CheckoutContextType = {
     order,
@@ -337,12 +366,19 @@ const useCheckout = () => {
 };
 
 // Date Range Modal component
-const DateRangeModal = ({ show, onHide }: ModalProps) => {
+const DateRangeModal = ({ show, onHide, forbiddenDate }: ModalProps) => {
   const { order, updateDates } = useCheckout();
   const [dateRange, setDateRange] = useState<Date[]>([
     new Date(order.pickup_date),
     new Date(order.return_date)
   ]);
+
+  // Reset dates when modal opens
+  useEffect(() => {
+    if (show) {
+      setDateRange([new Date(order.pickup_date), new Date(order.return_date)]);
+    }
+  }, [show, order.pickup_date, order.return_date]);
 
   const handleSave = () => {
     if (dateRange.length === 2) {
@@ -350,6 +386,10 @@ const DateRangeModal = ({ show, onHide }: ModalProps) => {
       onHide();
     }
   };
+
+  const disabledDates = forbiddenDate ? forbiddenDate.map((dateStr) => {
+    return new Date(dateStr);
+  }) : [];
 
   return (
     <Modal show={show} onHide={onHide}>
@@ -366,7 +406,8 @@ const DateRangeModal = ({ show, onHide }: ModalProps) => {
               minDate: "today",
               locale: Indonesian,
               showMonths: 1,
-              disableMobile: true
+              disableMobile: true,
+              disable: disabledDates,
             }}
             onChange={(dates) => {
               setDateRange(dates);
@@ -391,7 +432,7 @@ const DateRangeModal = ({ show, onHide }: ModalProps) => {
 };
 
 // Component for the car details section
-const CarDetails = () => {
+const CarDetails: FC<{ forbiddenDate?: string[] }> = ({ forbiddenDate }) => {
   const { carData, carThumbnail, order } = useCheckout();
   const [showDateModal, setShowDateModal] = useState(false);
 
@@ -420,7 +461,7 @@ const CarDetails = () => {
         </div>
       </Col>
 
-      <DateRangeModal show={showDateModal} onHide={() => setShowDateModal(false)} />
+      <DateRangeModal show={showDateModal} forbiddenDate={forbiddenDate} onHide={() => setShowDateModal(false)} />
     </Row>
   );
 };
@@ -466,6 +507,14 @@ const LocationModal = ({ show, onHide }: ModalProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<Location[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+
+  // Reset search term and results when modal opens
+  useEffect(() => {
+    if (show) {
+      setSearchTerm("");
+      setSearchResults([]);
+    }
+  }, [show]);
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) return;
@@ -589,12 +638,13 @@ const PaymentModal = ({ show, onHide }: ModalProps) => {
     setIsLoading(true);
     try {
       const response = await axios.get(route("v1.global.transaction.get-channels"));
-      setPaymentChannels(response.data);
+      const channels = response.data;
+      setPaymentChannels(channels);
 
       // Group payment channels by their group
       const groups: Record<string, PaymentChannel[]> = {};
-      Object.keys(response.data).forEach(id => {
-        const channel = response.data[id];
+      Object.keys(channels).forEach(id => {
+        const channel = channels[id];
         if (!groups[channel.group]) {
           groups[channel.group] = [];
         }
@@ -660,7 +710,7 @@ const PaymentModal = ({ show, onHide }: ModalProps) => {
                         return (
                           <Col md={6} key={index}>
                             <PaymentOption
-                              className="mb-0"
+                              // className={`mb-0 ${channel.code === paymentChannels?.code ? 'selected' : ''}`}
                               onClick={() => channel.active && handleSelectPaymentChannel(channel)}
                             >
                               <PaymentIcon src={channel.icon_url} alt={channel.name} />
@@ -713,8 +763,6 @@ const TermsAndConditions = () => {
 
 // Order summary component
 const OrderSummary = () => {
-  const [disableSubmit, setDisableSubmit] = useState(false);
-
   const {
     rentalDuration,
     basePrice,
@@ -724,23 +772,30 @@ const OrderSummary = () => {
     paymentFee,
     totalPrice,
     formatRupiah,
-    order,
     formData,
     isLoading,
     processing,
     isIdentityUnfilled,
     handleSubmit,
     carData,
-    selectedPaymentChannel
+    selectedPaymentChannel,
+    selectedLocation,
+    order
   } = useCheckout();
 
-  useEffect(() => {
-    setDisableSubmit(!formData.agree_terms || isIdentityUnfilled || processing || isLoading);
-  }, [formData, isIdentityUnfilled, processing, isLoading]);
+  // Calculate if submit button should be disabled
+  const disableSubmit =
+    !formData.agree_terms ||
+    isIdentityUnfilled ||
+    processing ||
+    isLoading ||
+    rentalDuration <= 0 ||
+    !selectedPaymentChannel ||
+    !selectedLocation;
 
   return (
     <div className="sticky-top" style={{ top: "5rem" }}>
-      <Card body>
+      <Card body className="rounded-4">
         <Card.Title className="pb-3 mb-3 border-bottom">Ringkasan Pembayaran</Card.Title>
 
         <ListGroup variant="flush" className="mb-3">
@@ -818,7 +873,7 @@ const FormHandler = () => {
 }
 
 // Main checkout component
-export default function CheckoutPage({ carData, order, carThumbnail }: CheckoutProps) {
+export default function CheckoutPage({ carData, order, carThumbnail, forbiddenDate = [] }: CheckoutProps) {
   const { props: { auth } } = usePage<PageProps>();
   const isIdentityUnfilled = auth.isIdentityUnfilled === true;
 
@@ -845,7 +900,7 @@ export default function CheckoutPage({ carData, order, carThumbnail }: CheckoutP
             <Card body className={twMerge("rounded-4", isIdentityUnfilled ? "mt-4" : "")}>
               <Card.Title className="pb-3 mb-3 border-bottom">Detail Pesanan</Card.Title>
 
-              <CarDetails />
+              <CarDetails forbiddenDate={forbiddenDate} />
               <FormHandler />
             </Card>
           </Col>

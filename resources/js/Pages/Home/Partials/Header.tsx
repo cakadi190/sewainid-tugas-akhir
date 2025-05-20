@@ -9,6 +9,7 @@ import Flatpickr from "react-flatpickr";
 import { FaThumbsUp } from 'react-icons/fa';
 import { CarModelEnum } from '@/Helpers/enum';
 import { getCarModelLabel } from '@/Helpers/EnumHelper';
+import { Indonesian } from "flatpickr/dist/l10n/id";
 
 const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
@@ -117,7 +118,6 @@ const HeaderHome = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Search:", { vehicleCategory, pickupDate, returnDate });
     router.get(route('armada.index'), { model: vehicleCategory, pickupDate, returnDate });
   };
 
@@ -173,6 +173,7 @@ const HeaderHome = () => {
                       <Flatpickr
                         className="form-control"
                         options={{
+                          locale: Indonesian,
                           dateFormat: "Y-m-d",
                           minDate: "today"
                         }}
@@ -187,6 +188,7 @@ const HeaderHome = () => {
                       <Flatpickr
                         className="form-control"
                         options={{
+                          locale: Indonesian,
                           dateFormat: "Y-m-d",
                           minDate: pickupDate
                         }}

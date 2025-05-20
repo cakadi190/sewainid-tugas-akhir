@@ -104,7 +104,7 @@ class GenerateVehicleDataCommand extends Command
     {
         $headers = [
             'Nama Kendaraan',
-            'Kode Registrasi',
+            'Nomor STNK',
             'Nomor Rangka',
             'Nomor Mesin',
             'Nomor BPKB',

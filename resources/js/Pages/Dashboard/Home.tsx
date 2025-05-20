@@ -4,12 +4,23 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
-import HeaderDashboard from './Partials/Header';
+import GlobalHeader from '@/Components/GlobalPartial/HeaderComponent';
+import DashboardImage from '@/Assets/Images/Cover-Dashboard.jpg';
 
 export default function Dashboard() {
   return (
     <AuthenticatedLayout
-      header={<HeaderDashboard />}
+      header={
+        <GlobalHeader
+          title="Beranda Dasbor"
+          description="Selamat datang di dasbor! Disinilah Anda dapat melihat informasi tentang permintaan, riwayat, dan melihat tagihan sewa mobil Anda."
+          backgroundImage={DashboardImage}
+          breadcrumbItems={[
+            { label: 'Beranda', url: route('home') },
+            { label: 'Beranda Dasbor' },
+          ]}
+        />
+      }
     >
       <Head title="Dashboard" />
 

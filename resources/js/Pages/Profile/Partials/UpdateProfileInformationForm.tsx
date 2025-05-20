@@ -1,4 +1,4 @@
-import { Button, Form, Alert, FormFloating, Row, Col } from 'react-bootstrap';
+import { Button, Form, Alert, FormFloating, Row, Col, Card } from 'react-bootstrap';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import { FormEventHandler, useState, useEffect } from 'react';
 import { PageProps } from '@/types';
@@ -33,6 +33,7 @@ export default function UpdateProfileInformation({
       sim: user.sim || '',
       avatar: null as unknown as File,
       address: user.address || '',
+      phone: user.phone || '', // Added phone field
     });
 
   // Generate Google API avatar URL based on email or name
@@ -129,6 +130,8 @@ export default function UpdateProfileInformation({
           <Col md={9}>
             <Row className='g-3'>
               <Col md={12}>
+                <Card.Header className="px-0 pt-0 pb-2 mb-3 bg-white fw-bold border-bottom">Identitas</Card.Header>
+
                 <FormFloating>
                   <Form.Control
                     type="text"
@@ -144,6 +147,23 @@ export default function UpdateProfileInformation({
                     {errors.name}
                   </Form.Control.Feedback>
                   <Form.Label>Nama Lengkap</Form.Label>
+                </FormFloating>
+              </Col>
+
+              <Col md={12}>
+                <FormFloating>
+                  <Form.Control
+                    type="text"
+                    value={data.phone}
+                    onChange={(e) => setData('phone', e.target.value)}
+                    isInvalid={!!errors.phone}
+                    placeholder="Nomor Telepon"
+                    maxLength={15}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.phone}
+                  </Form.Control.Feedback>
+                  <Form.Label>Nomor Telepon</Form.Label>
                 </FormFloating>
               </Col>
 
@@ -187,6 +207,10 @@ export default function UpdateProfileInformation({
                 </FormFloating>
               </Col>
 
+              <Col md={12}>
+                <Card.Header className="px-0 pt-2 pb-2 bg-white fw-bold border-bottom">Tanggal Lahir</Card.Header>
+              </Col>
+
               <Col md={4}>
                 <FormFloating>
                   <Form.Control
@@ -218,6 +242,10 @@ export default function UpdateProfileInformation({
                   </Form.Control.Feedback>
                   <Form.Label>Tanggal Lahir</Form.Label>
                 </FormFloating>
+              </Col>
+
+              <Col md={12}>
+                <Card.Header className="px-0 pt-2 pb-2 bg-white fw-bold border-bottom">Identitas Pengemudi</Card.Header>
               </Col>
 
               <Col md={4}>
@@ -269,6 +297,10 @@ export default function UpdateProfileInformation({
                   </Form.Control.Feedback>
                   <Form.Label>Nomor SIM</Form.Label>
                 </FormFloating>
+              </Col>
+
+              <Col md={12}>
+                <Card.Header className="px-0 pt-2 pb-2 bg-white fw-bold border-bottom">Alamat Lengkap</Card.Header>
               </Col>
 
               <Col md="12">
@@ -331,3 +363,4 @@ export default function UpdateProfileInformation({
     </section>
   );
 }
+

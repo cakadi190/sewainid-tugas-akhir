@@ -7,6 +7,7 @@ use App\Enums\RoleUser;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -22,6 +23,8 @@ use Illuminate\Support\Collection;
  * @property string|null $pbirth
  * @property string|null $dbirth
  * @property string $email
+ * @property string|null $phone
+ * @property string|null $address
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property string|null $password
  * @property string $avatar
@@ -34,10 +37,13 @@ use Illuminate\Support\Collection;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transactions
+ * @property-read int|null $transactions_count
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereAvatar($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereDbirth($value)
@@ -51,6 +57,7 @@ use Illuminate\Support\Collection;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereNik($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePbirth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRole($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereSim($value)
@@ -75,6 +82,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'nik',
+        'phone',
         'kk',
         'sim',
         'avatar',
@@ -143,7 +151,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isIdentityUnfilled(): bool
     {
-        $requiredFields = ['gender', 'pbirth', 'dbirth', 'nik', 'kk', 'sim'];
+        $requiredFields = ['gender', 'pbirth', 'phone', 'dbirth', 'nik', 'kk', 'sim'];
 
         return collect($requiredFields)->every(fn($field) => is_null($this->$field));
     }
@@ -156,6 +164,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public static function genders(): Collection
     {
         return collect(GenderUser::cases())->pluck('value');
+    }
+
+    /**
+     * Get all of the user's transactions.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
     }
 }
 

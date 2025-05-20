@@ -3,16 +3,17 @@
 namespace App\Models;
 
 use App\Enums\CarConditionEnum;
-use App\Traits\WithTrashedRouteBinding;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\CarModelEnum;
 use App\Enums\CarStatusEnum;
 use App\Enums\CarTransmissionEnum;
 use App\Enums\FuelTypeEnum;
+use App\Enums\TransactionStatusEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -59,10 +60,13 @@ use Spatie\Sluggable\SlugOptions;
  * @property int $baby_seat
  * @property int $rent_price
  * @property string|null $gps_imei
+ * @property-read mixed $full_name
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, Media> $media
  * @property-read int|null $media_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Review> $review
  * @property-read int|null $review_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transaction
+ * @property-read int|null $transaction_count
  * @method static \Database\Factories\CarDataFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData newQuery()
@@ -244,6 +248,50 @@ class CarData extends Model implements HasMedia
     {
         return $this->hasMany(Review::class);
     }
+
+    /**
+     * Relasi dengan model Transaction.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Transaction>
+     */
+    public function transaction(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    /**
+     * Get all disabled (unavailable) dates for the car based on its transactions.
+     *
+     * @return array<string> Tanggal-tanggal yang tidak tersedia dalam format 'Y-m-d'
+     */
+    public function getUnavailableDate(): array
+    {
+        return $this->transaction()
+            ->whereIn('status', [TransactionStatusEnum::PAID, TransactionStatusEnum::UNPAID])
+            ->get()
+            ->flatMap(function ($transaction) {
+                return CarbonPeriod::create($transaction->pickup_date, $transaction->return_date)
+                    ->toArray();
+            })
+            ->map(fn($date) => $date->format('Y-m-d'))
+            ->unique()
+            ->values()
+            ->toArray();
+    }
+
+    /**
+     * Determine if the given date is not in the car's unavailable dates.
+     *
+     * @param string|Carbon|null $date
+     * @return bool
+     */
+    public function isNotOnUnavailableDate(string|Carbon|null $date): bool
+    {
+        return !is_null($date)
+            && !collect($this->getUnavailableDate())
+                ->contains($date instanceof Carbon ? $date->toDateString() : (string) $date);
+    }
+
 
     /**
      * Register media conversions for the CarData model.

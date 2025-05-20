@@ -12,12 +12,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * Assign Driver Model
  *
  * @property int $id
- * @property int $transaction_id
- * @property int $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Transaction $transaction
- * @property-read \App\Models\User $user
+ * @property string $transaction_id
+ * @property int $user_id
+ * @property-read Transaction $transaction
+ * @property-read User $user
  * @method static \Database\Factories\AssignDriverFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AssignDriver newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AssignDriver newQuery()

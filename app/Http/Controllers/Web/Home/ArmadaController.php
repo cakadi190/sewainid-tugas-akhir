@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Web\Home;
 use App\Http\Controllers\Controller;
 use App\Models\CarData;
 use Spatie\SchemaOrg\Schema;
+use App\Enums\TransactionStatusEnum;
+use Carbon\Carbon;
 
 class ArmadaController extends Controller
 {
@@ -88,6 +90,7 @@ class ArmadaController extends Controller
         $reviews = $car_data->review()->latest()->paginate(10);
         $averageRating = round($car_data->review->avg('rating') ?? 0, 1);
         $reviewCount = $car_data->review->count();
+        $disabledCalendar = $car_data->getUnavailableDate();
 
         seo()
             ->title("Detail Kendaraan {$car_data->brand} {$car_data->car_name}")
@@ -116,7 +119,7 @@ class ArmadaController extends Controller
                 ->reviewCount($reviewCount),
         ];
 
-        return inertia('Home/Armada/Show', compact('car_data'))->withViewData(compact('schemas'));
+        return inertia('Home/Armada/Show', compact('car_data', 'disabledCalendar'))->withViewData(compact('schemas'));
     }
 }
 

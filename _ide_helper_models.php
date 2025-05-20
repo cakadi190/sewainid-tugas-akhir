@@ -16,12 +16,12 @@ namespace App\Models{
  * Assign Driver Model
  *
  * @property int $id
- * @property int $transaction_id
- * @property int $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Transaction $transaction
- * @property-read \App\Models\User $user
+ * @property string $transaction_id
+ * @property int $user_id
+ * @property-read Transaction $transaction
+ * @property-read User $user
  * @method static \Database\Factories\AssignDriverFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AssignDriver newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AssignDriver newQuery()
@@ -76,10 +76,13 @@ namespace App\Models{
  * @property int $baby_seat
  * @property int $rent_price
  * @property string|null $gps_imei
+ * @property-read mixed $full_name
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, Media> $media
  * @property-read int|null $media_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Review> $review
  * @property-read int|null $review_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transaction
+ * @property-read int|null $transaction_count
  * @method static \Database\Factories\CarDataFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData newQuery()
@@ -121,7 +124,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereVehicleRegistrationCertNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereYearOfManufacture($value)
  * @mixin \Eloquent
- * @property-read mixed $full_name
  */
 	class CarData extends \Eloquent implements \Spatie\MediaLibrary\HasMedia {}
 }
@@ -195,7 +197,7 @@ namespace App\Models{
 /**
  * Transaction Model
  *
- * @property int $id
+ * @property string $id
  * @property string $status
  * @property string $rental_status
  * @property string|null $confirmed_at
@@ -207,6 +209,7 @@ namespace App\Models{
  * @property string|null $pickup_date
  * @property string|null $return_date
  * @property string $place_name
+ * @property int $with_driver
  * @property string $longitude
  * @property string $latitude
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -235,9 +238,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereTotalPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereUserId($value)
- * @mixin \Eloquent
- * @property int $with_driver
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereWithDriver($value)
+ * @mixin \Eloquent
+ * @property-read \App\Models\CarData|null $carData
  */
 	class Transaction extends \Eloquent {}
 }
@@ -309,6 +312,7 @@ namespace App\Models{
  * @property string|null $pbirth
  * @property string|null $dbirth
  * @property string $email
+ * @property string|null $address
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property string|null $password
  * @property string $avatar
@@ -325,6 +329,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereAvatar($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereDbirth($value)
@@ -343,8 +348,10 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereSim($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property string|null $address
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereAddress($value)
+ * @property string|null $phone
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transactions
+ * @property-read int|null $transactions_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePhone($value)
  */
 	class User extends \Eloquent implements \Illuminate\Contracts\Auth\MustVerifyEmail {}
 }
@@ -353,11 +360,6 @@ namespace App\Models{
 /**
  * Wishlist Model Data
  *
- * @method static \Database\Factories\WishlistFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist query()
- * @mixin \Eloquent
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -365,11 +367,16 @@ namespace App\Models{
  * @property int|null $car_data_id
  * @property-read \App\Models\CarData|null $carData
  * @property-read \App\Models\User|null $user
+ * @method static \Database\Factories\WishlistFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist whereCarDataId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist whereUserId($value)
+ * @mixin \Eloquent
  */
 	class Wishlist extends \Eloquent {}
 }

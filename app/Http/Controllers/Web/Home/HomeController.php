@@ -59,17 +59,20 @@ class HomeController extends Controller
             ->canonical(route('checkout'));
 
         $order = session('order');
+
+        /** @var CarData $carData */
         $carData = $this->_carData
             ->select(['id', 'car_name', 'brand', 'license_plate', 'rent_price', 'slug'])
             ->find($order['car_id'] ?? null);
 
         $carThumbnail = $carData?->getMedia('gallery')->first();
+        $forbiddenDate = $carData?->getUnavailableDate();
 
         if (!$carData || !session()->has('order')) {
             return redirect()->route('home');
         }
 
-        return inertia('Home/Checkout', compact('carData', 'order', 'carThumbnail'));
+        return inertia('Home/Checkout', compact('carData', 'order', 'carThumbnail', 'forbiddenDate'));
     }
 }
 

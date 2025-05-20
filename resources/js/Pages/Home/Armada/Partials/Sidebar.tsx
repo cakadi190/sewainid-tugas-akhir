@@ -7,6 +7,7 @@ import { getCarFuelTypeLabel, getCarModelLabel, getCarTransmissionLabel } from "
 import { useDebounce } from "@/Hooks/useDebounce";
 import styled from "@emotion/styled";
 import Flatpickr from "react-flatpickr";
+import { Indonesian } from "flatpickr/dist/l10n/id";
 import "react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css";
 
 export interface FilterState {
@@ -80,6 +81,12 @@ const FilterSidebar: FC<FilterSidebarProps> = ({ filters, setFilters }) => {
   const [yearToDisplay, setYearToDisplay] = useState<number>(Number(localFilters.year_to) || maxYear);
   const [priceMinDisplay, setPriceMinDisplay] = useState<number>(Number(localFilters.price_min) || 0);
   const [priceMaxDisplay, setPriceMaxDisplay] = useState<number>(Number(localFilters.price_max) || maxPriceLimit);
+
+  // State untuk date range
+  const [dateRange, setDateRange] = useState<Date[]>([
+    localFilters.pickup_date ? new Date(localFilters.pickup_date) : null,
+    localFilters.return_date ? new Date(localFilters.return_date) : null
+  ].filter(Boolean) as Date[]);
 
   const updateFilters = useCallback((newFilters: FilterState) => {
     const nonEmptyFilters = Object.entries(newFilters).reduce((acc, [key, value]) => {
@@ -208,17 +215,22 @@ const FilterSidebar: FC<FilterSidebarProps> = ({ filters, setFilters }) => {
     return new Intl.NumberFormat('id-ID').format(price);
   };
 
-  const handleDateChange = useCallback((dates: Date[], currentDateStr: string, instance: any, data: any) => {
-    const name = instance.input.getAttribute('name') || 'pickup_date';
-    const formattedDate = dates[0] ?
-      dates[0].getFullYear() + '-' +
-      String(dates[0].getMonth() + 1).padStart(2, '0') + '-' +
-      String(dates[0].getDate()).padStart(2, '0') :
-      '';
+  // Handler untuk date range picker
+  const handleDateRangeChange = useCallback((dates: Date[]) => {
+    setDateRange(dates);
+
+    const formatDate = (date: Date) => {
+      return date ?
+        date.getFullYear() + '-' +
+        String(date.getMonth() + 1).padStart(2, '0') + '-' +
+        String(date.getDate()).padStart(2, '0') :
+        '';
+    };
 
     const newFilters = {
       ...localFilters,
-      [name]: formattedDate
+      pickup_date: dates[0] ? formatDate(dates[0]) : '',
+      return_date: dates[1] ? formatDate(dates[1]) : ''
     };
 
     setLocalFilters(newFilters);
@@ -238,6 +250,7 @@ const FilterSidebar: FC<FilterSidebarProps> = ({ filters, setFilters }) => {
     setYearToDisplay(maxYear);
     setPriceMinDisplay(0);
     setPriceMaxDisplay(maxPriceLimit);
+    setDateRange([]);
     router.get(route('armada.index'), {}, { preserveState: true });
   }, [filters, setFilters, minYear, maxYear, maxPriceLimit]);
 
@@ -258,6 +271,12 @@ const FilterSidebar: FC<FilterSidebarProps> = ({ filters, setFilters }) => {
       setYearToDisplay(Number(filters.year_to) || maxYear);
       setPriceMinDisplay(Number(filters.price_min) || 0);
       setPriceMaxDisplay(Number(filters.price_max) || maxPriceLimit);
+
+      // Update date range
+      setDateRange([
+        filters.pickup_date ? new Date(filters.pickup_date) : null,
+        filters.return_date ? new Date(filters.return_date) : null
+      ].filter(Boolean) as Date[]);
     }
   }, [filters, minYear, maxYear, maxPriceLimit]);
 
@@ -294,31 +313,20 @@ const FilterSidebar: FC<FilterSidebarProps> = ({ filters, setFilters }) => {
         </Form.Floating>
 
         <Form.Group className="mb-3">
-          <FloatingLabel label="Tanggal Diambil">
+          <FloatingLabel label="Periode Sewa">
             <Flatpickr
               className="form-control"
               options={{
+                locale: Indonesian,
+                mode: "range",
                 dateFormat: "Y-m-d",
-                minDate: "today"
+                minDate: "today",
+                enableTime: false,
+                altInput: true,
+                altFormat: "d M Y",
               }}
-              value={localFilters.pickup_date || ''}
-              onChange={handleDateChange}
-              name="pickup_date"
-            />
-          </FloatingLabel>
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <FloatingLabel label="Tanggal Kembali">
-            <Flatpickr
-              className="form-control"
-              options={{
-                dateFormat: "Y-m-d",
-                minDate: "today"
-              }}
-              value={localFilters.return_date || ''}
-              onChange={handleDateChange}
-              name="return_date"
+              value={dateRange}
+              onChange={handleDateRangeChange}
             />
           </FloatingLabel>
         </Form.Group>

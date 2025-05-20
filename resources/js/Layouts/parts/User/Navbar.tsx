@@ -132,9 +132,9 @@ const UserDropdown: FC<UserDropdownProps> = ({ user, scrolled }) => {
 
   const userItems: NavItem[] = [
     { label: "Dasbor", href: user.role === RoleUser.ADMIN ? "/administrator" : "/dashboard" },
-    { label: "Pesanan", href: "/checkout" },
-    { label: "Keinginan", href: "/wishlist" },
-    { label: "Riwayat Sewa", href: "/history" },
+    { label: "Pesanan", href: route('checkout') },
+    { label: "Keinginan", href: route('wishlist') },
+    { label: "Riwayat Sewa", href: route('dashboard.transaction.index') },
     { label: "Profil", href: "/profile" },
   ];
 

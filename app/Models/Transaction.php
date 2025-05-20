@@ -6,13 +6,14 @@ use App\Enums\RentalStatusEnum;
 use App\Enums\TransactionStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 /**
  * Transaction Model
  *
- * @property int $id
+ * @property string $id
  * @property string $status
  * @property string $rental_status
  * @property string|null $confirmed_at
@@ -24,12 +25,14 @@ use Illuminate\Support\Str;
  * @property string|null $pickup_date
  * @property string|null $return_date
  * @property string $place_name
+ * @property int $with_driver
  * @property string $longitude
  * @property string $latitude
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int|null $user_id
  * @property int|null $car_data_id
+ * @property-read \App\Models\CarData|null $carData
  * @method static \Database\Factories\TransactionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction newQuery()
@@ -52,6 +55,7 @@ use Illuminate\Support\Str;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereTotalPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereWithDriver($value)
  * @mixin \Eloquent
  */
 class Transaction extends Model
@@ -60,20 +64,36 @@ class Transaction extends Model
     use HasFactory;
 
     /**
-     * The "booted" method of the model.
+     * The key type of the model.
      *
-     * @return void
+     * @var string
      */
-    protected static function boot()
-    {
-        parent::boot();
+    protected $keyType = 'string';
 
-        static::creating(function ($model) {
-            if (empty($model->id)) {
-                $model->id = (string) Str::uuid();
-            }
-        });
-    }
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'id',
+        'status',
+        'rental_status',
+        'confirmed_at',
+        'payment_channel',
+        'payment_references',
+        'expired_at',
+        'total_price',
+        'total_pay',
+        'pickup_date',
+        'return_date',
+        'place_name',
+        'with_driver',
+        'longitude',
+        'latitude',
+        'user_id',
+        'car_data_id',
+    ];
 
     /**
      * Retrieve a collection of all possible transaction statuses.
@@ -86,7 +106,7 @@ class Transaction extends Model
     }
 
     /**
-     * Retrieve a collection of all possible transaction statuses.
+     * Retrieve a collection of all possible rental statuses.
      *
      * @return \Illuminate\Support\Collection|null A collection of RentalStatusEnum cases, or null if none.
      */
@@ -94,4 +114,15 @@ class Transaction extends Model
     {
         return collect(RentalStatusEnum::cases())->pluck('value');
     }
+
+    /**
+     * The car data that this transaction belongs to.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function carData(): BelongsTo
+    {
+        return $this->belongsTo(CarData::class);
+    }
 }
+

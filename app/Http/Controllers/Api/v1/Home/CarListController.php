@@ -28,7 +28,7 @@ class CarListController extends Controller
     {
         $cars = $this->_carData
             ->whereIn('condition', [CarConditionEnum::EXCELLENT, CarConditionEnum::GOOD, CarConditionEnum::FAIR])
-            ->where('status', [CarStatusEnum::READY, CarStatusEnum::BORROWED])
+            ->whereIn('status', [CarStatusEnum::READY, CarStatusEnum::BORROWED]) // Fixed: use whereIn instead of where for array values
             ->withAvg('review', 'rating')
             ->withCount('review')
             ->orderBy(function ($query) {
@@ -78,6 +78,8 @@ class CarListController extends Controller
     {
         Log::info("All Request Context", $request->all());
 
+        $pickupDate = $request->input('pickup_date');
+        $returnDate = $request->input('return_date');
         $perPage = $request->input('per_page', 9);
         $query = $this->_carData->query();
 
@@ -87,14 +89,33 @@ class CarListController extends Controller
             ->when($request->filled('year_to'), fn($q) => $q->where('year_of_manufacture', '<=', $request->input('year_to')))
             ->when($request->filled('fuel_type'), fn($q) => $q->where('fuel_type', $request->input('fuel_type')))
             ->when($request->filled('transmission'), fn($q) => $q->where('transmission', $request->input('transmission')))
-            ->when($request->filled('status'), fn($q) => $q->where('status', $request->input('status')))
+            ->when($request->filled('status'), fn($q) => $q->where('status', $request->input('status'))) // This is fine since we're passing a single value
             ->when($request->filled('condition'), fn($q) => $q->where('condition', $request->input('condition')))
             ->when($request->filled('price_min'), fn($q) => $q->where('rent_price', '>=', $request->input('price_min')))
             ->when($request->filled('price_max'), fn($q) => $q->where('rent_price', '<=', $request->input('price_max')))
             ->when($request->filled('seats'), fn($q) => $q->where('seats', $request->input('seats')))
-            ->when($request->filled('search'), fn($q) => $q->where('car_name', 'like', '%' . $request->input('search') . '%')
-                ->orWhere('brand', 'like', '%' . $request->input('search') . '%')
-                ->orWhere('license_plate', 'like', '%' . $request->input('search') . '%'));
+            ->when($request->filled('search'), function ($q) use ($request, $pickupDate, $returnDate) {
+                $q->where(function ($q) use ($request) {
+                    $q->where('car_name', 'like', '%' . $request->input('search') . '%')
+                        ->orWhere('brand', 'like', '%' . $request->input('search') . '%')
+                        ->orWhere('license_plate', 'like', '%' . $request->input('search') . '%');
+                });
+
+                // Only add date filtering if both pickup and return dates are provided
+                if (!empty($pickupDate) && !empty($returnDate)) {
+                    $q->whereDoesntHave('transaction', function ($q) use ($pickupDate, $returnDate) {
+                        $q->whereNotIn('status', ['cancelled', 'completed'])
+                            ->where(function ($q) use ($pickupDate, $returnDate) {
+                                $q->whereBetween('pickup_date', [$pickupDate, $returnDate])
+                                    ->orWhereBetween('return_date', [$pickupDate, $returnDate])
+                                    ->orWhere(function ($q) use ($pickupDate, $returnDate) {
+                                        $q->where('pickup_date', '<=', $pickupDate)
+                                            ->where('return_date', '>=', $returnDate);
+                                    });
+                            });
+                    });
+                }
+            });
 
         $query->withAvg('review', 'rating')
             ->withCount('review');

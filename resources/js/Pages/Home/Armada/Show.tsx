@@ -13,6 +13,7 @@ import { PiBabyCarriage, PiCarProfileDuotone, PiLock, PiMusicNote, PiPalette, Pi
 import { getCarConditionLabel, getCarFuelTypeLabel, getCarModelLabel, getCarStatusColor, getCarStatusIcon, getCarStatusLabel, getCarTransmissionLabel } from "@/Helpers/EnumHelper";
 import { GiGearStickPattern } from "react-icons/gi";
 import Flatpickr from "react-flatpickr";
+import { Indonesian } from "flatpickr/dist/l10n/id";
 import { twMerge } from "tailwind-merge";
 import { CarConditionEnum, CarModelEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum } from "@/Helpers/enum";
 import HeaderArmadaDetail from "./Partials/HeaderArmadaDetail";
@@ -134,7 +135,7 @@ const CarMainDetails: React.FC<{ carData: Database['CarData'] & { media?: MediaL
   );
 };
 
-const CarStatus: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
+const CarStatus: React.FC<{ carData: Database['CarData']; disabledCalendar?: string[] }> = ({ carData, disabledCalendar = [] }) => {
   const lastUsage = dayjs().diff('2025-04-01', 'day');
 
   const { data, post, processing, setData } = useForm<{
@@ -196,9 +197,11 @@ const CarStatus: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
           <Flatpickr
             options={{
               mode: 'range',
+              locale: Indonesian,
               dateFormat: 'Y-m-d',
               minDate: 'today',
               closeOnSelect: false,
+              disable: disabledCalendar ?? []
             }}
             className="form-control"
             onChange={(selectedDates: Date[]) => {
@@ -485,9 +488,10 @@ const CarComments = () => {
 
 interface ShowProps {
   car_data: Database['CarData'] & { review: Database['Review'] };
+  disabledCalendar?: string[];
 }
 
-export default function Show({ car_data }: ShowProps) {
+export default function Show({ car_data, disabledCalendar }: ShowProps) {
   return (
     <AuthenticatedUser header={<HeaderArmadaDetail carData={car_data} />}>
       <Head title={`Detail Kendaraan ${car_data.brand} ${car_data.car_name}`} />
@@ -497,7 +501,7 @@ export default function Show({ car_data }: ShowProps) {
           <CarMainDetails carData={car_data} />
         </Col>
         <Col md={4} className="position-relative">
-          <CarStatus carData={car_data} />
+          <CarStatus carData={car_data} disabledCalendar={disabledCalendar} />
         </Col>
       </Row>
 

@@ -33,8 +33,8 @@ return new class extends Migration {
             $table->string('place_name');
             $table->boolean('with_driver')->default(false);
 
-            $table->decimal('longitude', 10, 8)->default(0.00000000);
-            $table->decimal('latitude', 10, 8)->default(0.00000000);
+            $table->decimal('longitude', 15, 13)->default(0.0000000000000);
+            $table->decimal('latitude', 15, 13)->default(0.0000000000000);
 
             $table->timestamps();
 
