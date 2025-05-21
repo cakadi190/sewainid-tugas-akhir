@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
+use App\Services\TripayServices;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -14,6 +15,11 @@ use Inertia\Inertia;
  */
 class TransactionController extends Controller
 {
+    public function __construct(
+        protected readonly TripayServices $tripay
+    ) {
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -33,7 +39,11 @@ class TransactionController extends Controller
      */
     public function show(Transaction $transaction)
     {
-        return inertia('Dashboard/Transaction/Show', compact('transaction'));
+        $transaction->load('carData', 'carData.media', 'user');
+
+        $transactionDetail = $this->tripay->getPayment($transaction->payment_references)?->json()['data'];
+
+        return inertia('Dashboard/Transaction/Show', compact('transaction', 'transactionDetail'));
     }
 }
 

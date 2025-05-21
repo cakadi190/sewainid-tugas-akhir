@@ -54,5 +54,9 @@ return [
         'private_key' => env('TRIPAY_PRIVATE_KEY'),
         'api_key' => env('TRIPAY_API_KEY'),
         'mode' => env('TRIPAY_MODE'),
+    ],
+
+    'fonnte' => [
+        'token' => env('FONNTE_API_TOKEN'),
     ]
 ];

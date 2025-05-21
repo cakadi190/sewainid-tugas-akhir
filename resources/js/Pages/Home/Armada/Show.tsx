@@ -21,6 +21,7 @@ import { FaTimes } from "react-icons/fa";
 import { calculateRent } from "@/Helpers/rent";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
+import { useCallback, useEffect } from "react";
 
 const InfoCard: React.FC<{ icon: React.ReactNode, title: string, value: string }> = ({ icon, title, value }) => {
   return (
@@ -183,6 +184,17 @@ const CarStatus: React.FC<{ carData: Database['CarData']; disabledCalendar?: str
     }
   };
 
+  const handleDateRangeChange = useCallback((selectedDates: Date[]) => {
+    if (selectedDates?.length) {
+      const [startDate, returnDate] = selectedDates;
+      setData('pickup_date', startDate?.toISOString() || null);
+      setData('return_date', returnDate?.toISOString() || null);
+    } else {
+      setData('pickup_date', null);
+      setData('return_date', null);
+    }
+  }, [setData]);
+
   const { duration, carRentTotal, tax, driverRentTotal, subtotal, total } = calculateRent({
     pickDate: data.pickup_date || null,
     returnDate: data.return_date || null,
@@ -204,14 +216,7 @@ const CarStatus: React.FC<{ carData: Database['CarData']; disabledCalendar?: str
               disable: disabledCalendar ?? []
             }}
             className="form-control"
-            onChange={(selectedDates: Date[]) => {
-              if (selectedDates && selectedDates.length > 0) {
-                setData('pickup_date', selectedDates[0]?.toISOString() || null);
-                if (selectedDates.length > 1) {
-                  setData('return_date', selectedDates[1]?.toISOString() || null);
-                }
-              }
-            }}
+            onChange={handleDateRangeChange}
             onReady={(_, __, fp) => {
               flatpickrInstance = fp;
             }}
@@ -342,7 +347,7 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <PiTag size={24} />
               <div>
                 <h6 className="mb-0 fw-bold">Model</h6>
-                <p className="mb-0">{getCarModelLabel(carData.model as CarModelEnum)}</p>
+                <p className="mb-0">{getCarModelLabel(carData.model as unknown as CarModelEnum)}</p>
               </div>
             </div>
           </GridItem>
@@ -351,7 +356,7 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <GiGearStickPattern size={24} />
               <div>
                 <h6 className="mb-0 fw-bold">Transmisi</h6>
-                <p className="mb-0">{getCarTransmissionLabel(carData.transmission as CarTransmissionEnum)}</p>
+                <p className="mb-0">{getCarTransmissionLabel(carData.transmission as unknown as CarTransmissionEnum)}</p>
               </div>
             </div>
           </GridItem>

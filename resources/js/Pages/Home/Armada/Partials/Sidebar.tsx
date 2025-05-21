@@ -219,18 +219,18 @@ const FilterSidebar: FC<FilterSidebarProps> = ({ filters, setFilters }) => {
   const handleDateRangeChange = useCallback((dates: Date[]) => {
     setDateRange(dates);
 
-    const formatDate = (date: Date) => {
+    const formatUTCDate = (date: Date) => {
       return date ?
-        date.getFullYear() + '-' +
-        String(date.getMonth() + 1).padStart(2, '0') + '-' +
-        String(date.getDate()).padStart(2, '0') :
+        date.getUTCFullYear() + '-' +
+        String(date.getUTCMonth() + 1).padStart(2, '0') + '-' +
+        String(date.getUTCDate()).padStart(2, '0') :
         '';
     };
 
     const newFilters = {
       ...localFilters,
-      pickup_date: dates[0] ? formatDate(dates[0]) : '',
-      return_date: dates[1] ? formatDate(dates[1]) : ''
+      pickup_date: dates[0] ? formatUTCDate(dates[0]) : '',
+      return_date: dates[1] ? formatUTCDate(dates[1]) : ''
     };
 
     setLocalFilters(newFilters);

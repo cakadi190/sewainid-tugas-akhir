@@ -25,7 +25,7 @@ import { twMerge } from 'tailwind-merge';
  * @property {boolean} [sortable] - Menentukan apakah kolom dapat diurutkan
  * @property {function} [render] - Fungsi kustom untuk merender konten sel
  */
-interface Column {
+export interface Column {
   data: string;
   name: string;
   title: string;

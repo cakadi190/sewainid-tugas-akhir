@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Api\v1\Global;
 
-use App\Helpers\TripayHelper;
 use App\Http\Controllers\Controller;
+use App\Services\TripayServices;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class TripayController extends Controller
 {
     public function __construct(
-        protected readonly TripayHelper $_tripay
+        protected readonly TripayServices $_tripay
     ) {
     }
 

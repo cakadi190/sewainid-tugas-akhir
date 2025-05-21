@@ -1,5 +1,5 @@
 import { FaCheckCircle, FaCircle, FaExclamation, FaExclamationTriangle, FaMinusCircle, FaMoneyBill, FaQuestionCircle, FaThumbsUp, FaTimesCircle, FaTools, FaWrench } from "react-icons/fa";
-import { CarConditionEnum, CarModelEnum, CarRepairNoteStatusEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum, GenderUser, RentalStatusEnum } from "./enum";
+import { CarConditionEnum, CarModelEnum, CarRepairNoteStatusEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum, GenderUser, RentalStatusEnum, TransactionStatusEnum } from "./enum";
 
 import MiniVanIcon from '@/Assets/Icon/car-type/camper-van.png';
 import HatchbackIcon from '@/Assets/Icon/car-type/hatchback.png';
@@ -220,6 +220,28 @@ const carFuelTypeColors: { [key in FuelEnum]: string } = {
 }
 
 /**
+ * Mapping of TransactionStatusEnum values to human-readable labels in Indonesian
+ */
+export const transactionStatusLabels: { [key in TransactionStatusEnum]: string } = {
+  [TransactionStatusEnum.UNPAID]: 'Belum Bayar',
+  [TransactionStatusEnum.PAID]: 'Sudah Bayar',
+  [TransactionStatusEnum.EXPIRED]: 'Kadaluarsa',
+  [TransactionStatusEnum.FAILED]: 'Gagal',
+  [TransactionStatusEnum.REFUND]: 'Refund',
+}
+
+/**
+ * Mapping of TransactionStatusEnum values to Bootstrap 5 color classes
+ */
+export const transactionStatusColors: { [key in TransactionStatusEnum]: string } = {
+  [TransactionStatusEnum.UNPAID]: 'bg-yellow-500',
+  [TransactionStatusEnum.PAID]: 'bg-green-500',
+  [TransactionStatusEnum.EXPIRED]: 'bg-red-500',
+  [TransactionStatusEnum.FAILED]: 'bg-red-500',
+  [TransactionStatusEnum.REFUND]: 'bg-blue-500',
+}
+
+/**
  * Retrieves the human-readable label for a car model
  * @param model - The CarModelEnum value to be converted to a label
  * @returns The corresponding label for the car model, or 'Unknown Model' if not found
@@ -375,4 +397,22 @@ export function getCarConditionColor(condition: CarConditionEnum): string {
  */
 export function getCarConditionIcon(condition: CarConditionEnum): JSX.Element {
   return carConditionIcons[condition] || <FaQuestionCircle />;
+}
+
+/**
+ * Retrieves the human-readable label for a transaction status
+ * @param status - The TransactionStatusEnum value to be converted to a label
+ * @returns The corresponding label for the transaction status, or 'Status Transaksi Tidak Diketahui' if not found
+ */
+export function getTransactionStatusLabel(status: TransactionStatusEnum): string {
+  return transactionStatusLabels[status] || 'Status Transaksi Tidak Diketahui';
+}
+
+/**
+ * Retrieves the Bootstrap 5 color class for a transaction status
+ * @param status - The TransactionStatusEnum value to be converted to a color
+ * @returns The corresponding Bootstrap 5 color class for the transaction status, or 'secondary' if not found
+ */
+export function getTransactionStatusColor(status: TransactionStatusEnum): string {
+  return transactionStatusColors[status] || 'secondary';
 }

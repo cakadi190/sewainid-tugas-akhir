@@ -273,7 +273,7 @@ class CarData extends Model implements HasMedia
                 return CarbonPeriod::create($transaction->pickup_date, $transaction->return_date)
                     ->toArray();
             })
-            ->map(fn($date) => $date->format('Y-m-d'))
+            ->map(fn($date) => $date->setTimezone('Asia/Jakarta')->format('Y-m-d'))
             ->unique()
             ->values()
             ->toArray();

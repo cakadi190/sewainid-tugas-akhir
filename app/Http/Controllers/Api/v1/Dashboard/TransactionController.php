@@ -11,8 +11,7 @@ class TransactionController extends Controller
 {
     public function __invoke(Request $request)
     {
-        return DataTables::of(auth()->user()->transactions()->with('carData')->latest())
-            ->addColumn('firstMediaUrl', fn(Transaction $transaction) => $transaction->carData?->getFirstMediaUrl('gallery') ?? '')
+        return DataTables::of(auth()->user()->transactions()->latest())
             ->make();
     }
 }

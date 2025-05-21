@@ -45,6 +45,14 @@ export enum FuelEnum {
   OTHER = 'other',
 }
 
+export enum TransactionStatusEnum {
+  UNPAID = 'UNPAID',
+  PAID = 'PAID',
+  EXPIRED = 'EXPIRED',
+  FAILED = 'FAILED',
+  REFUND = 'REFUND',
+}
+
 export enum GenderUser {
   MALE = 'male',
   FEMALE = 'female',

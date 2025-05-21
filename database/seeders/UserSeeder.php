@@ -24,7 +24,11 @@ class UserSeeder extends Seeder
         User::factory()->create([
             'name' => 'Amir Zuhdi Wibowo',
             'email' => 'cakadi190@gmail.com',
+            'phone' => '081234771365',
+            'dbirth' => '2003-02-21',
+            'pbirth' => 'Klaten',
             'role' => RoleUser::USER->value,
+            'address' => 'Jl. Brigjend Katamso, RT 003/02, Nomor 03, Munggut, Padas, Kabupaten Ngawi, Jawa Timur',
             'password' => bcrypt('@Cakadi.iD2024'),
         ]);
     }

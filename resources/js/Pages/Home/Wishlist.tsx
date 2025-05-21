@@ -1,11 +1,12 @@
 import AuthenticatedUser from "@/Layouts/AuthenticatedLayout";
 import { Head, Link } from "@inertiajs/react";
-import HeaderWishlist from "./Partials/HeaderWishlist";
+import DashboardImage from '@/Assets/Images/Cover-Dashboard.jpg';
 import { useCallback, useEffect, useState } from "react";
 import { FetchSuccess } from "@/types";
 import WishlistCard, { IntrinsicTypeData } from "@/Components/LoopPartial/WishlistArmadaLoop";
 import EmptyState from "@/Components/EmptyState";
 import { FaArrowLeft } from "react-icons/fa";
+import GlobalHeader from "@/Components/GlobalPartial/HeaderComponent";
 
 export default function WishlistPage() {
   const [wishlist, setWishlist] = useState<IntrinsicTypeData[] | null>(null);
@@ -30,7 +31,17 @@ export default function WishlistPage() {
   }, [fetchWishlist]);
 
   return (
-    <AuthenticatedUser header={<HeaderWishlist />}>
+    <AuthenticatedUser header={
+      <GlobalHeader
+        title="Daftar Armada Favorit"
+        description="Selamat datang di wishlist! Disinilah Anda dapat melihat daftar keinginan mobil Anda."
+        backgroundImage={DashboardImage}
+        breadcrumbItems={[
+          { label: 'Beranda', url: route('home') },
+          { label: 'Daftar Armada Favorit' },
+        ]}
+      />
+    }>
       <Head title="Daftar Armada Favorit" />
 
       <div className="gap-3 py-5 d-flex flex-column">

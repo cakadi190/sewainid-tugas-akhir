@@ -71,6 +71,13 @@ class Transaction extends Model
     protected $keyType = 'string';
 
     /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -93,6 +100,19 @@ class Transaction extends Model
         'latitude',
         'user_id',
         'car_data_id',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'confirmed_at' => 'datetime',
+        'expired_at' => 'datetime',
+        'pickup_date' => 'datetime',
+        'return_date' => 'datetime',
+        'with_driver' => 'boolean',
     ];
 
     /**
@@ -124,5 +144,14 @@ class Transaction extends Model
     {
         return $this->belongsTo(CarData::class);
     }
-}
 
+    /**
+     * The user that this transaction belongs to.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+}

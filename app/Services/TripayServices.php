@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Services;
 
 use App\TransferObjects\Tripay\TripayCustomerData;
 use App\TransferObjects\Tripay\TripayOrderItem;
@@ -9,7 +9,7 @@ use Illuminate\Http\Client\Response;
 use Exception;
 use Illuminate\Support\Str;
 
-class TripayHelper
+class TripayServices
 {
     protected readonly ?string $merchantCode;
     protected readonly ?string $apiKey;
@@ -69,7 +69,7 @@ class TripayHelper
         $response->throw();
 
         return collect($response->json()['data'])
-            ->when($search, fn($collection) => $collection->filter(fn($item) => Str::contains(strtolower($item['name']), strtolower($search))));
+            ->when($search, fn($collection) => $collection->filter(fn($item) => Str::contains(strtolower($item['name']), strtolower($search)) || Str::contains(strtolower($item['code']), strtolower($search))));
     }
 
     /**
@@ -100,5 +100,21 @@ class TripayHelper
             'expired' => $expired,
             'signature' => $sign
         ], method: 'POST');
+    }
+
+    /**
+     * Retrieve a payment status from the Tripay API by reference.
+     *
+     * @param string $ref The transaction reference from the Tripay API.
+     * @return Response The response from the Tripay API.
+     * @throws \Exception If the transaction reference is empty.
+     */
+    public function getPayment(string $ref)
+    {
+        if (empty($ref)) {
+            throw new Exception('Transaction reference is required');
+        }
+
+        return $this->fetch('transaction/detail', params: ['reference' => $ref], method: 'GET');
     }
 }

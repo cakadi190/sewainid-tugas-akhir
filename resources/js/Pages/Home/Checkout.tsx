@@ -81,11 +81,18 @@ interface FormData {
 }
 
 interface CheckoutContextType {
-  order: CheckoutProps['order'];
+  order: {
+    car_id: string;
+    pickup_date: string;
+    return_date: string;
+    with_driver: boolean | null;
+    pickup_location?: string;
+    return_location?: string;
+  };
   carData: CheckoutProps['carData'];
   carThumbnail: MediaLibraryType;
   formData: FormData;
-  setFormData: (field: string, value: any) => void;
+  setFormData: (field: keyof FormData | Partial<FormData>, value?: any) => void;
   errors: Record<string, string>;
   processing: boolean;
   isLoading: boolean;
@@ -137,7 +144,6 @@ const PaymentOption = styled.div`
   padding: 1rem;
   border: 1px solid #dee2e6;
   border-radius: 0.25rem;
-  margin-bottom: 0.5rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -183,7 +189,7 @@ const CheckoutContext = createContext<CheckoutContextType | undefined>(undefined
 const TAX_RATE = 0.11; // 11% Indonesian tax
 
 // Context provider component
-const CheckoutProvider = ({ children, carData, order, carThumbnail }: CheckoutProviderProps) => {
+const CheckoutProvider = ({ children, carData, order: initialOrder, carThumbnail }: CheckoutProviderProps) => {
   const { props: { auth } } = usePage<PageProps>();
   const isIdentityUnfilled = auth.isIdentityUnfilled === true; // Ensure boolean type
   const [isLoading, setIsLoading] = useState(false);
@@ -192,10 +198,17 @@ const CheckoutProvider = ({ children, carData, order, carThumbnail }: CheckoutPr
   const [paymentChannels, setPaymentChannels] = useState<Record<string, PaymentChannel>>({});
   const [selectedPaymentChannel, setSelectedPaymentChannel] = useState<PaymentChannel | null>(null);
 
+  // Use state for order to allow updates
+  const [order, setOrder] = useState({
+    ...initialOrder,
+    pickup_date: initialOrder.pickup_date || dayjs().format('YYYY-MM-DD'),
+    return_date: initialOrder.return_date || dayjs().add(1, 'day').format('YYYY-MM-DD')
+  });
+
   // Calculate rental duration in days
   const pickupDate = dayjs(order.pickup_date);
   const returnDate = dayjs(order.return_date);
-  const rentalDuration = returnDate.diff(pickupDate, 'day');
+  const rentalDuration = Math.max(1, returnDate.diff(pickupDate, 'day'));
 
   // Calculate costs
   const basePrice = carData.rent_price * rentalDuration;
@@ -225,7 +238,7 @@ const CheckoutProvider = ({ children, carData, order, carThumbnail }: CheckoutPr
   // Updated total price calculation including tax and payment fee
   const totalPrice = subtotal + paymentFee;
 
-  const { data: formData, setData: setFormData, post, processing, errors } = useForm<FormData>({
+  const { data: formData, setData, post, processing, errors } = useForm<FormData>({
     car_id: carData.id,
     pickup_date: order.pickup_date,
     return_date: order.return_date,
@@ -238,27 +251,46 @@ const CheckoutProvider = ({ children, carData, order, carThumbnail }: CheckoutPr
     agree_terms: false,
   });
 
-  console.log(formData);
+  // Enhanced setFormData to handle both single field updates and object updates
+  const setFormData = (fieldOrObject: keyof FormData | Partial<FormData>, value?: any) => {
+    if (typeof fieldOrObject === 'string') {
+      // Properly typed now as keyof FormData
+      setData(fieldOrObject, value);
+    } else {
+      Object.entries(fieldOrObject).forEach(([key, val]) => {
+        // Cast key as keyof FormData to ensure type safety
+        setData(key as keyof FormData, val);
+      });
+    }
+  };
 
   // Function to update dates
   const updateDates = (startDate: Date, endDate: Date) => {
     const formattedStartDate = dayjs(startDate).format('YYYY-MM-DD');
     const formattedEndDate = dayjs(endDate).format('YYYY-MM-DD');
 
-    setFormData('pickup_date', formattedStartDate);
-    setFormData('return_date', formattedEndDate);
+    // Update both order state and form data
+    setOrder(prev => ({
+      ...prev,
+      pickup_date: formattedStartDate,
+      return_date: formattedEndDate
+    }));
+
+    setFormData({
+      pickup_date: formattedStartDate,
+      return_date: formattedEndDate
+    });
   };
 
   // Update form data when location changes
   useEffect(() => {
     if (selectedLocation) {
-      setFormData(formValue => ({
-        ...formValue,
+      setFormData({
         destination_latitude: selectedLocation.latitude,
         destination_longitude: selectedLocation.longitude,
         destination_name: selectedLocation.name,
         destination_address: selectedLocation.address
-      }));
+      });
     }
   }, [selectedLocation]);
 
@@ -271,6 +303,14 @@ const CheckoutProvider = ({ children, carData, order, carThumbnail }: CheckoutPr
     }
   }, [selectedPaymentChannel, paymentMethod]);
 
+  // Update form data when order changes
+  useEffect(() => {
+    setFormData({
+      pickup_date: order.pickup_date,
+      return_date: order.return_date
+    });
+  }, [order.pickup_date, order.return_date]);
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -282,8 +322,9 @@ const CheckoutProvider = ({ children, carData, order, carThumbnail }: CheckoutPr
     }
 
     // Ensure form data is up-to-date before submission
-    const updatedFormData = {
-      ...formData,
+    const updatedFormData: Partial<FormData> = {
+      pickup_date: order.pickup_date,
+      return_date: order.return_date,
       destination_latitude: selectedLocation?.latitude || 0,
       destination_longitude: selectedLocation?.longitude || 0,
       destination_name: selectedLocation?.name || "",
@@ -372,24 +413,50 @@ const DateRangeModal = ({ show, onHide, forbiddenDate }: ModalProps) => {
     new Date(order.pickup_date),
     new Date(order.return_date)
   ]);
+  const flatpickrRef = useRef<any>(null);
 
   // Reset dates when modal opens
   useEffect(() => {
     if (show) {
-      setDateRange([new Date(order.pickup_date), new Date(order.return_date)]);
+      try {
+        setDateRange([new Date(order.pickup_date), new Date(order.return_date)]);
+
+        // Reset the flatpickr input value
+        if (flatpickrRef.current && flatpickrRef.current.flatpickr) {
+          const fp = flatpickrRef.current.flatpickr;
+          fp.setDate([new Date(order.pickup_date), new Date(order.return_date)]);
+        }
+      } catch (error) {
+        console.error("Error setting date range:", error);
+      }
     }
   }, [show, order.pickup_date, order.return_date]);
 
   const handleSave = () => {
     if (dateRange.length === 2) {
-      updateDates(dateRange[0], dateRange[1]);
+      // Ensure both dates are valid
+      const startDate = dateRange[0] instanceof Date && !isNaN(dateRange[0].getTime())
+        ? dateRange[0]
+        : new Date();
+
+      const endDate = dateRange[1] instanceof Date && !isNaN(dateRange[1].getTime())
+        ? dateRange[1]
+        : new Date(startDate.getTime() + 86400000); // Default to next day if invalid
+
+      updateDates(startDate, endDate);
       onHide();
     }
   };
 
-  const disabledDates = forbiddenDate ? forbiddenDate.map((dateStr) => {
-    return new Date(dateStr);
-  }) : [];
+  // Process forbidden dates
+  const disabledDates = (forbiddenDate || []).map(dateStr => {
+    try {
+      return new Date(dateStr);
+    } catch (e) {
+      console.error("Invalid date format:", dateStr);
+      return null;
+    }
+  }).filter(date => date !== null) as Date[];
 
   return (
     <Modal show={show} onHide={onHide}>
@@ -399,6 +466,7 @@ const DateRangeModal = ({ show, onHide, forbiddenDate }: ModalProps) => {
       <Modal.Body className="border-0">
         <DateRangeContainer>
           <Flatpickr
+            ref={flatpickrRef}
             value={dateRange}
             options={{
               mode: "range",
@@ -410,12 +478,14 @@ const DateRangeModal = ({ show, onHide, forbiddenDate }: ModalProps) => {
               disable: disabledDates,
             }}
             onChange={(dates) => {
-              setDateRange(dates);
+              if (dates && dates.length > 0) {
+                setDateRange(dates);
+              }
             }}
             className="form-control"
           />
           <small className="mt-1 text-muted d-block">
-            Silakan pilih tanggal mulai dan tanggal selesai
+            Silakan pilih tanggal pengambilan dan tanggal pengembalian.
           </small>
         </DateRangeContainer>
       </Modal.Body>
@@ -461,7 +531,11 @@ const CarDetails: FC<{ forbiddenDate?: string[] }> = ({ forbiddenDate }) => {
         </div>
       </Col>
 
-      <DateRangeModal show={showDateModal} forbiddenDate={forbiddenDate} onHide={() => setShowDateModal(false)} />
+      <DateRangeModal
+        show={showDateModal}
+        forbiddenDate={forbiddenDate}
+        onHide={() => setShowDateModal(false)}
+      />
     </Row>
   );
 };
@@ -710,7 +784,7 @@ const PaymentModal = ({ show, onHide }: ModalProps) => {
                         return (
                           <Col md={6} key={index}>
                             <PaymentOption
-                              // className={`mb-0 ${channel.code === paymentChannels?.code ? 'selected' : ''}`}
+                              className={channel.active ? '' : 'opacity-50'}
                               onClick={() => channel.active && handleSelectPaymentChannel(channel)}
                             >
                               <PaymentIcon src={channel.icon_url} alt={channel.name} />
