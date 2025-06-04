@@ -20,7 +20,7 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
   const [loading, setLoading] = useState<boolean>(false);
   const [galleryData, setGalleryData] = useState<MediaLibrary[] | null | undefined>(null);
 
-  const { data: formData, setData, post, processing, reset, errors, clearErrors } = useForm<Omit<Database['CarData'], 'deleted_at' | 'created_at' | 'id' | 'updated_at'> & { gallery: File[], _method: string }>({
+  const { data: formData, setData, post, processing, reset, errors, clearErrors } = useForm<Omit<Database['CarData'], 'deleted_at' | 'created_at' | 'id' | 'updated_at'> & { gallery: File[], _method: string }>('edit_car_data', {
     _method: 'put',
     car_name: '',
     brand: '',
@@ -621,12 +621,12 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                   <Form.Floating>
                     <Form.Control
                       type="text"
-                      placeholder="Nomor IMEI Pada GPS"
+                      placeholder="Nomor IMEI atau ID pada GPS"
                       value={formData.gps_imei || ''}
                       onChange={(e) => setData("gps_imei", e.target.value)}
                       isInvalid={!!errors.gps_imei}
                     />
-                    <Form.Label>Nomor IMEI Pada GPS</Form.Label>
+                    <Form.Label>Nomor IMEI atau ID pada GPS</Form.Label>
                     <Form.Control.Feedback type="invalid">{errors.gps_imei}</Form.Control.Feedback>
                   </Form.Floating>
                 </div>

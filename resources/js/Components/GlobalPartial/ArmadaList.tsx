@@ -5,6 +5,7 @@ import { FaArrowRight } from "react-icons/fa";
 import { usePage } from "@inertiajs/react";
 import CardArmadaLoop, { TypeOfCarData, WishlistItem } from "@/Components/LoopPartial/CardArmadaLoop";
 import { FetchSuccess, PageProps } from "@/types";
+import EmptyState from "../EmptyState";
 
 const Section = styled.section`
   background-color: #fff;
@@ -60,6 +61,15 @@ const ErrorState: FC<ErrorStateProps> = ({ error }) => <div>Error: {error}</div>
 const CarList: FC<CarListProps> = ({ cars, loading, wishlist, error, colSize }) => {
   if (loading) return <LoadingState />;
   if (error) return <ErrorState error={error} />;
+
+  if (!cars || cars.length === 0) {
+    return (
+      <EmptyState
+        title="No Cars Available"
+        message="Sorry, we couldn't find any cars matching your criteria."
+      />
+    )
+  }
 
   return (
     <Row className="g-3">

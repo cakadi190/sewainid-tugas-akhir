@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"editor.tabSize": 2,
+		"editor.insertSpaces": true,
+		"editor.detectIndentation": false,
+		"files.autoSave": "afterDelay",
+		"files.autoSaveDelay": 1000,
+		"files.trimTrailingWhitespace": true,
+		"files.insertFinalNewline": true,
+		"workbench.colorTheme": "GitHub Dark Colorblind (Beta)",
+		"workbench.iconTheme": "material-icon-theme"
+	},
+}

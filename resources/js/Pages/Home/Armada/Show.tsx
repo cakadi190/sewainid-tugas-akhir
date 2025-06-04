@@ -21,7 +21,8 @@ import { FaTimes } from "react-icons/fa";
 import { calculateRent } from "@/Helpers/rent";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
-import { useCallback, useEffect } from "react";
+import { FC, useCallback, useEffect } from "react";
+import EmptyState from "@/Components/EmptyState";
 
 const InfoCard: React.FC<{ icon: React.ReactNode, title: string, value: string }> = ({ icon, title, value }) => {
   return (
@@ -32,6 +33,12 @@ const InfoCard: React.FC<{ icon: React.ReactNode, title: string, value: string }
     </GridItem>
   );
 };
+
+interface ReviewUser {
+  review: Database['Review'] & {
+    user: Database['User']
+  }[]
+}
 
 const CarInfoCards: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
   return (
@@ -477,22 +484,27 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
   );
 };
 
-const CarComments = () => {
+const CarComments: FC<ReviewUser> = ({ review }) => {
   return (
-    <Row className="g-0">
-      <Col md={12}>
-        <Card bg="light">
-          <Card.Body>
-            <Card.Title>Komentar</Card.Title>
-          </Card.Body>
-        </Card>
-      </Col>
-    </Row>
+    <div>
+      <h4 className="mb-1 fw-bold">Tanggapan Pengguna</h4>
+      <p>Semua tanggapan dan komentar dari pengguna terhadap armada ini.</p>
+
+      {review.length > 1 ? review.map(() => (
+        <></>
+      )) : (
+        <div className="py-4 text-center">
+          <h1 className="display-3 fw-bold">404</h1>
+          <h2>Tidak ada tanggapan</h2>
+          <p className="mb-0">Belum ada tanggapan dan komentar dari pengguna.</p>
+        </div>
+      )}
+    </div>
   );
 };
 
 interface ShowProps {
-  car_data: Database['CarData'] & { review: Database['Review'] };
+  car_data: Database['CarData'] & ReviewUser;
   disabledCalendar?: string[];
 }
 
@@ -528,7 +540,7 @@ export default function Show({ car_data, disabledCalendar }: ShowProps) {
                 <CarSpecification carData={car_data} />
               </Tab.Pane>
               <Tab.Pane eventKey="komentar">
-                <CarComments />
+                <CarComments review={car_data?.review} />
               </Tab.Pane>
             </Tab.Content>
           </Card.Body>

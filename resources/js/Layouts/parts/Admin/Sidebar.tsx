@@ -391,7 +391,7 @@ export default function Sidebar() {
       child: [
         {
           label: 'Daftar Pemesanan',
-          href: '#',
+          href: route('administrator.booking.index'),
         },
         {
           label: 'Jadwal Sewa',
@@ -415,10 +415,6 @@ export default function Sidebar() {
         },
         {
           label: 'Konfirmasi Pembayaran',
-          href: '#',
-        },
-        {
-          label: 'Riwayat Pembayaran',
           href: '#',
         },
       ],

@@ -18,22 +18,15 @@ import EditData from "./EditData";
 import { twMerge } from "tailwind-merge";
 import { CarConditionEnum, CarModelEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum } from "@/Helpers/enum";
 import { ShowModalTrackProvider, useShowModalTrack } from "@/Context/TrackingModalContext";
+import { useEffect, useMemo, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import CarImage from '@/Assets/Icon/car.png';
+import ModalTrackingMap from "./TrackingMap";
 
 interface ShowProps {
   car_data: Database['CarData'];
-}
-
-const ModalTrackingMap = () => {
-  const { showModalTrack, setShowModalTrack } = useShowModalTrack();
-
-  return (
-    <Modal show={showModalTrack} onHide={() => setShowModalTrack(false)} fullscreen centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Lacak Posisi Kendaraan</Modal.Title>
-      </Modal.Header>
-      <Modal.Body></Modal.Body>
-    </Modal>
-  )
 }
 
 const CarDetailHeader: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
@@ -362,7 +355,7 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <PiTag size={24} />
               <div>
                 <h6 className="mb-0 fw-bold">Model</h6>
-                <p className="mb-0">{getCarModelLabel(carData.model as CarModelEnum)}</p>
+                <p className="mb-0">{getCarModelLabel(carData.model as unknown as CarModelEnum)}</p>
               </div>
             </div>
           </GridItem>
@@ -371,7 +364,7 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <GiGearStickPattern size={24} />
               <div>
                 <h6 className="mb-0 fw-bold">Transmisi</h6>
-                <p className="mb-0">{getCarTransmissionLabel(carData.transmission as CarTransmissionEnum)}</p>
+                <p className="mb-0">{getCarTransmissionLabel(carData.transmission as unknown as CarTransmissionEnum)}</p>
               </div>
             </div>
           </GridItem>
@@ -696,7 +689,7 @@ export default function Show({ car_data }: ShowProps) {
           </Card>
         </Tab.Container>
 
-        <ModalTrackingMap />
+        <ModalTrackingMap carData={car_data} />
       </ShowModalTrackProvider>
     </AuthenticatedAdmin>
   );

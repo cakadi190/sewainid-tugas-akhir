@@ -14,6 +14,12 @@ class TripayController extends Controller
     ) {
     }
 
+    /**
+     * Retrieve payment channels from the Tripay API and optionally filter them by a search term.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Support\Collection
+     */
     public function getChannels(Request $request)
     {
         try {

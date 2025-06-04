@@ -1,6 +1,5 @@
 import { useState, FormEvent } from "react";
 import { Button, Modal, Form, Spinner, Row, Col, Card } from "react-bootstrap";
-import { useForm } from "@inertiajs/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { createPortal } from "react-dom";
@@ -11,45 +10,51 @@ import Database from "@/types/database";
 import SeparatorText from "@/Components/SeparatorText";
 import { currencyFormat } from "@/Helpers/number";
 import { CarConditionEnum, CarModelEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum } from "@/Helpers/enum";
+import { useForm } from "@inertiajs/react";
+
+type CarFormData = Omit<Database['CarData'], 'deleted_at' | 'created_at' | 'id' | 'updated_at'> & {
+  gallery: File[] | string[];
+};
 
 export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?: () => void }) {
   const [showModal, setShowModal] = useState<boolean>(false);
 
-  const { data: formData, setData, post, processing, reset, errors, clearErrors } = useForm<Omit<Database['CarData'], 'deleted_at' | 'created_at' | 'id' | 'updated_at'> & { gallery: File[] }>({
-    car_name: '',
-    brand: '',
-    frame_number: '',
-    engine_number: '',
-    mileage: 0,
-    license_plate: '',
-    license_plate_expiration: '',
-    vehicle_registration_cert_number: '',
-    vehicle_registration_cert_expiration: '',
-    color: '',
-    year_of_manufacture: 0,
-    vehicle_ownership_book_number: '',
-    transmission: CarTransmissionEnum.MT,
-    model: CarModelEnum.MINI_VAN,
-    status: CarStatusEnum.READY,
-    condition: CarConditionEnum.EXCELLENT,
-    description: '',
-    rent_price: 0,
-    doors: 0,
-    seats: 0,
-    max_speed: 0,
-    big_luggage: 0,
-    med_luggage: 0,
-    small_luggage: 0,
-    fuel_type: FuelEnum.GASOLINE,
-    ac: true,
-    audio: true,
-    abs: true,
-    child_lock: true,
-    traction_control: true,
-    baby_seat: true,
-    gallery: [],
-    gps_imei: ''
-  });
+  const { data: formData, setData, post, processing, reset, errors, clearErrors } =
+    useForm<CarFormData>('create_car_data', {
+      car_name: '',
+      brand: '',
+      frame_number: '',
+      engine_number: '',
+      mileage: 0,
+      license_plate: '',
+      license_plate_expiration: '',
+      vehicle_registration_cert_number: '',
+      vehicle_registration_cert_expiration: '',
+      color: '',
+      year_of_manufacture: 0,
+      vehicle_ownership_book_number: '',
+      transmission: CarTransmissionEnum.MT satisfies CarTransmissionEnum,
+      model: CarModelEnum.MINI_VAN satisfies CarModelEnum,
+      status: CarStatusEnum.READY satisfies CarStatusEnum,
+      condition: CarConditionEnum.EXCELLENT satisfies CarConditionEnum,
+      description: '',
+      rent_price: 0,
+      doors: 0,
+      seats: 0,
+      max_speed: 0,
+      big_luggage: 0,
+      med_luggage: 0,
+      small_luggage: 0,
+      fuel_type: FuelEnum.GASOLINE satisfies FuelEnum,
+      ac: true,
+      audio: true,
+      abs: true,
+      child_lock: true,
+      traction_control: true,
+      baby_seat: true,
+      gallery: [],
+      gps_imei: ''
+    });
 
   const onOpen = () => setShowModal(true);
   const onClose = () => {
@@ -125,13 +130,13 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
                   <Form.Floating>
                     <Form.Select
                       value={formData.transmission}
-                      onChange={(e) => setData("transmission", e.target.value as CarTransmissionEnum)}
+                      onChange={(e) => setData("transmission", e.target.value as unknown as CarTransmissionEnum)}
                       isInvalid={!!errors.transmission}
                     >
                       <option disabled value="">Pilih Salah Satu</option>
                       {Object.values(CarTransmissionEnum).map((transmission) => (
                         <option key={transmission} value={transmission}>
-                          {getCarTransmissionLabel(transmission as CarTransmissionEnum)}
+                          {getCarTransmissionLabel(transmission)}
                         </option>
                       ))}
                     </Form.Select>
@@ -150,7 +155,7 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
                       <option disabled value="">Pilih Salah Satu</option>
                       {Object.values(FuelEnum).map((fuel) => (
                         <option key={fuel} value={fuel}>
-                          {getCarFuelTypeLabel(fuel as FuelEnum)}
+                          {getCarFuelTypeLabel(fuel)}
                         </option>
                       ))}
                     </Form.Select>
@@ -163,13 +168,13 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
                   <Form.Floating>
                     <Form.Select
                       value={formData.model}
-                      onChange={(e) => setData("model", e.target.value as CarModelEnum)}
+                      onChange={(e) => setData("model", e.target.value as unknown as CarModelEnum)}
                       isInvalid={!!errors.model}
                     >
                       <option disabled value="">Pilih Salah Satu</option>
                       {Object.values(CarModelEnum).map((model) => (
                         <option key={model} value={model}>
-                          {getCarModelLabel(model as CarModelEnum)}
+                          {getCarModelLabel(model)}
                         </option>
                       ))}
                     </Form.Select>
@@ -555,12 +560,12 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
                   <Form.Floating>
                     <Form.Control
                       type="text"
-                      placeholder="Nomor IMEI Pada GPS"
+                      placeholder="Nomor IMEI atau ID pada GPS"
                       value={formData.gps_imei || ''}
                       onChange={(e) => setData("gps_imei", e.target.value)}
                       isInvalid={!!errors.gps_imei}
                     />
-                    <Form.Label>Nomor IMEI Pada GPS</Form.Label>
+                    <Form.Label>Nomor IMEI atau ID pada GPS</Form.Label>
                     <Form.Control.Feedback type="invalid">{errors.gps_imei}</Form.Control.Feedback>
                   </Form.Floating>
                 </div>
@@ -575,7 +580,7 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
                       <option disabled value="">Pilih Salah Satu</option>
                       {Object.values(CarStatusEnum).map((status) => (
                         <option key={status} value={status}>
-                          {getCarStatusLabel(status as CarStatusEnum)}
+                          {getCarStatusLabel(status)}
                         </option>
                       ))}
                     </Form.Select>
@@ -594,12 +599,12 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
                       <option disabled value="">Pilih Salah Satu</option>
                       {Object.values(CarConditionEnum).map((condition) => (
                         <option key={condition} value={condition}>
-                          {getCarConditionLabel(condition as CarConditionEnum)}
+                          {getCarConditionLabel(condition)}
                         </option>
                       ))}
                     </Form.Select>
                     <Form.Label>Kondisi</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.status}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">{errors.condition}</Form.Control.Feedback>
                   </Form.Floating>
                 </div>
               </Row>

@@ -6,11 +6,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [DashboardController::class, 'index'])->name('home');
 
-Route::inertia('repair-shop-data', 'Admin/RepairShopData/Index')->name('repair-shop-data.index');
-
-Route::controller(CarDataController::class)->prefix('car-data')->name('car-data.')->group(function() {
+Route::controller(CarDataController::class)->prefix('car-datas')->name('car-data.')->group(function() {
     Route::get('/', 'index')->name('index');
     Route::get('{car_data}', 'show')->name('show');
 });
 
-Route::inertia('car-repair', 'Admin/CarRepairNoteData/Index')->name('car-repair.index');
+Route::inertia('car-repairs', 'Admin/CarRepairNoteData/Index')->name('car-repair.index');
+Route::inertia('bookings', 'Admin/Booking/Index')->name('booking.index');

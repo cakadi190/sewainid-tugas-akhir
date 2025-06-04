@@ -12,10 +12,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   errorCode,
   title,
   message,
-  link = {
-    href: "/",
-    label: "Kembali ke Beranda",
-  },
+  link = undefined,
 }) => {
   return (
     <div className="flex flex-col items-center justify-center p-6 text-center min-h-64">
@@ -32,15 +29,14 @@ const EmptyState: React.FC<EmptyStateProps> = ({
       </p>
       {link && (
         link.external ? (
-          (
-            <a
-              className="btn btn-primary"
-              href={link.href}
-              target={link.external ? "_blank" : "_self"}
-            >
-              {link.label}
-            </a>
-          )
+          <a
+            className="btn btn-primary"
+            href={link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {link.label}
+          </a>
         ) : (
           <Link
             className="btn btn-primary"

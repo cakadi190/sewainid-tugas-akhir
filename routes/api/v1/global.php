@@ -11,4 +11,5 @@ Route::prefix('geolocation')->group(function () {
 
 Route::prefix('transaction')->name('transaction.')->group(function () {
     Route::get('get-channels', [\App\Http\Controllers\Api\v1\Global\TripayController::class, 'getChannels'])->name('get-channels');
+    Route::get('callback', [\App\Http\Controllers\Api\v1\Global\TripayController::class, 'callback'])->name('callback');
 });

@@ -44,7 +44,7 @@ export const useAuth = () => {
   };
 
   const isRole = (role: 'admin' | 'operator' | 'user'): boolean => {
-    return !!user && !!user.role && user.role.key === role;
+    return !!user && !!user.role && user.role === role;
   };
 
   return {
