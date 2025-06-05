@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::apiResource('car-data', \App\Http\Controllers\Api\v1\Admin\CarDataController::class);
 Route::apiResource('car-repair', \App\Http\Controllers\Api\v1\Admin\CarRepairNoteDataController::class);
+Route::apiResource('booking', \App\Http\Controllers\Api\v1\Admin\BookingController::class);
 
 Route::prefix('options')->name('options.')->group(function () {
     Route::any('car-data', \App\Http\Controllers\Api\v1\Admin\CarDataOptionsController::class)->name('car-data');
