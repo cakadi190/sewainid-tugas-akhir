@@ -13,6 +13,7 @@ use App\Services\FonnteService;
 use App\TransferObjects\Tripay\TripayCustomerData;
 use App\TransferObjects\Tripay\TripayOrderItem;
 use Carbon\Carbon;
+use Http;
 use Illuminate\Http\Request;
 use Illuminate\Session\Store;
 use Illuminate\Support\Facades\DB;
@@ -156,7 +157,13 @@ class CheckoutController extends Controller
                 'car_data_id' => $car->id,
             ]);
 
-            $this->sendWhatsappMessage($transaction);
+            $this->sendOrderToGpsApi(
+                latitude: $validated['destination_latitude'],
+                longitude: $validated['destination_longitude'],
+                device: $car->device_id ?? null
+            );
+
+            $this->sendWhatsappMessage(transaction: $transaction);
 
             $this->cleanUpSessionAndWishlist();
 
@@ -167,6 +174,47 @@ class CheckoutController extends Controller
             DB::rollBack();
             report($th);
             return back()->with('error', $th->getMessage());
+        }
+    }
+
+    /**
+     * Send data order trip into GPS API Server
+     *
+     * @param float $latitude
+     * @param float $longitude
+     * @param string|null $device
+     * @return void
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function sendOrderToGpsApi(float $latitude, float $longitude, ?string $device = null): void
+    {
+        $order = $this->session->get('order');
+
+        abort_unless($order, 422, 'You have no order! ERR_NO_ORDER');
+
+        $user = auth()->user();
+
+        if (!$user) {
+            return;
+        }
+
+        $data = [
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+        ];
+
+        $isImei = is_imei($device);
+
+        if (!$isImei) {
+            $data['deviceId'] = $device;
+        } else {
+            $data['imei'] = $device;
+        }
+
+        try {
+            Http::post("https://gps.kodinus.web.id/api/order-trip/create", $data);
+        } catch (\Throwable $e) {
+            report($e);
         }
     }
 
