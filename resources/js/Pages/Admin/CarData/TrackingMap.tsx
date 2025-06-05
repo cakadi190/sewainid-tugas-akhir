@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState, useCallback, FC } from "react";
-import { Modal, Nav, Row, Col } from "react-bootstrap";
+import { Modal, Nav, Pagination } from "react-bootstrap";
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import Flatpickr from "react-flatpickr";
+import "flatpickr/dist/themes/material_blue.css";
+import { Indonesian } from "flatpickr/dist/l10n/id.js";
 import { useShowModalTrack } from "@/Context/TrackingModalContext";
 import CarImage from '@/Assets/Icon/car.png';
-import { FaSync } from "react-icons/fa";
+import { FaSync, FaCalendarAlt, FaTimes } from "react-icons/fa";
 import Database from "@/types/database";
 
 interface CurrentGPSData {
@@ -58,29 +61,24 @@ interface HistoryGPSData {
     updatedAt: string;
   };
   histories: HistoryRecord[];
-  summary: {
-    totalRecords: number;
-    recordsReturned: number;
-    timeRange: {
-      hours: number;
-      startDate: string;
-      endDate: string;
-      timezone: string;
-    };
-    dataRange: {
-      firstTimestamp: string;
-      lastTimestamp: string;
-    };
+  filters: {
+    startDate: string | null;
+    endDate: string | null;
+    timezone: string;
   };
-  meta: {
-    requestedAt: string;
-    limit: number;
-    hasMoreData: boolean;
+  pagination: {
+    page: number;
+    perPage: number;
+    total: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
   };
 }
 
 const DEFAULT_POSITION: [number, number] = [-7.63978, 111.523638];
 const REFRESH_INTERVAL = 60000;
+const DEFAULT_PER_PAGE = 100;
 
 const ModalTrackingMap: FC<{ carData: Database['CarData'] }> = ({ carData }) => {
   const { showModalTrack, setShowModalTrack } = useShowModalTrack();
@@ -90,12 +88,33 @@ const ModalTrackingMap: FC<{ carData: Database['CarData'] }> = ({ carData }) => 
   const [currentData, setCurrentData] = useState<CurrentGPSData | null>(null);
   const [historyData, setHistoryData] = useState<HistoryGPSData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [perPage, setPerPage] = useState<number>(DEFAULT_PER_PAGE);
+  const [dateRange, setDateRange] = useState<Date[]>([]);
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+
+  // Helper function to determine if identifier is IMEI or deviceId
+  const isImei = useCallback((identifier: string): boolean => {
+    // IMEI typically has 15 digits and contains only numbers
+    return /^\d{15}$/.test(identifier);
+  }, []);
+
+  // Helper function to build API endpoint
+  const buildApiEndpoint = useCallback((identifier: string, endpoint: string): string => {
+    const baseUrl = 'https://gps.kodinus.web.id/api/gps-history';
+
+    if (isImei(identifier)) {
+      return `${baseUrl}/imei/${identifier}${endpoint}`;
+    } else {
+      return `${baseUrl}/device/${identifier}${endpoint}`;
+    }
+  }, [isImei]);
 
   const createCarIcon = useCallback((rotation: number = 0) => {
     return L.divIcon({
       html: `
         <div style="
-          transform: rotate(${rotation - 90}deg);
+          transform: rotate(${rotation}deg);
           transform-origin: center;
           width: 48px;
           height: 48px;
@@ -111,7 +130,7 @@ const ModalTrackingMap: FC<{ carData: Database['CarData'] }> = ({ carData }) => 
       iconAnchor: [24, 48],
       popupAnchor: [0, -48],
     });
-  }, []);
+  }, [carData.brand, carData.car_name]);
 
   const startMarkerIcon = useMemo(() =>
     L.divIcon({
@@ -126,7 +145,8 @@ const ModalTrackingMap: FC<{ carData: Database['CarData'] }> = ({ carData }) => 
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`https://gps.kodinus.web.id/api/gps-history/${carData.gps_imei}/current`);
+      const endpoint = buildApiEndpoint(carData.gps_imei || '', '/current');
+      const response = await fetch(endpoint);
       if (!response.ok) throw new Error('Failed to fetch current data');
       const data: CurrentGPSData = await response.json();
       setCurrentData(data);
@@ -136,37 +156,57 @@ const ModalTrackingMap: FC<{ carData: Database['CarData'] }> = ({ carData }) => 
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [carData.gps_imei, buildApiEndpoint]);
 
-  const fetchHistoryData = useCallback(async () => {
+  const fetchHistoryData = useCallback(async (page: number = 1, limit: number = DEFAULT_PER_PAGE, startDate?: Date, endDate?: Date) => {
     setHistoryLoading(true);
     setError(null);
     try {
-      const response = await fetch(`https://gps.kodinus.web.id/api/gps-history/${carData.gps_imei}/latest?limit=1000`);
+      let queryParams = `page=${page}&perPage=${limit}`;
+
+      if (startDate && endDate) {
+        const startISO = startDate.toISOString();
+        const endISO = endDate.toISOString();
+        queryParams += `&startDate=${encodeURIComponent(startISO)}&endDate=${encodeURIComponent(endISO)}`;
+      }
+
+      const endpoint = buildApiEndpoint(carData.gps_imei || '', `?${queryParams}`);
+      const response = await fetch(endpoint);
       if (!response.ok) throw new Error('Failed to fetch history data');
       const data: HistoryGPSData = await response.json();
       setHistoryData(data);
+      setCurrentPage(page);
     } catch (error) {
       console.error('Error fetching GPS history data:', error);
       setError('Gagal memuat data riwayat');
     } finally {
       setHistoryLoading(false);
     }
-  }, []);
+  }, [carData.gps_imei, buildApiEndpoint]);
 
   useEffect(() => {
     if (!showModalTrack) return;
 
-    if (activeTab === 'current') fetchCurrentData();
-    else if (activeTab === 'history') fetchHistoryData();
+    if (activeTab === 'current') {
+      fetchCurrentData();
+    } else if (activeTab === 'history') {
+      const startDate = dateRange.length >= 1 ? dateRange[0] : undefined;
+      const endDate = dateRange.length >= 2 ? dateRange[1] : undefined;
+      fetchHistoryData(currentPage, perPage, startDate, endDate);
+    }
 
     const interval = setInterval(() => {
-      if (activeTab === 'current') fetchCurrentData();
-      else if (activeTab === 'history') fetchHistoryData();
+      if (activeTab === 'current') {
+        fetchCurrentData();
+      } else if (activeTab === 'history') {
+        const startDate = dateRange.length >= 1 ? dateRange[0] : undefined;
+        const endDate = dateRange.length >= 2 ? dateRange[1] : undefined;
+        fetchHistoryData(currentPage, perPage, startDate, endDate);
+      }
     }, REFRESH_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [showModalTrack, activeTab, fetchCurrentData, fetchHistoryData]);
+  }, [showModalTrack, activeTab, currentPage, perPage, dateRange, fetchCurrentData, fetchHistoryData]);
 
   const centerPosition: [number, number] = useMemo(() => {
     if (activeTab === 'current' && currentData?.currentPosition) {
@@ -187,6 +227,42 @@ const ModalTrackingMap: FC<{ carData: Database['CarData'] }> = ({ carData }) => 
     }
     return [];
   }, [historyData]);
+
+  const handlePageChange = useCallback((page: number) => {
+    if (page !== currentPage && page >= 1 && historyData && page <= historyData.pagination.totalPages) {
+      const startDate = dateRange.length >= 1 ? dateRange[0] : undefined;
+      const endDate = dateRange.length >= 2 ? dateRange[1] : undefined;
+      fetchHistoryData(page, perPage, startDate, endDate);
+    }
+  }, [currentPage, historyData, perPage, dateRange, fetchHistoryData]);
+
+  const handlePerPageChange = useCallback((newPerPage: number) => {
+    setPerPage(newPerPage);
+    setCurrentPage(1);
+    const startDate = dateRange.length >= 1 ? dateRange[0] : undefined;
+    const endDate = dateRange.length >= 2 ? dateRange[1] : undefined;
+    fetchHistoryData(1, newPerPage, startDate, endDate);
+  }, [dateRange, fetchHistoryData]);
+
+  const handleDateRangeChange = useCallback((selectedDates: Date[]) => {
+    setDateRange(selectedDates);
+    setCurrentPage(1);
+
+    if (selectedDates.length === 2) {
+      const startDate = selectedDates[0];
+      const endDate = selectedDates[1];
+      fetchHistoryData(1, perPage, startDate, endDate);
+    } else if (selectedDates.length === 0) {
+      // Reset to show all data
+      fetchHistoryData(1, perPage);
+    }
+  }, [perPage, fetchHistoryData]);
+
+  const clearDateFilter = useCallback(() => {
+    setDateRange([]);
+    setCurrentPage(1);
+    fetchHistoryData(1, perPage);
+  }, [perPage, fetchHistoryData]);
 
   const LoadingSpinner = ({ text = "Memuat..." }: { text?: string }) => (
     <div className="d-flex flex-column justify-content-center align-items-center h-100">
@@ -225,6 +301,119 @@ const ModalTrackingMap: FC<{ carData: Database['CarData'] }> = ({ carData }) => 
         </>
       )}
     </button>
+  );
+
+  // Simplified Pagination Controls
+  const PaginationControls = () => {
+    if (!historyData?.pagination) return null;
+
+    const { page, totalPages, hasNextPage, hasPrevPage, total } = historyData.pagination;
+
+    return (
+      <div className="mb-3 d-flex justify-content-between align-items-center">
+        <div className="text-muted small">
+          Halaman {page} dari {totalPages} | Total: {total.toLocaleString('id-ID')} data
+        </div>
+
+        {totalPages > 1 && (
+          <Pagination size="sm" className="mb-0">
+            <Pagination.Prev
+              disabled={!hasPrevPage}
+              onClick={() => handlePageChange(page - 1)}
+            />
+            <Pagination.Item active>{page}</Pagination.Item>
+            <Pagination.Next
+              disabled={!hasNextPage}
+              onClick={() => handlePageChange(page + 1)}
+            />
+          </Pagination>
+        )}
+      </div>
+    );
+  };
+
+  const DateRangeFilter = () => (
+    <div className="mb-3">
+      <div className="gap-2 mb-2 d-flex align-items-center">
+        <FaCalendarAlt className="text-primary" />
+        <span className="text-muted small">Filter Periode:</span>
+        {dateRange.length > 0 && (
+          <button
+            className="btn btn-sm btn-outline-secondary"
+            onClick={clearDateFilter}
+            title="Hapus filter tanggal"
+          >
+            <FaTimes /> Hapus Filter
+          </button>
+        )}
+      </div>
+
+      <div className="row g-2">
+        <div className="col-md-6">
+          <div className="position-relative">
+            <Flatpickr
+              options={{
+                mode: "range",
+                dateFormat: "d/m/Y",
+                locale: Indonesian,
+                maxDate: "today",
+                allowInput: true,
+                clickOpens: true,
+              }}
+              value={dateRange}
+              onChange={handleDateRangeChange}
+              className="form-control form-control-sm"
+              placeholder="Pilih rentang tanggal..."
+            />
+          </div>
+        </div>
+        <div className="col-md-6">
+          <div className="gap-2 d-flex">
+            <button
+              className="btn btn-sm btn-outline-primary"
+              onClick={() => {
+                const today = new Date();
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+                handleDateRangeChange([yesterday, today]);
+              }}
+            >
+              Kemarin
+            </button>
+            <button
+              className="btn btn-sm btn-outline-primary"
+              onClick={() => {
+                const today = new Date();
+                const weekAgo = new Date(today);
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                handleDateRangeChange([weekAgo, today]);
+              }}
+            >
+              7 Hari
+            </button>
+            <button
+              className="btn btn-sm btn-outline-primary"
+              onClick={() => {
+                const today = new Date();
+                const monthAgo = new Date(today);
+                monthAgo.setMonth(monthAgo.getMonth() - 1);
+                handleDateRangeChange([monthAgo, today]);
+              }}
+            >
+              30 Hari
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {dateRange.length === 2 && (
+        <div className="mt-2">
+          <small className="text-success">
+            <strong>Filter aktif:</strong> {dateRange[0].toLocaleDateString('id-ID')} - {dateRange[1].toLocaleDateString('id-ID')}
+          </small>
+        </div>
+      )}
+    </div>
   );
 
   const renderCurrentLocationTab = () => {
@@ -272,32 +461,15 @@ const ModalTrackingMap: FC<{ carData: Database['CarData'] }> = ({ carData }) => 
 
     return (
       <div style={{ height: '100%' }}>
-        <div className="p-3 mb-3 rounded bg-light">
-          <Row>
-            <Col md={3}>
-              <small className="text-muted">Total Rekaman</small>
-              <div className="fw-bold">{historyData.summary.totalRecords.toLocaleString('id-ID')}</div>
-            </Col>
-            <Col md={3}>
-              <small className="text-muted">Periode</small>
-              <div className="fw-bold">{historyData.summary.timeRange.hours} jam terakhir</div>
-            </Col>
-            <Col md={3}>
-              <small className="text-muted">Waktu Mulai</small>
-              <div className="fw-bold">
-                {new Date(historyData.summary.dataRange.firstTimestamp).toLocaleString('id-ID')}
-              </div>
-            </Col>
-            <Col md={3}>
-              <small className="text-muted">Waktu Akhir</small>
-              <div className="fw-bold">
-                {new Date(historyData.summary.dataRange.lastTimestamp).toLocaleString('id-ID')}
-              </div>
-            </Col>
-          </Row>
-        </div>
-        <div className="position-relative" style={{ height: 'calc(100vh - 260px)' }}>
-          <RefreshButton onClick={fetchHistoryData} isLoading={historyLoading} />
+        <DateRangeFilter />
+        <PaginationControls />
+
+        <div className="position-relative" style={{ height: 'calc(100vh - 320px)' }}>
+          <RefreshButton onClick={() => {
+            const startDate = dateRange.length >= 1 ? dateRange[0] : undefined;
+            const endDate = dateRange.length >= 2 ? dateRange[1] : undefined;
+            fetchHistoryData(currentPage, perPage, startDate, endDate);
+          }} isLoading={historyLoading} />
           <MapContainer
             center={centerPosition}
             zoom={15}
@@ -357,6 +529,10 @@ const ModalTrackingMap: FC<{ carData: Database['CarData'] }> = ({ carData }) => 
   const handleTabChange = useCallback((tab: 'current' | 'history') => {
     setActiveTab(tab);
     setError(null);
+    if (tab === 'history') {
+      setCurrentPage(1);
+      setDateRange([]);
+    }
   }, []);
 
   return (

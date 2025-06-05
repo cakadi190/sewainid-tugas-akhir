@@ -133,12 +133,12 @@ export interface CarData extends BaseModel {
   color: string;
   vehicle_ownership_book_number?: string;
   year_of_manufacture: number;
-  transmission: CarTransmissionEnum;
-  model: CarModelEnum;
-  fuel_type: FuelEnum;
-  status: CarStatusEnum;
+  transmission: CarTransmissionEnum | string;
+  model: CarModelEnum | string;
+  fuel_type: FuelEnum | string;
+  status: CarStatusEnum | string;
   description: string;
-  condition: CarConditionEnum;
+  condition: CarConditionEnum | string;
   rent_price: number;
   doors: number;
   mileage: number;

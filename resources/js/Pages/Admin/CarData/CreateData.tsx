@@ -33,10 +33,10 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
       color: '',
       year_of_manufacture: 0,
       vehicle_ownership_book_number: '',
-      transmission: CarTransmissionEnum.MT satisfies CarTransmissionEnum,
-      model: CarModelEnum.MINI_VAN satisfies CarModelEnum,
-      status: CarStatusEnum.READY satisfies CarStatusEnum,
-      condition: CarConditionEnum.EXCELLENT satisfies CarConditionEnum,
+      transmission: CarTransmissionEnum.MT.valueOf(),
+      model: CarModelEnum.MINI_VAN.valueOf(),
+      status: CarStatusEnum.READY.valueOf(),
+      condition: CarConditionEnum.EXCELLENT.valueOf(),
       description: '',
       rent_price: 0,
       doors: 0,
@@ -45,7 +45,7 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
       big_luggage: 0,
       med_luggage: 0,
       small_luggage: 0,
-      fuel_type: FuelEnum.GASOLINE satisfies FuelEnum,
+      fuel_type: FuelEnum.GASOLINE.valueOf(),
       ac: true,
       audio: true,
       abs: true,
@@ -303,7 +303,7 @@ export default function CreateData({ onSuccess: onSuccessAction }: { onSuccess?:
                       value={formData.mileage ?? ''}
                       onChange={(e) => {
                         const value = parseInt(e.target.value);
-                        setData("mileage", isNaN(value) ? undefined : value);
+                        setData("mileage", isNaN(value) ? 0 : value);
                       }}
                       isInvalid={!!errors.mileage}
                     />

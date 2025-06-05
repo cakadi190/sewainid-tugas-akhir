@@ -24,6 +24,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import CarImage from '@/Assets/Icon/car.png';
 import ModalTrackingMap from "./TrackingMap";
+import MapPreview from "./MapPreview";
 
 interface ShowProps {
   car_data: Database['CarData'];
@@ -152,13 +153,9 @@ const PricingInfo: React.FC<{ carData: Database['CarData'] }> = ({ carData }) =>
 };
 
 const CarMainDetails: React.FC<{ carData: Database['CarData'] & { media?: MediaLibrary[] } }> = ({ carData }) => {
-  const { showModalTrack, setShowModalTrack } = useShowModalTrack();
-
   return (
     <Card body className="rounded-4">
-      <div className="p-4 rounded-3 bg-light d-flex justify-content-center align-items-center" style={{ width: '100%', height: '300px' }}>
-        <Button variant="dark" onClick={() => setShowModalTrack(!showModalTrack)}>Lacak Posisi Kendaraan</Button>
-      </div>
+      <MapPreview />
 
       {(carData.media && carData.media?.length > 0) && (
         <div className="py-3 my-3 border-top border-bottom">

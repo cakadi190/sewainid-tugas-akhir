@@ -15,13 +15,18 @@ import { MediaLibrary } from "@/types/medialibrary";
 import axios from "axios";
 import { CarConditionEnum, CarModelEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum } from "@/Helpers/enum";
 
+type CarFormData = Omit<Database['CarData'], 'deleted_at' | 'created_at' | 'id' | 'updated_at'> & {
+  gallery: File[] | string[];
+  _method: 'PUT' | 'POST';
+};
+
 export default function EditData({ id, onSuccess: onSuccessAction, label }: { id: number; onSuccess?: () => void; label?: string }) {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [galleryData, setGalleryData] = useState<MediaLibrary[] | null | undefined>(null);
 
-  const { data: formData, setData, post, processing, reset, errors, clearErrors } = useForm<Omit<Database['CarData'], 'deleted_at' | 'created_at' | 'id' | 'updated_at'> & { gallery: File[], _method: string }>('edit_car_data', {
-    _method: 'put',
+  const { data: formData, setData, post, processing, reset, errors, clearErrors } = useForm<CarFormData>('edit_car_data', {
+    _method: 'PUT',
     car_name: '',
     brand: '',
     frame_number: '',
@@ -48,6 +53,7 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
     fuel_type: FuelEnum.GASOLINE,
     ac: true,
     audio: true,
+    mileage: 0,
     abs: true,
     child_lock: true,
     traction_control: true,
@@ -364,7 +370,7 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       value={formData.mileage ?? ''}
                       onChange={(e) => {
                         const value = parseInt(e.target.value);
-                        setData("mileage", isNaN(value) ? undefined : value);
+                        setData("mileage", isNaN(value) ? 0 : value);
                       }}
                       isInvalid={!!errors.mileage}
                     />
