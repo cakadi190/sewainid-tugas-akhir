@@ -12,6 +12,9 @@ const MapWrapper = styled.div`
   position: relative;
   overflow: hidden;
   border-radius: .5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover .map-overlay {
     opacity: 1;
@@ -76,7 +79,14 @@ const MapPreview: React.FC = () => {
     fetchGps();
   }, []);
 
-  if (!gpsData) return <p>Loading map...</p>;
+  if (!gpsData) {
+    return (
+      <MapWrapper>
+        Sedang Dimuat
+        <MapOverlayHover className="map-overlay">Loading...</MapOverlayHover>
+      </MapWrapper>
+    );
+  }
 
   const { latitude, longitude } = gpsData.currentPosition;
 
