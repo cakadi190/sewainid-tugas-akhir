@@ -1,6 +1,6 @@
 import AuthenticatedUser from "@/Layouts/AuthenticatedLayout";
 import HeaderCheckout from "./Armada/Partials/HeaderCheckout";
-import { Head, Link, useForm, usePage } from "@inertiajs/react";
+import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
 import { Card, Col, Row, Button, Form, ListGroup, Badge, Image, Modal } from "react-bootstrap";
 import { MediaLibraryType, PageProps } from "@/types";
 import { Alert } from "react-bootstrap";
@@ -18,6 +18,8 @@ import "flatpickr/dist/themes/material_blue.css";
 import { Indonesian } from "flatpickr/dist/l10n/id";
 import { LeafletSingle } from "@/Components/LeafletMap";
 import { twMerge } from "tailwind-merge";
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
 
 // Type definitions
 interface CheckoutProps {
@@ -208,7 +210,7 @@ const CheckoutProvider = ({ children, carData, order: initialOrder, carThumbnail
   // Calculate rental duration in days
   const pickupDate = dayjs(order.pickup_date);
   const returnDate = dayjs(order.return_date);
-  const rentalDuration = Math.max(1, returnDate.diff(pickupDate, 'day'));
+  const rentalDuration = Math.max(1, returnDate.diff(pickupDate, 'day')) + 1;
 
   // Calculate costs
   const basePrice = carData.rent_price * rentalDuration;
@@ -951,6 +953,24 @@ export default function CheckoutPage({ carData, order, carThumbnail, forbiddenDa
   const { props: { auth } } = usePage<PageProps>();
   const isIdentityUnfilled = auth.isIdentityUnfilled === true;
 
+  const handleCancelCart = () => {
+    withReactContent(Swal).fire({
+      title: 'Apakah kamu yakin?',
+      text: "Apakah kamu yakin akan membatalkan transaksi ini? Jika iya, maka aksi ini tidak dapat dikembalikan.",
+      showCancelButton: true,
+      showConfirmButton: true,
+      icon: 'warning',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#0d6efd',
+      confirmButtonText: 'Batalkan Pesanan',
+      cancelButtonText: 'Lanjutkan Pesanan',
+    }).then(({ isConfirmed }) => {
+      if (isConfirmed) {
+        router.post(route('v1.home.checkout.cancel'));
+      }
+    })
+  }
+
   return (
     <CheckoutProvider carData={carData} order={order} carThumbnail={carThumbnail}>
       <AuthenticatedUser header={<HeaderCheckout />}>
@@ -972,7 +992,10 @@ export default function CheckoutPage({ carData, order, carThumbnail, forbiddenDa
             )}
 
             <Card body className={twMerge("rounded-4", isIdentityUnfilled ? "mt-4" : "")}>
-              <Card.Title className="pb-3 mb-3 border-bottom">Detail Pesanan</Card.Title>
+              <div className="gap-2 pb-3 mb-3 d-flex justify-content-between border-bottom align-items-center">
+                <Card.Title className="mb-0">Detail Pesanan</Card.Title>
+                <Button variant="danger" onClick={handleCancelCart}>Batalkan</Button>
+              </div>
 
               <CarDetails forbiddenDate={forbiddenDate} />
               <FormHandler />

@@ -1,7 +1,8 @@
 import { FC, ReactNode, useMemo } from "react";
 import { Card, Col } from "react-bootstrap";
 import styled from "@emotion/styled";
-import { FaHeart, FaTachometerAlt } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa6";
+import { FaTachometerAlt } from "react-icons/fa";
 import { Link, router } from "@inertiajs/react";
 import { mileageFormat, speedFormat } from "@/Helpers/number";
 import RatingReview from "@/Components/StarRating";

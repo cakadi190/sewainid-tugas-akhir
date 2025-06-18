@@ -29,7 +29,7 @@ enum RoleUser: string
      *
      * @return string Label untuk peran dalam bahasa lokal.
      */
-    function label(): string
+    public function label(): string
     {
         return match($this) {
             self::ADMIN => 'Administrator',
@@ -44,7 +44,7 @@ enum RoleUser: string
      *
      * @return string Warna yang digunakan untuk menandai peran pengguna.
      */
-    function color(): string
+    public function color(): string
     {
         return match($this) {
             self::ADMIN => 'danger',

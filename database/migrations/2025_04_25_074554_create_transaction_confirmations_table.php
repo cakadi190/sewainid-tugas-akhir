@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            $table->string('transaction_receipt', 48);
+            $table->string('transaction_receipt', 128);
 
             $table->string('transaction_id', 48);
             $table->foreign('transaction_id')->references('id')->on('transactions')->cascadeOnDelete()->cascadeOnUpdate();

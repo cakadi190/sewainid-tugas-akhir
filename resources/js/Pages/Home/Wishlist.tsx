@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { FetchSuccess } from "@/types";
 import WishlistCard, { IntrinsicTypeData } from "@/Components/LoopPartial/WishlistArmadaLoop";
 import EmptyState from "@/Components/EmptyState";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa6";
 import GlobalHeader from "@/Components/GlobalPartial/HeaderComponent";
 
 export default function WishlistPage() {

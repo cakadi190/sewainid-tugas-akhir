@@ -15,7 +15,7 @@ export function calculateRent({
 }) {
   const pickDateObj = pickDate ? dayjs(pickDate) : undefined;
   const returnDateObj = returnDate ? dayjs(returnDate) : undefined;
-  const duration = returnDateObj ? returnDateObj.diff(pickDateObj, 'day') : 0;
+  const duration = returnDateObj ? returnDateObj.diff(pickDateObj, 'day') + 1 : 0;
 
   const carRentTotal = rentPrice * duration;
   const driverRentTotal = withDriver ? driverCost * duration : 0;

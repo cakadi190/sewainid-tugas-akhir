@@ -403,22 +403,6 @@ export default function Sidebar() {
         },
       ],
     },
-    {
-      label: 'Pembayaran',
-      type: 'menu',
-      href: '#',
-      icon: faMoneyBillWave,
-      child: [
-        {
-          label: 'Daftar Pembayaran',
-          href: '#',
-        },
-        {
-          label: 'Konfirmasi Pembayaran',
-          href: '#',
-        },
-      ],
-    },
     { label: 'Laporan', type: 'heading' },
     {
       label: 'Laporan Transaksi',

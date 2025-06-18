@@ -57,6 +57,7 @@ interface DataTableProps {
   filterComponent?: React.ReactNode;
   onDataLoad?: (data: any) => void;
   withTrashToggle?: boolean;
+  search?: string;
 }
 
 /**
@@ -138,6 +139,7 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
   defaultSort,
   defaultPageLength = 10,
   filterComponent,
+  search,
   onDataLoad
 }, ref) => {
   const [data, setData] = useState<any[]>([]);
@@ -153,6 +155,10 @@ const CustomDataTable = forwardRef<DataTableRef, DataTableProps>(({
   );
   const [draw, setDraw] = useState(1);
   const [includeTrashed, setIncludeTrashed] = useState(false);
+
+  useEffect(() => {
+    setSearchText(search || '');
+  }, [search])
 
   const fetchData = async () => {
     setLoading(true);

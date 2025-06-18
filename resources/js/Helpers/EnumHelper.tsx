@@ -1,4 +1,4 @@
-import { FaCheckCircle, FaCircle, FaExclamation, FaExclamationTriangle, FaMinusCircle, FaMoneyBill, FaQuestionCircle, FaThumbsUp, FaTimesCircle, FaTools, FaWrench } from "react-icons/fa";
+import { FaCircle, FaExclamation, FaMoneyBill, FaThumbsUp, FaWrench } from "react-icons/fa6";
 import { CarConditionEnum, CarModelEnum, CarRepairNoteStatusEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum, GenderUser, RentalStatusEnum, TransactionStatusEnum } from "./enum";
 
 import MiniVanIcon from '@/Assets/Icon/car-type/camper-van.png';
@@ -10,6 +10,7 @@ import CityCarIcon from '@/Assets/Icon/car-type/city-car.png';
 import SedanIcon from '@/Assets/Icon/car-type/sedan.png';
 import MpvIcon from '@/Assets/Icon/car-type/mpv.png';
 import PickupIcon from '@/Assets/Icon/car-type/pickup.png';
+import { FaCheckCircle, FaExclamationTriangle, FaMinusCircle, FaQuestionCircle, FaTimesCircle, FaTools } from "react-icons/fa";
 
 /**
  * Mapping of CarConditionEnum values to human-readable labels in Indonesian

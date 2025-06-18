@@ -30,4 +30,16 @@ class TransactionConfirmation extends Model
 {
     /** @use HasFactory<\Database\Factories\TransactionConfirmationFactory> */
     use HasFactory;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'id',
+        'transaction_id',
+        'user_id',
+        'transaction_receipt',
+    ];
 }

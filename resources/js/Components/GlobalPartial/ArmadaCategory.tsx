@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import { Link } from "@inertiajs/react";
 import { useRef } from "react";
 import { Row, Col } from "react-bootstrap";
-import { FaArrowRight } from "react-icons/fa";
+import { FaArrowRight } from "react-icons/fa6";
 
 const Section = styled.section`
   background-color: #fff;

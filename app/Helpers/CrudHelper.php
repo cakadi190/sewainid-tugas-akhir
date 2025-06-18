@@ -218,9 +218,12 @@ class CrudHelper implements CrudInterface
             if ($request->boolean('forceDelete')) {
                 $model->forceDelete();
                 return redirect()->back()->with('success', "Data berhasil dihapus permanen!");
-            } else {
+            } else if (in_array(\Illuminate\Database\Eloquent\SoftDeletes::class, class_uses($model))) {
                 $model->delete();
                 return redirect()->back()->with('success', "Data berhasil dihapus sementara!");
+            } else {
+                $model->delete();
+                return redirect()->back()->with('success', "Data berhasil dihapus!");
             }
         } catch (\Throwable $th) {
             Log::error($th);

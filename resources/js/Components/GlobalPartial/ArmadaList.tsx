@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { Row } from "react-bootstrap";
 import styled from "@emotion/styled";
-import { FaArrowRight } from "react-icons/fa";
+import { FaArrowRight } from "react-icons/fa6";
 import { usePage } from "@inertiajs/react";
 import CardArmadaLoop, { TypeOfCarData, WishlistItem } from "@/Components/LoopPartial/CardArmadaLoop";
 import { FetchSuccess, PageProps } from "@/types";

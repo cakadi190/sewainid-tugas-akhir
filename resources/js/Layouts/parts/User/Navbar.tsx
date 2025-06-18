@@ -2,7 +2,7 @@ import { useState, useEffect, FC } from "react";
 import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { Link, router, usePage } from "@inertiajs/react";
 import ApplicationLogo from "@/Components/ApplicationLogo";
-import { FaHeart, FaBell } from "react-icons/fa";
+import { FaHeart, FaBell } from "react-icons/fa6";
 import { PageProps } from "@/types";
 import styled from "@emotion/styled";
 import Database from "@/types/database";

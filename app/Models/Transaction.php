@@ -16,16 +16,16 @@ use Illuminate\Support\Str;
  * @property string $id
  * @property string $status
  * @property string $rental_status
- * @property string|null $confirmed_at
+ * @property \Illuminate\Support\Carbon|null $confirmed_at
  * @property string|null $payment_channel
  * @property string|null $payment_references
- * @property string|null $expired_at
+ * @property \Illuminate\Support\Carbon|null $expired_at
  * @property int $total_price
  * @property int $total_pay
- * @property string|null $pickup_date
- * @property string|null $return_date
+ * @property \Illuminate\Support\Carbon|null $pickup_date
+ * @property \Illuminate\Support\Carbon|null $return_date
  * @property string $place_name
- * @property int $with_driver
+ * @property bool $with_driver
  * @property string $longitude
  * @property string $latitude
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -33,6 +33,7 @@ use Illuminate\Support\Str;
  * @property int|null $user_id
  * @property int|null $car_data_id
  * @property-read \App\Models\CarData|null $carData
+ * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\TransactionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction newQuery()

@@ -6,6 +6,7 @@ use App\Enums\GenderUser;
 use App\Enums\RoleUser;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -39,10 +40,13 @@ use Illuminate\Support\Collection;
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transactions
  * @property-read int|null $transactions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Wishlist> $wishlists
+ * @property-read int|null $wishlists_count
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User role(array|string|null $role)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereAvatar($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
@@ -115,6 +119,22 @@ class User extends Authenticatable implements MustVerifyEmail
             'gender' => GenderUser::class,
             'role' => RoleUser::class
         ];
+    }
+
+    /**
+     * Scope a query to only include users of a given role.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \App\Enums\RoleUser  $role
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeRole(Builder $query, array|string|null $role)
+    {
+        if (is_array($role)) {
+            return $query->whereIn('role', $role);
+        }
+
+        return $query->where('role', $role);
     }
 
     /**

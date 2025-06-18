@@ -21,8 +21,7 @@ import { FaTimes } from "react-icons/fa";
 import { calculateRent } from "@/Helpers/rent";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
-import { FC, useCallback, useEffect } from "react";
-import EmptyState from "@/Components/EmptyState";
+import { FC, useCallback } from "react";
 
 const InfoCard: React.FC<{ icon: React.ReactNode, title: string, value: string }> = ({ icon, title, value }) => {
   return (
@@ -219,8 +218,14 @@ const CarStatus: React.FC<{ carData: Database['CarData']; disabledCalendar?: str
               locale: Indonesian,
               dateFormat: 'Y-m-d',
               minDate: 'today',
-              closeOnSelect: false,
-              disable: disabledCalendar ?? []
+              closeOnSelect: true,
+              disable: disabledCalendar ?? [],
+              onClose: function (selectedDates, dateStr, instance) {
+                if (selectedDates.length === 1) {
+                  const singleDate = selectedDates[0];
+                  instance.setDate([singleDate, singleDate], true);
+                }
+              }
             }}
             className="form-control"
             onChange={handleDateRangeChange}

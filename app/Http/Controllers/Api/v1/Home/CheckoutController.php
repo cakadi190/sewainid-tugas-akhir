@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Api\v1\Home;
 
 use App\Enums\RentalStatusEnum;
+use App\Enums\RoleUser;
 use App\Enums\TransactionStatusEnum;
 use App\Services\TripayServices;
 use App\Http\Controllers\Controller;
 use App\Models\CarData;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Notifications\InvoiceCreatedToAdmin;
+use App\Notifications\InvoiceCreatedToUser;
 use App\Services\FonnteService;
 use App\TransferObjects\Tripay\TripayCustomerData;
 use App\TransferObjects\Tripay\TripayOrderItem;
@@ -71,6 +74,18 @@ class CheckoutController extends Controller
     }
 
     /**
+     * Cancels the current order by removing it from the session
+     * and redirects the user to the home page.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function cancel()
+    {
+        $this->session->forget('order');
+        return redirect()->route('home');
+    }
+
+    /**
      * Proses checkout: buat transaksi dan integrasi dengan Tripay
      */
     public function checkout(Request $request)
@@ -109,7 +124,7 @@ class CheckoutController extends Controller
                 ]);
             }
 
-            $rentDays = Carbon::parse($order['pickup_date'])->diffInDays(Carbon::parse($order['return_date']));
+            $rentDays = Carbon::parse($order['pickup_date'])->diffInDays(Carbon::parse($order['return_date'])) + 1;
             $trxId = $this->generateTransactionId();
             $items = $this->buildOrderItems($car, $rentDays, $order['with_driver'] ?? false, $trxId);
             $tax = $this->calculateTax($items);
@@ -165,6 +180,9 @@ class CheckoutController extends Controller
 
             $this->sendWhatsappMessage(transaction: $transaction);
 
+            $this->sendEmailToAdmin(trxId: $transaction->id);
+            $this->sendEmailToUser(trxId: $transaction->id, name: $user->name, amount: $totalPay);
+
             $this->cleanUpSessionAndWishlist();
 
             DB::commit();
@@ -175,6 +193,39 @@ class CheckoutController extends Controller
             report($th);
             return back()->with('error', $th->getMessage());
         }
+    }
+
+    /**
+     * Sends an email notification to all admin users about a new transaction.
+     *
+     * This function retrieves all users with the 'admin' role and sends them
+     * a notification regarding a new transaction using the InvoiceCreatedToAdmin
+     * notification.
+     *
+     * @param string $trxId The transaction ID for which the notification is sent.
+     */
+    private function sendEmailToAdmin(string $trxId)
+    {
+        $admins = User::role([RoleUser::ADMIN, RoleUser::MONETARY])->get();
+
+        foreach ($admins as $admin) {
+            $admin->notify(new InvoiceCreatedToAdmin($trxId, $admin->name));
+        }
+    }
+
+    /**
+     * Sends an email notification to the user about a new transaction.
+     *
+     * This function sends a notification to the authenticated user regarding a new transaction
+     * using the InvoiceCreatedToUser notification.
+     *
+     * @param string $trxId The transaction ID for which the notification is sent.
+     * @param string $name The user's name.
+     * @param int $amount The total amount of the transaction.
+     */
+    private function sendEmailToUser(string $trxId, string $name, int $amount)
+    {
+        auth()->user()->notify(new InvoiceCreatedToUser($name, $trxId, $amount));
     }
 
     /**

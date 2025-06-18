@@ -9,7 +9,8 @@ import { Badge, OverlayTrigger, Popover } from "react-bootstrap";
 import { getTransactionStatusColor, getTransactionStatusLabel } from "@/Helpers/EnumHelper";
 import { currencyFormat } from "@/Helpers/number";
 import { formatDateToWIB, isMoreThanNow } from "@/Helpers/dayjs";
-import { FaExclamationTriangle, FaEye } from "react-icons/fa";
+import { FaEye } from "react-icons/fa6";
+import { FaExclamationTriangle } from "react-icons/fa";
 
 const ExpiredPopover = () => (
   <OverlayTrigger

@@ -8,9 +8,8 @@ import {
   FaQrcode,
   FaArrowRight,
   FaCopy,
-  FaCheck,
-  FaSync
-} from "react-icons/fa";
+  FaCheck
+} from "react-icons/fa6";
 
 import GlobalHeader from "@/Components/GlobalPartial/HeaderComponent";
 import AuthenticatedUser from "@/Layouts/AuthenticatedLayout";
@@ -117,9 +116,11 @@ const TransactionHeader = memo(({ transaction }: { transaction: TransactionPageD
           <Badge color={getTransactionStatusColor(transaction?.status || 'UNPAID' as TransactionStatusEnum)}>
             {getTransactionStatusLabel(transaction?.status || 'UNPAID' as TransactionStatusEnum)}
           </Badge>
-          <Badge>
-            Unggah Bukti Bayar
-          </Badge>
+          {transaction?.status === 'UNPAID' && (
+            <Badge>
+              Unggah Bukti Bayar
+            </Badge>
+          )}
         </div>
         <div className="gap-2 d-flex justify-content-end flex-column flex-lg-row">
           <Button className="gap-2 mt-2 d-flex align-items-center justify-content-center" variant="light">
@@ -155,13 +156,6 @@ const PaymentSummary = memo(({
       <div className="gap-2 d-flex align-items-center">
         {isQRPayment ? <FaQrcode /> : <FaCreditCard />}
         <span>{currentChannel?.name || transaction?.payment_channel || '-'}</span>
-        {transaction?.confirmed_at ? (
-          <span className="ms-auto">{formatDateToWIB(transaction?.confirmed_at)}</span>
-        ) : (
-          <a href={transactionDetail?.pay_url} className="ms-auto">
-            Bayar <FaArrowRight />
-          </a>
-        )}
       </div>
     </Card>
   );
@@ -263,7 +257,7 @@ const BillDetails = memo(({
   </div>
 ));
 
-const PaymentGuide = memo(() => {
+const PaymentGuide = memo(({ transactionStatus }: { transactionStatus?: TransactionStatusEnum }) => {
   const { transactionDetail } = usePage<PageProps<{ transactionDetail?: TripayDetail }>>().props;
   const [modalState, setModalState] = useState(false);
   const [openCollapse, setOpenCollapse] = useState<string | null>(null);
@@ -271,6 +265,13 @@ const PaymentGuide = memo(() => {
   const toggleCollapse = (instructionId: string) => {
     setOpenCollapse(openCollapse === instructionId ? null : instructionId);
   };
+
+  const isPending = useMemo(() =>
+    PENDING_STATUSES.includes(transactionStatus || ''),
+    [transactionStatus]
+  );
+
+  if (!isPending) return null;
 
   return (
     <div className="mt-2">
@@ -477,7 +478,9 @@ export default function TransactionPageDetail({ transaction, transactionDetail }
                       transactionDetail={transactionDetail}
                     />
 
-                    <PaymentGuide />
+                    <PaymentGuide
+                      transactionStatus={transaction?.status}
+                    />
                   </div>
                 </Col>
               </Row>
