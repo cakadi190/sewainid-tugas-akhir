@@ -10,6 +10,7 @@ import useWindowSize from '@/Hooks/useWindowSize';
 import LogoutConfirmationModal from '@/Components/Modal/LogoutModal';
 import styled from '@emotion/styled';
 import Gravatar from 'react-gravatar';
+import NotificationDropdown from './NotificationDropdown';
 
 const NavbarWrapperStyle = styled(Navbar, {
   shouldForwardProp: (prop) => !['isToggled'].includes(prop),
@@ -22,10 +23,8 @@ const NavbarWrapperStyle = styled(Navbar, {
   z-index: 1020;
   width: calc(100% - 20rem);
   left: 20rem;
-  padding-top: 1.75rem;
-  padding-bottom: 1.5rem;
-  padding-inline-start: 1rem;
-  padding-inline-end: 1rem;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
   transition: all .2s;
   right: 0;
 
@@ -153,6 +152,8 @@ function MainAdminNav() {
             <ClockItem />
           </Nav>
           <Nav className="ms-auto">
+            <NotificationDropdown />
+
             <UserDropdown />
           </Nav>
         </Navbar.Collapse>

@@ -40,7 +40,6 @@ ${({ isToggled }) => !isToggled && `
 
 const MainPageInnerStyled = styled.div`
 margin-bottom: 1rem;
-padding: 0 1rem;
 `;
 
 export default function MainPage({ children }: PropsWithChildren) {

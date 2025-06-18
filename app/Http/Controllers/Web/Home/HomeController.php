@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Web\Home;
 
 use App\Http\Controllers\Controller;
 use App\Models\CarData;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class HomeController extends Controller
