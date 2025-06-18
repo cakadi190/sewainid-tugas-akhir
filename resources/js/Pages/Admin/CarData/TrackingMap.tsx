@@ -117,7 +117,7 @@ const ModalTrackingMap: FC<{ carData: Database["CarData"] }> = ({
   // Helper function to build API endpoint
   const buildApiEndpoint = useCallback(
     (identifier: string, endpoint: string): string => {
-      const baseUrl = "https://gps.kodinus.web.id/api/gps-history";
+      const baseUrl = "https://gps.kodinus.id/api/gps-history";
 
       if (isImei(identifier)) {
         return `${baseUrl}/imei/${identifier}${endpoint}`;

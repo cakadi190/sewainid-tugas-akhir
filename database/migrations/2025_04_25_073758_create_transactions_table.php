@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->enum('rental_status', Transaction::getAllRentalStatus()->toArray())->default(RentalStatusEnum::DRAFT);
 
             $table->timestamp('confirmed_at')->nullable();
-            $table->string('payment_channel', 8)->nullable();
+            $table->string('payment_channel', 24)->nullable();
             $table->string('payment_references', 128)->nullable();
             $table->timestamp('expired_at')->nullable();
 

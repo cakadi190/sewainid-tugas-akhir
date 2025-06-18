@@ -87,6 +87,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'sim',
         'avatar',
         'google_id',
+        'address',
+        'email_verified_at',
+        'role',
     ];
 
     /**

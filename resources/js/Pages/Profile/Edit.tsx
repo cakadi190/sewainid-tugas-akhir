@@ -5,7 +5,8 @@ import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
 import { Card, Tab, Tabs } from 'react-bootstrap';
 import MainLayout from '@/Layouts/MainLayout';
-import HeaderDashboardProfile from './Partials/Header';
+import ImageHeader from '@/Assets/Images/Cover-Dashboard.jpg';
+import GlobalHeader from '@/Components/GlobalPartial/HeaderComponent';
 
 /**
  * Komponen ini digunakan untuk mengedit profil pengguna.
@@ -25,7 +26,17 @@ export default function Edit({
   return (
     <MainLayout
       isAdmin={auth.user.role === 'admin'}
-      header={<HeaderDashboardProfile />}
+      header={auth.user.role === 'user' && (
+        <GlobalHeader
+          title="Beranda Dasbor"
+          description="Selamat datang di dasbor! Disinilah Anda dapat melihat informasi tentang permintaan, riwayat, dan melihat tagihan sewa mobil Anda."
+          backgroundImage={ImageHeader}
+          breadcrumbItems={[
+            { label: 'Beranda', url: route('home') },
+            { label: 'Beranda Dasbor' },
+          ]}
+        />
+      )}
     >
       <Head title="Profil Saya" />
 

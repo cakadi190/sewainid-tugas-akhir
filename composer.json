@@ -9,6 +9,8 @@
   "license": "MIT",
   "require": {
     "php": "^8.2",
+    "barryvdh/laravel-debugbar": "^3.15",
+    "barryvdh/laravel-ide-helper": "^3.5",
     "honeystone/laravel-seo": "^2.0",
     "inertiajs/inertia-laravel": "^1.0",
     "intervention/image": "^3.11",
@@ -16,16 +18,16 @@
     "laravel/sanctum": "^4.0",
     "laravel/socialite": "^5.20",
     "laravel/tinker": "^2.9",
-    "opcodesio/log-viewer": "^3.15",
+    "opcodesio/log-viewer": "^3.17",
     "sirajcse/laravel-unique-id-generator": "^1.0",
     "spatie/laravel-medialibrary": "^11.9",
+    "spatie/laravel-permission": "^6.19",
     "spatie/laravel-sluggable": "^3.7",
     "spatie/schema-org": "^3.23",
     "tightenco/ziggy": "^2.0",
     "yajra/laravel-datatables": "^11.0"
   },
   "require-dev": {
-    "barryvdh/laravel-ide-helper": "^3.2",
     "fakerphp/faker": "^1.23",
     "laravel/breeze": "^2.2",
     "laravel/pail": "^1.1",

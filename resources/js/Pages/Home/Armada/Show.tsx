@@ -259,12 +259,12 @@ const CarStatus: React.FC<{ carData: Database['CarData']; disabledCalendar?: str
               </ListGroup.Item>
               <ListGroup.Item className="px-0 d-flex justify-content-between">
                 <div className="text-muted">Harga Sewa</div>
-                <div className="fw-bold">{compactCurrencyFormat(carRentTotal)} / Hari</div>
+                <div className="fw-bold">{compactCurrencyFormat(carRentTotal)} / {duration} Hari</div>
               </ListGroup.Item>
               {data.with_driver && (
                 <ListGroup.Item className="px-0 d-flex justify-content-between">
                   <div className="text-muted">Harga Sewa Driver</div>
-                  <div className="fw-bold">{compactCurrencyFormat(driverRentTotal)} / Hari</div>
+                  <div className="fw-bold">{compactCurrencyFormat(driverRentTotal)} / {duration} Hari</div>
                 </ListGroup.Item>
               )}
               <ListGroup.Item className="px-0 d-flex justify-content-between">

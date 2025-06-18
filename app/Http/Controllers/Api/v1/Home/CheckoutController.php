@@ -160,7 +160,7 @@ class CheckoutController extends Controller
             $this->sendOrderToGpsApi(
                 latitude: $validated['destination_latitude'],
                 longitude: $validated['destination_longitude'],
-                device: $car->device_id ?? null
+                device: $car->gps_imei ?? null
             );
 
             $this->sendWhatsappMessage(transaction: $transaction);
@@ -212,7 +212,7 @@ class CheckoutController extends Controller
         }
 
         try {
-            Http::post("https://gps.kodinus.web.id/api/order-trip/create", $data);
+            Http::post("https://gps.kodinus.id/api/order-trip/create", $data);
         } catch (\Throwable $e) {
             report($e);
         }
@@ -237,7 +237,7 @@ class CheckoutController extends Controller
             ? Carbon::parse($transaction->expired_at)
                 ->setTimezone('Asia/Jakarta')
                 ->locale('id_ID')
-                ->isoFormat('d F Y, H:i')
+                ->translatedFormat('j F Y, H:i') // translatedFormat untuk bahasa Indonesia
             : null;
 
         $formattedPrice = number_format($transaction->total_pay, 0, ',', '.');
