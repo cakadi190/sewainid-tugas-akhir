@@ -1,7 +1,7 @@
-import { Link, usePage } from '@inertiajs/react';
+import { InertiaLinkProps, Link, usePage } from '@inertiajs/react';
 import styled from '@emotion/styled';
 import { Breadcrumb, Col, Container, Row } from "react-bootstrap";
-import { FaCalendar, FaHeart, FaHome, FaUser, FaWallet } from 'react-icons/fa';
+import { FaCalendar, FaHeart, FaHome, FaSignOutAlt, FaUser, FaWallet } from 'react-icons/fa';
 
 interface BreadcrumbItem {
   label: string;
@@ -93,10 +93,10 @@ const StyledHeader = styled.header<{ backgroundImage: string; overlay: number }>
 `;
 
 interface StyledMenuItemProps {
-  active: boolean;
+  active?: boolean;
 }
 
-const StyledMenuItem = styled(Link) <StyledMenuItemProps>`
+const StyledMenuItem = styled(Link)<StyledMenuItemProps & InertiaLinkProps>`
   display: flex;
   align-items: center;
   padding: 1rem 1.5rem;
@@ -125,6 +125,40 @@ const StyledMenuItem = styled(Link) <StyledMenuItemProps>`
 
     svg {
       color: var(--bs-primary);
+    }
+  }
+`;
+
+// Custom styled component untuk tombol logout
+const StyledLogoutButton = styled(Link)`
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  flex-direction: column;
+  border: 1px solid var(--bs-danger);
+  border-radius: .5rem;
+  background: var(--bs-light);
+  transition: all .2s;
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  align-content: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--bs-danger);
+
+  svg {
+    margin-bottom: 0.5rem;
+    color: var(--bs-danger);
+  }
+
+  &:hover {
+    background: var(--bs-danger);
+    border-color: var(--bs-danger);
+    color: var(--bs-white);
+
+    svg {
+      color: var(--bs-white);
     }
   }
 `;
@@ -188,45 +222,65 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({
       <div className="py-4 bg-white border-bottom d-none d-lg-flex d-md-none">
         <Container>
           <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
+            display: 'flex',
+            alignItems: 'stretch',
             gap: '1rem',
           }}>
-            <StyledMenuItem
-              href={route('dashboard')}
-              active={isActive('/dashboard') && !isActive('/dashboard/transaction')}
-            >
-              <FaHome size={24} />
-              <span>Dasbor</span>
-            </StyledMenuItem>
-            <StyledMenuItem
-              href={route('dashboard.transaction.index')}
-              active={isActive('/dashboard/transaction')}
-            >
-              <FaWallet size={24} />
-              <span>Transaksi</span>
-            </StyledMenuItem>
-            <StyledMenuItem
-              href={route('wishlist')}
-              active={isActive('/wishlist')}
-            >
-              <FaHeart size={24} />
-              <span>Wishlist</span>
-            </StyledMenuItem>
-            {/* <StyledMenuItem
-              href={route('booking')}
-              active={isActive('/booking')}
-            >
-              <FaCalendar size={24} />
-              <span>Pemesanan</span>
-            </StyledMenuItem> */}
-            <StyledMenuItem
-              href={route('profile.edit')}
-              active={isActive('/profile')}
-            >
-              <FaUser size={24} />
-              <span>Profil</span>
-            </StyledMenuItem>
+            {/* Menu utama */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
+              gap: '1rem',
+              flex: 1,
+            }}>
+              <StyledMenuItem
+                href={route('dashboard')}
+                active={isActive('/dashboard') && !isActive('/dashboard/transaction')}
+              >
+                <FaHome size={24} />
+                <span>Dasbor</span>
+              </StyledMenuItem>
+              <StyledMenuItem
+                href={route('dashboard.transaction.index')}
+                active={isActive('/dashboard/transaction')}
+              >
+                <FaWallet size={24} />
+                <span>Transaksi</span>
+              </StyledMenuItem>
+              <StyledMenuItem
+                href={route('wishlist')}
+                active={isActive('/wishlist')}
+              >
+                <FaHeart size={24} />
+                <span>Wishlist</span>
+              </StyledMenuItem>
+              <StyledMenuItem
+                href={'/dashboard/booking'}
+                active={isActive('/booking')}
+              >
+                <FaCalendar size={24} />
+                <span>Pemesanan</span>
+              </StyledMenuItem>
+              <StyledMenuItem
+                href={route('profile.edit')}
+                active={isActive('/profile')}
+              >
+                <FaUser size={24} />
+                <span>Profil</span>
+              </StyledMenuItem>
+            </div>
+
+            {/* Tombol logout di pojok kanan */}
+            <div style={{ minWidth: '100px' }}>
+              <StyledLogoutButton
+                href={route('logout')}
+                method='post'
+                as='button'
+              >
+                <FaSignOutAlt size={24} />
+                <span>Keluar</span>
+              </StyledLogoutButton>
+            </div>
           </div>
         </Container>
       </div>

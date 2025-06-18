@@ -135,69 +135,26 @@ function RecentTransactions() {
   )
 }
 
-const SummaryTab = () => {
+const SummaryOverview = () => {
   return (
-    <Tab.Container defaultActiveKey="summary">
-      <Row>
-        <Col>
-          <Nav variant="pills" defaultActiveKey="summary" className='p-2 border bg-light rounded-3' style={{ width: 'fit-content' }}>
-            <Nav.Item>
-              <Nav.Link eventKey="summary">Selayang Pandang</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link eventKey="analytics">Analitik</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link eventKey="reports">Laporan</Nav.Link>
-            </Nav.Item>
-          </Nav>
-          <Tab.Content className='mt-4'>
-            <Tab.Pane eventKey="summary">
-              <Row className='mb-4'>
-                <Col md="7">
-                  <Card body>
-                    <h5>Revenue Overview</h5>
-                  </Card>
-                </Col>
-                <Col md="5">
-                  <Card className="h-100 rounded-4">
-                    <Card.Header className="pt-3 bg-white rounded-4 border-bottom-0">
-                      <Card.Title className="mb-0">Recent Transactions</Card.Title>
-                      <Card.Subtitle className="mt-1 text-muted">Latest rental transactions</Card.Subtitle>
-                    </Card.Header>
-                    <Card.Body>
-                      <RecentTransactions />
-                    </Card.Body>
-                  </Card>
-                </Col>
-              </Row>
-
-              <Row className='mb-4'>
-                <Col md="5">
-                  <Card body>
-                    <h5>Revenue Overview</h5>
-                  </Card>
-                </Col>
-                <Col md="7">
-                </Col>
-              </Row>
-            </Tab.Pane>
-            <Tab.Pane eventKey="analytics">
-              <p>
-                Analitik berisi data yang diolah dan dianalisis untuk
-                memudahkan admin dalam mengambil keputusan.
-              </p>
-            </Tab.Pane>
-            <Tab.Pane eventKey="reports">
-              <p>
-                Laporan berisi data yang diolah dan disajikan dalam bentuk
-                tabel, grafik, dan lain-lain.
-              </p>
-            </Tab.Pane>
-          </Tab.Content>
-        </Col>
-      </Row>
-    </Tab.Container>
+    <Row className='mb-4'>
+      <Col md="7">
+        <Card body className="rounded-4">
+          <h5>Revenue Overview</h5>
+        </Card>
+      </Col>
+      <Col md="5">
+        <Card className="h-100 rounded-4">
+          <Card.Header className="pt-3 bg-white rounded-4 border-bottom-0">
+            <Card.Title className="mb-0">Recent Transactions</Card.Title>
+            <Card.Subtitle className="mt-1 text-muted">Latest rental transactions</Card.Subtitle>
+          </Card.Header>
+          <Card.Body>
+            <RecentTransactions />
+          </Card.Body>
+        </Card>
+      </Col>
+    </Row>
   )
 }
 
@@ -210,8 +167,7 @@ export default function Dashboard() {
       <Head title='Beranda Admin' />
 
       <SummaryCards />
-
-      <SummaryTab />
+      <SummaryOverview />
     </AuthenticatedAdmin>
   );
 }

@@ -8,7 +8,8 @@ import {
   FaQrcode,
   FaArrowRight,
   FaCopy,
-  FaCheck
+  FaCheck,
+  FaSync
 } from "react-icons/fa";
 
 import GlobalHeader from "@/Components/GlobalPartial/HeaderComponent";
@@ -100,25 +101,32 @@ const PENDING_STATUSES = ['UNPAID', 'PENDING'];
 
 const TransactionHeader = memo(({ transaction }: { transaction: TransactionPageDetailProps['transaction'] }) => (
   <Card body className="p-2 rounded-4">
-    <div className="gap-3 d-flex align-items-start align-items-lg-center flex-column justify-content-between flex-lg-row">
+    <div className="gap-3 d-flex align-items-stretch flex-column justify-content-between flex-lg-row">
       <div>
         <div className="mb-3">
           <h6 className="mb-1">Tagihan</h6>
-          <h4 className="fw-bold">#{transaction?.id}</h4>
+          <h4 className="mb-0 fw-bold">#{transaction?.id}</h4>
         </div>
         <p className="gap-2 mb-0 d-flex align-items-center">
-          <FaCalendar />
+          <FaCalendar size={12} />
           <span>{formatDateToWIB(transaction?.updated_at || '')}</span>
         </p>
       </div>
-      <div className="gap-2 d-flex flex-column align-items-end">
-        <Badge color={getTransactionStatusColor(transaction?.status || 'UNPAID' as TransactionStatusEnum)}>
-          {getTransactionStatusLabel(transaction?.status || 'UNPAID' as TransactionStatusEnum)}
-        </Badge>
-        <Button className="gap-2 mt-2 d-flex align-items-center" variant="light">
-          <FaDownload />
-          <span>Unduh Tagihan</span>
-        </Button>
+      <div className="gap-2 d-flex flex-column flex-lg-fill">
+        <div className="gap-2 d-flex justify-content-start justify-content-lg-end">
+          <Badge color={getTransactionStatusColor(transaction?.status || 'UNPAID' as TransactionStatusEnum)}>
+            {getTransactionStatusLabel(transaction?.status || 'UNPAID' as TransactionStatusEnum)}
+          </Badge>
+          <Badge>
+            Unggah Bukti Bayar
+          </Badge>
+        </div>
+        <div className="gap-2 d-flex justify-content-end flex-column flex-lg-row">
+          <Button className="gap-2 mt-2 d-flex align-items-center justify-content-center" variant="light">
+            <FaDownload />
+            <span>Unduh Tagihan</span>
+          </Button>
+        </div>
       </div>
     </div>
   </Card>
@@ -205,7 +213,7 @@ const TransactionInfo = memo(({ transaction }: { transaction: TransactionPageDet
         {transactionFields.map((field, index) => (
           <div key={field.label} className="pb-3 d-flex justify-content-between border-bottom">
             <span className="text-muted">{field.label}</span>
-            <span className="fw-medium">{field.value}</span>
+            <span className="fw-medium text-end">{field.value}</span>
           </div>
         ))}
 
