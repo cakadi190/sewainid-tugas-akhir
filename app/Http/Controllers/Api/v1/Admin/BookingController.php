@@ -26,7 +26,10 @@ class BookingController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = $this->_transaction->query();
+        $query = $this->_transaction->with([
+            'transactionConfirmation' => fn($query) => $query->select(['id', 'transaction_id', 'created_at', 'transaction_receipt']),
+            'carData' => fn($query) => $query->select(['id', 'brand', 'car_name']),
+        ]);
 
         if ($request->boolean('withTrashed')) {
             $query = $this->_transaction->onlyTrashed();
@@ -34,9 +37,7 @@ class BookingController extends Controller
 
         return DataTables::of($query)
             ->orderColumn('name', '-name $1')
-            ->setRowId(function (Transaction $model) {
-                return $model->id;
-            })
+            ->setRowId(fn(Transaction $model): string => $model->id)
             ->make(true);
     }
 
@@ -67,7 +68,7 @@ class BookingController extends Controller
                     if ($request->payment_proof) {
                         $uploadPath = $request->payment_proof->store('payment_proof', 'public');
 
-                        $booking->confirmations()->create([
+                        $booking->transactionConfirmation()->create([
                             'transaction_receipt' => $uploadPath,
                             'user_id' => auth()->id(),
                         ]);

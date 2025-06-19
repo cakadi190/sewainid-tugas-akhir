@@ -1,7 +1,7 @@
 import { compactCurrencyFormat, currencyFormat, mileageFormat, speedFormat } from "@/Helpers/number";
 import { AuthenticatedAdmin } from "@/Layouts/AuthenticatedLayout";
 import Database from "@/types/database";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, usePage } from "@inertiajs/react";
 import { Badge, Breadcrumb, BreadcrumbItem, Button, Card, Col, Modal, Nav, Row, Tab } from "react-bootstrap";
 import { FaChevronRight, FaMapPin, FaUser } from "react-icons/fa6";
 import { FaExclamationTriangle } from "react-icons/fa";
@@ -12,19 +12,20 @@ import { MediaLibrary } from "@/types/medialibrary";
 import ImageGallery from "@/Components/ImageGallery";
 import { GridContainer, GridItem } from "@/InternalBorderGrid";
 import { PiBabyCarriage, PiCarProfileDuotone, PiLock, PiMusicNote, PiPalette, PiSeat, PiShield, PiSnowflake, PiSpeedometer, PiTag, PiTire } from "react-icons/pi";
-import { getCarConditionLabel, getCarFuelTypeLabel, getCarModelLabel, getCarStatusColor, getCarStatusIcon, getCarStatusLabel, getCarTransmissionLabel } from "@/Helpers/EnumHelper";
+import { getCarConditionLabel, getCarFuelTypeLabel, getCarModelLabel, getCarStatusColor, getCarStatusIcon, getCarStatusLabel, getCarTransmissionLabel, getRentalStatusColor, getRentalStatusLabel } from "@/Helpers/EnumHelper";
 import { GiGearStickPattern } from "react-icons/gi";
 import LabelValue from "@/Components/LabelValue";
 import EditData from "./EditData";
 import { twMerge } from "tailwind-merge";
-import { CarConditionEnum, CarModelEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum } from "@/Helpers/enum";
+import { CarConditionEnum, CarModelEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum, RentalStatusEnum } from "@/Helpers/enum";
 import { ShowModalTrackProvider, useShowModalTrack } from "@/Context/TrackingModalContext";
 import 'leaflet/dist/leaflet.css';
 import ModalTrackingMap from "./TrackingMap";
 import MapPreview from "./MapPreview";
+import { PageProps } from "@/types";
 
 interface ShowProps {
-  car_data: Database['CarData'];
+  car_data: Database['CarData'] & { transaction: Database['Transaction'] };
 }
 
 const CarDetailHeader: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
@@ -540,31 +541,33 @@ const CarRegistration = ({ carData }: { carData: Database['CarData'] }) => {
 };
 
 const CarHistory = () => {
+  const {
+    props: {
+      car_data: { transaction: transactionData },
+    },
+  } = usePage<PageProps<{ car_data: Database['CarData'] & { transaction: Array<Database['Transaction'] & { user: Database['User'] }> } }>>();
+
   return (
     <div>
       <div className="gap-3 d-flex flex-column">
-        {[1, 2, 3].map((i) => (
-          <Card key={i} className="mb-0">
+        {transactionData.map((trans) => (
+          <Card key={trans.id} className="mb-0">
             <Card.Header className="bg-white d-flex justify-content-between align-items-center">
               <div className="gap-3 d-flex align-items-center">
                 <div className="overflow-hidden rounded-circle" style={{ width: '40px', height: '40px' }}>
                   <img
-                    src={`https://placehold.co/40/6c757d/ffffff?text=U${i}`}
-                    alt="User"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = `https://placehold.co/40/6c757d/ffffff?text=U${i}`;
-                    }}
+                    src={trans.user.avatar}
+                    alt={trans.user.name}
                     width={40}
                     height={40}
                   />
                 </div>
                 <div>
-                  <p className="mb-0 fw-semibold">Budi Santoso</p>
-                  <p className="mb-0 text-muted small">ID: RS-2023-{1000 + i}</p>
+                  <p className="mb-0 fw-semibold">{trans.user.name}</p>
+                  <p className="mb-0 text-muted small">{dayjs(trans.created_at).format('LLLL')}</p>
                 </div>
               </div>
-              <Badge bg="light" text="dark" className="border">Selesai</Badge>
+              <Badge as="div" bg={getRentalStatusColor(trans.rental_status as unknown as RentalStatusEnum)}>{getRentalStatusLabel(trans.rental_status as unknown as RentalStatusEnum)}</Badge>
             </Card.Header>
 
             <Card.Body>
@@ -574,8 +577,8 @@ const CarHistory = () => {
                     <FaCalendar size={16} className="mt-1 text-muted" />
                     <div>
                       <p className="mb-0 text-muted small fw-medium">Periode Sewa</p>
-                      <p className="mb-0 small">12 Apr - 15 Apr 2023</p>
-                      <p className="mb-0 text-muted small">3 hari</p>
+                      <p className="mb-0 small">{dayjs(trans.pickup_date).format('DD MMMM YYYY')} - {dayjs(trans.return_date).format('DD MMMM YYYY')}</p>
+                      <p className="mb-0 text-muted small">Durasi sewa {dayjs(trans.return_date).diff(dayjs(trans.pickup_date), 'day')} hari</p>
                     </div>
                   </div>
                 </Col>
@@ -584,7 +587,7 @@ const CarHistory = () => {
                     <FaMapPin size={16} className="mt-1 text-muted" />
                     <div>
                       <p className="mb-0 text-muted small fw-medium">Lokasi</p>
-                      <p className="mb-0 small">Kota Surakarta</p>
+                      <p className="mb-0 small">{trans.place_name}</p>
                     </div>
                   </div>
                 </Col>
@@ -593,7 +596,7 @@ const CarHistory = () => {
                     <FaUser size={16} className="mt-1 text-muted" />
                     <div>
                       <p className="mb-0 text-muted small fw-medium">Pengemudi</p>
-                      <p className="mb-0 small">Dengan Pengemudi</p>
+                      <p className="mb-0 small">{trans.with_driver ? 'Ya' : 'Tidak'}</p>
                     </div>
                   </div>
                 </Col>
@@ -603,7 +606,7 @@ const CarHistory = () => {
             <Card.Footer className="bg-white d-flex justify-content-between align-items-center">
               <div>
                 <p className="mb-0 small fw-medium">Total Pembayaran</p>
-                <p className="mb-0 fw-bold">{currencyFormat(1050000)}</p>
+                <p className="mb-0 fw-bold">{currencyFormat(trans.total_pay)}</p>
               </div>
               <Button variant="light" size="sm" className="gap-1 d-flex align-items-center">
                 Detail

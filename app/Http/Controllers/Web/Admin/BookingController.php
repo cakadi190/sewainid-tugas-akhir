@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Http\Controllers\Web\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Transaction;
+use App\Services\TripayServices;
+use Illuminate\Http\Request;
+
+class BookingController extends Controller
+{
+    public function __construct(
+        protected readonly TripayServices $tripay
+    ) {
+    }
+
+    /**
+     * Show the admin booking index page.
+     *
+     * @return \Inertia\Response
+     */
+    public function index()
+    {
+        seo()->title('Pemesanan Armada')->generate();
+
+        return inertia('Admin/Booking/Index');
+    }
+
+    /**
+     * Display the specified booking details.
+     *
+     * @param \App\Models\Transaction $booking
+     * @return \Inertia\Response
+     */
+    public function show(Transaction $booking)
+    {
+        $booking->load(['carData', 'carData.media', 'user', 'carData.transaction', 'carData.transaction.user', 'transactionConfirmation']);
+
+        $transactionDetail = $this->tripay->getPayment($booking->payment_references)?->json()['data'];
+
+        return inertia('Admin/Booking/Show', compact('booking', 'transactionDetail'));
+    }
+}

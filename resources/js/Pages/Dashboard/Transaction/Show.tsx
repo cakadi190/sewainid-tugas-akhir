@@ -242,8 +242,8 @@ const BillDetails = memo(({
     <ListGroup variant="flush">
       {transactionDetail?.order_items?.map((item, index) => (
         <ListGroup.Item key={`${item.sku}-${index}`} className="px-0 d-flex justify-content-between">
-          <span className="text-muted">{item.name}</span>
-          <span>{currencyFormat(item.price)}</span>
+          <span className="text-muted">{item.name} x {item.quantity}</span>
+          <span>{currencyFormat(item.price * item.quantity)}</span>
         </ListGroup.Item>
       ))}
     </ListGroup>

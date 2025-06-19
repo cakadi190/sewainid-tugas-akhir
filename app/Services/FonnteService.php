@@ -176,9 +176,6 @@ class FonnteService
                 ->asMultipart()
                 ->post('https://api.fonnte.com/send', $multipart);
 
-            Log::info("Request status", $response->json());
-            Log::info("API Token: {$this->token}");
-
             return $response->json();
         } catch (RequestException $e) {
             Log::info("Request status", $e->getTrace());

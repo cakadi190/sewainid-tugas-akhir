@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Transaction Confirmation Model
@@ -42,4 +43,14 @@ class TransactionConfirmation extends Model
         'user_id',
         'transaction_receipt',
     ];
+
+    /**
+     * Get the user that owns the TransactionConfirmation
+     *
+     * @return BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

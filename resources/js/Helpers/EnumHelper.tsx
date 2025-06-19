@@ -52,7 +52,7 @@ const carConditionIcons: { [key in CarConditionEnum]: JSX.Element } = {
  * Mapping of RentalStatusEnum values to human-readable labels in Indonesian
  */
 const rentalStatusLabels: { [key in RentalStatusEnum]: string } = {
-  [RentalStatusEnum.DRAFT]: 'Draft',
+  [RentalStatusEnum.DRAFT]: 'Draf',
   [RentalStatusEnum.PENDING]: 'Menunggu',
   [RentalStatusEnum.IN_PROGRESS]: 'Sedang Berlangsung',
   [RentalStatusEnum.COMPLETED]: 'Selesai',
@@ -63,11 +63,11 @@ const rentalStatusLabels: { [key in RentalStatusEnum]: string } = {
  * Mapping of RentalStatusEnum values to Bootstrap 5 color classes
  */
 const rentalStatusColors: { [key in RentalStatusEnum]: string } = {
-  [RentalStatusEnum.DRAFT]: 'bg-secondary',
-  [RentalStatusEnum.PENDING]: 'bg-warning',
-  [RentalStatusEnum.IN_PROGRESS]: 'bg-primary',
-  [RentalStatusEnum.COMPLETED]: 'bg-success',
-  [RentalStatusEnum.CANCELED]: 'bg-danger',
+  [RentalStatusEnum.DRAFT]: 'secondary',
+  [RentalStatusEnum.PENDING]: 'warning',
+  [RentalStatusEnum.IN_PROGRESS]: 'primary',
+  [RentalStatusEnum.COMPLETED]: 'success',
+  [RentalStatusEnum.CANCELED]: 'danger',
 }
 
 /**
@@ -224,10 +224,10 @@ const carFuelTypeColors: { [key in FuelEnum]: string } = {
  * Mapping of TransactionStatusEnum values to human-readable labels in Indonesian
  */
 export const transactionStatusLabels: { [key in TransactionStatusEnum]: string } = {
-  [TransactionStatusEnum.UNPAID]: 'Belum Bayar',
-  [TransactionStatusEnum.PAID]: 'Sudah Bayar',
+  [TransactionStatusEnum.UNPAID]: 'Belum Dibayar',
+  [TransactionStatusEnum.PAID]: 'Sudah Dibayar',
   [TransactionStatusEnum.EXPIRED]: 'Kadaluarsa',
-  [TransactionStatusEnum.FAILED]: 'Gagal',
+  [TransactionStatusEnum.FAILED]: 'Gagal / Batal',
   [TransactionStatusEnum.REFUND]: 'Refund',
 }
 
@@ -235,11 +235,11 @@ export const transactionStatusLabels: { [key in TransactionStatusEnum]: string }
  * Mapping of TransactionStatusEnum values to Bootstrap 5 color classes
  */
 export const transactionStatusColors: { [key in TransactionStatusEnum]: string } = {
-  [TransactionStatusEnum.UNPAID]: 'bg-yellow-500',
-  [TransactionStatusEnum.PAID]: 'bg-green-500',
-  [TransactionStatusEnum.EXPIRED]: 'bg-red-500',
-  [TransactionStatusEnum.FAILED]: 'bg-red-500',
-  [TransactionStatusEnum.REFUND]: 'bg-blue-500',
+  [TransactionStatusEnum.UNPAID]: 'secondary',
+  [TransactionStatusEnum.PAID]: 'success',
+  [TransactionStatusEnum.EXPIRED]: 'danger',
+  [TransactionStatusEnum.FAILED]: 'dark',
+  [TransactionStatusEnum.REFUND]: 'info',
 }
 
 /**
@@ -295,7 +295,7 @@ export function getCarModelColor(model: CarModelEnum): string {
  * @returns The corresponding Bootstrap 5 color class for the rental status, or 'secondary' if not found
  */
 export function getRentalStatusColor(status: RentalStatusEnum): string {
-  return rentalStatusColors[status] || 'secondary';
+  return rentalStatusColors[status];
 }
 
 /**
@@ -304,7 +304,7 @@ export function getRentalStatusColor(status: RentalStatusEnum): string {
  * @returns The corresponding label for the rental status, or 'Unknown Status' if not found.
  */
 export function getRentalStatusLabel(status: RentalStatusEnum): string {
-  return rentalStatusLabels[status] || 'Unknown Status';
+  return rentalStatusLabels[status];
 }
 
 /**
@@ -415,5 +415,5 @@ export function getTransactionStatusLabel(status: TransactionStatusEnum): string
  * @returns The corresponding Bootstrap 5 color class for the transaction status, or 'secondary' if not found
  */
 export function getTransactionStatusColor(status: TransactionStatusEnum): string {
-  return transactionStatusColors[status] || 'secondary';
+  return transactionStatusColors[status];
 }

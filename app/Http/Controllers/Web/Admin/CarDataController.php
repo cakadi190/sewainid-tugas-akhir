@@ -31,6 +31,9 @@ class CarDataController extends Controller
     {
         seo()->title("Detail Armada {$car_data->brand} {$car_data->car_name}")->generate();
 
+        $car_data->load(['transaction' => function ($query) {
+            $query->latest();
+        }, 'transaction.user']);
         $car_data->getMedia('gallery');
 
         return inertia('Admin/CarData/Show', compact('car_data'));

@@ -126,7 +126,7 @@ class CheckoutController extends Controller
 
             $rentDays = Carbon::parse($order['pickup_date'])->diffInDays(Carbon::parse($order['return_date'])) + 1;
             $trxId = $this->generateTransactionId();
-            $items = $this->buildOrderItems($car, $rentDays, $order['with_driver'] ?? false, $trxId);
+            $items = $this->buildOrderItems($car, $rentDays, $order['with_driver'], $trxId);
             $tax = $this->calculateTax($items);
 
             $items->push(new TripayOrderItem(

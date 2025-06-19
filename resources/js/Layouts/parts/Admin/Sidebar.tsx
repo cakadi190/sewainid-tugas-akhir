@@ -397,10 +397,6 @@ export default function Sidebar() {
           label: 'Jadwal Sewa',
           href: '#',
         },
-        {
-          label: 'Konfirmasi Pemesanan',
-          href: '#',
-        },
       ],
     },
     { label: 'Laporan', type: 'heading' },
