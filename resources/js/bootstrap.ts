@@ -6,15 +6,15 @@ window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 // Enabling Popover and Tooltip
-document.addEventListener('DOMContentLoaded', () => {
-  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-  const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+document.addEventListener('DOMContentLoaded', (): void => {
+  const tooltipTriggerList: HTMLElement[] | null = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  const popoverTriggerList: HTMLElement[] | null = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
 
-  tooltipTriggerList.forEach(tooltipTriggerEl => {
+  tooltipTriggerList.forEach((tooltipTriggerEl: HTMLElement) => {
     new bootstrap.Tooltip(tooltipTriggerEl);
   });
 
-  popoverTriggerList.forEach(popoverTriggerEl => {
+  popoverTriggerList.forEach((popoverTriggerEl: HTMLElement) => {
     new bootstrap.Popover(popoverTriggerEl);
   });
 });
