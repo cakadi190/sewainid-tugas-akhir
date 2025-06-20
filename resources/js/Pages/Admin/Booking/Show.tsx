@@ -505,10 +505,10 @@ export default function Show({ booking, transactionDetail }: {
               </Button>
               {booking.status === 'UNPAID' && (
                 <>
-                  <Button className="gap-2 d-flex justify-content-center align-items-center" variant="light">
+                  <Link className="gap-2 d-flex justify-content-center align-items-center btn btn-light" href={route('v1.admin.transaction.send-reminder', booking.id)} method="post" as="button">
                     <FaEnvelope />
                     <span>Kirim Pengingat</span>
-                  </Button>
+                  </Link>
                   <Button onClick={() => updateTransactionStatus(booking.id, TransactionStatusEnum.PAID, !!booking.transaction_confirmation)} className="gap-2 d-flex justify-content-center align-items-center" variant="success">
                     <FaCheckCircle />
                     <span>Verifikasi Pesanan</span>
