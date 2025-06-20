@@ -59,7 +59,7 @@ export default function Index() {
       formData.append('payment_proof', file);
     }
 
-    router.post(route('v1.admin.booking.update', id), formData, {
+    router.post(route('v1.admin.transaction.update', id), formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -270,13 +270,13 @@ export default function Index() {
           )}
           <Link
             title="Lihat Detail Tagihan"
-            href={route('administrator.booking.show', value)}
+            href={route('administrator.transaction.show', value)}
             className="btn btn-primary"
           >
             <FaEye />
           </Link>
           <DeleteData
-            url={route('v1.admin.booking.destroy', row.id)}
+            url={route('v1.admin.transaction.destroy', row.id)}
             onSuccess={refetch}
           />
         </ButtonGroup>
@@ -300,13 +300,13 @@ export default function Index() {
         </div>
       }
     >
-      <Head title="Data Pemesanan" />
+      <Head title="Transaksi" />
       <AlertPage />
       <DataTable
         ref={dataTableRef}
         search={searchQuery}
         className="mt-3"
-        url={route('v1.admin.booking.index')}
+        url={route('v1.admin.transaction.index')}
         columns={columns}
       />
     </AuthenticatedAdmin>

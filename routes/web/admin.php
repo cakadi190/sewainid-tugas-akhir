@@ -9,9 +9,9 @@ Route::controller(\App\Http\Controllers\Web\Admin\CarDataController::class)->pre
     Route::get('{car_data}', 'show')->name('show');
 });
 
-Route::controller(\App\Http\Controllers\Web\Admin\BookingController::class)->prefix('bookings')->name('booking.')->group(function() {
+Route::controller(\App\Http\Controllers\Web\Admin\TransactionController::class)->prefix('transactions')->name('transaction.')->group(function() {
     Route::get('/', 'index')->name('index');
-    Route::get('{booking}', 'show')->name('show');
+    Route::get('{transaction}', 'show')->name('show');
 });
 
 Route::get('car-repairs', \App\Http\Controllers\Web\Admin\CarRepairController::class)->name('car-repair.index');

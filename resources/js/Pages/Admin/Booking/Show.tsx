@@ -232,8 +232,8 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
   );
 };
 
-export default function Show({ booking, transactionDetail }: {
-  booking: BookingWithRelations;
+export default function Show({ transaction, transactionDetail }: {
+  transaction: BookingWithRelations;
   transactionDetail?: TripayDetail;
 }) {
   const validateFile = useCallback((file: File | null): string | null => {
@@ -260,7 +260,7 @@ export default function Show({ booking, transactionDetail }: {
       formData.append('payment_proof', file);
     }
 
-    router.post(route('v1.admin.booking.update', id), formData, {
+    router.post(route('v1.admin.transaction.update', id), formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -392,35 +392,35 @@ export default function Show({ booking, transactionDetail }: {
       header={
         <div className="d-flex justify-content-between">
           <div className="flex-column d-flex">
-            <h3 className="h4 fw-semibold">Tagihan #{booking.id}</h3>
+            <h3 className="h4 fw-semibold">Tagihan #{transaction.id}</h3>
             <Breadcrumb className="m-0" bsPrefix="m-0 breadcrumb">
               <BreadcrumbItem linkAs={Link} href={route('administrator.home')}>
                 Dasbor Beranda
               </BreadcrumbItem>
-              <BreadcrumbItem linkAs={Link} href={route('administrator.booking.index')}>
+              <BreadcrumbItem linkAs={Link} href={route('administrator.transaction.index')}>
                 Data Pemesanan
               </BreadcrumbItem>
-              <BreadcrumbItem active>#{booking.id}</BreadcrumbItem>
+              <BreadcrumbItem active>#{transaction.id}</BreadcrumbItem>
             </Breadcrumb>
           </div>
 
-          <div><Link href={route('administrator.booking.show', booking.id)} className="btn btn-primary">Perbarui</Link></div>
+          <div><Link href={route('administrator.transaction.show', transaction.id)} className="btn btn-primary">Perbarui</Link></div>
         </div>
       }
     >
-      <Head title={`Detail Tagihan #${booking.id}`} />
+      <Head title={`Detail Tagihan #${transaction.id}`} />
 
       <Row className="mt-3">
         <Col md="8">
           <Card body className="p-2 mb-3 bg-light rounded-4">
             <div className="d-flex flex-column align-items-center flex-lg-row justify-content-between">
               <div>
-                <h3 className="fw-bold">#{booking.id}</h3>
-                <div className="mt-2">Dibuat pada {dayjs(booking.created_at).format("LLLL")}</div>
+                <h3 className="fw-bold">#{transaction.id}</h3>
+                <div className="mt-2">Dibuat pada {dayjs(transaction.created_at).format("LLLL")}</div>
               </div>
               <div className="text-start text-lg-end">
-                <h4>{currencyFormat(booking.total_pay)}</h4>
-                <Badge bg={getTransactionStatusColor(booking.status)}>{getTransactionStatusLabel(booking.status)}</Badge>
+                <h4>{currencyFormat(transaction.total_pay)}</h4>
+                <Badge bg={getTransactionStatusColor(transaction.status)}>{getTransactionStatusLabel(transaction.status)}</Badge>
               </div>
             </div>
           </Card>
@@ -430,21 +430,21 @@ export default function Show({ booking, transactionDetail }: {
               <h5>Detail Pelanggan</h5>
 
               <div className="gap-3 pt-3 d-flex align-items-center">
-                <img src={booking.user.avatar} alt={booking.user.name} className="rounded-circle" width={96} height={96} />
+                <img src={transaction.user.avatar} alt={transaction.user.name} className="rounded-circle" width={96} height={96} />
                 <div className="gap-2 d-flex flex-column">
-                  <h4 className="mb-0 fw-bold">{booking.user.name}</h4>
+                  <h4 className="mb-0 fw-bold">{transaction.user.name}</h4>
                   <div className="flex-wrap gap-2 d-flex align-items-center">
                     <div className="gap-2 d-flex align-items-center">
                       <Mail size={16} />
-                      {booking.user.email}
+                      {transaction.user.email}
                     </div>
                     <div className="gap-2 d-flex align-items-center">
                       <Phone size={16} />
-                      {booking.user.phone}
+                      {transaction.user.phone}
                     </div>
                     <div className="gap-2 d-flex align-items-center">
                       <Pin size={16} />
-                      {booking.user.address}
+                      {transaction.user.address}
                     </div>
                   </div>
                 </div>
@@ -466,9 +466,9 @@ export default function Show({ booking, transactionDetail }: {
           </Card>
 
           <Card body className="p-2 mb-3 rounded-4">
-            <h3>{booking.car_data.brand} {booking.car_data.car_name}</h3>
+            <h3>{transaction.car_data.brand} {transaction.car_data.car_name}</h3>
 
-            <CarSpecification carData={booking.car_data} />
+            <CarSpecification carData={transaction.car_data} />
           </Card>
         </Col>
         <Col md="4">
@@ -478,15 +478,15 @@ export default function Show({ booking, transactionDetail }: {
             <ListGroup className="px-0 mt-3" variant="flush">
               <ListGroupItem className="px-0 d-flex justify-content-between align-items-center">
                 <strong>Jatuh Tempo</strong>
-                <span>{dayjs(booking.expired_at).format("LLL")}</span>
+                <span>{dayjs(transaction.expired_at).format("LLL")}</span>
               </ListGroupItem>
               <ListGroupItem className="px-0 d-flex justify-content-between align-items-center">
                 <strong>Status</strong>
-                <span><Badge bg={getTransactionStatusColor(booking.status)}>{getTransactionStatusLabel(booking.status)}</Badge></span>
+                <span><Badge bg={getTransactionStatusColor(transaction.status)}>{getTransactionStatusLabel(transaction.status)}</Badge></span>
               </ListGroupItem>
               <ListGroupItem className="px-0 d-flex justify-content-between align-items-center">
                 <strong>Total Tagihan</strong>
-                <span>{currencyFormat(booking.total_pay)}</span>
+                <span>{currencyFormat(transaction.total_pay)}</span>
               </ListGroupItem>
               <ListGroupItem className="px-0 d-flex justify-content-between align-items-center">
                 <strong>Metode Pembayaran</strong>
@@ -503,17 +503,17 @@ export default function Show({ booking, transactionDetail }: {
                 <FaDownload />
                 <span>Unduh Tagihan</span>
               </Button>
-              {booking.status === 'UNPAID' && (
+              {transaction.status === 'UNPAID' && (
                 <>
-                  <Link className="gap-2 d-flex justify-content-center align-items-center btn btn-light" href={route('v1.admin.transaction.send-reminder', booking.id)} method="post" as="button">
+                  <Link className="gap-2 d-flex justify-content-center align-items-center btn btn-light" href={route('v1.admin.transaction.send-reminder', transaction.id)} method="post" as="button">
                     <FaEnvelope />
                     <span>Kirim Pengingat</span>
                   </Link>
-                  <Button onClick={() => updateTransactionStatus(booking.id, TransactionStatusEnum.PAID, !!booking.transaction_confirmation)} className="gap-2 d-flex justify-content-center align-items-center" variant="success">
+                  <Button onClick={() => updateTransactionStatus(transaction.id, TransactionStatusEnum.PAID, !!transaction.transaction_confirmation)} className="gap-2 d-flex justify-content-center align-items-center" variant="success">
                     <FaCheckCircle />
                     <span>Verifikasi Pesanan</span>
                   </Button>
-                  <Button onClick={() => updateTransactionStatus(booking.id, TransactionStatusEnum.FAILED)} className="gap-2 d-flex justify-content-center align-items-center" variant="danger">
+                  <Button onClick={() => updateTransactionStatus(transaction.id, TransactionStatusEnum.FAILED)} className="gap-2 d-flex justify-content-center align-items-center" variant="danger">
                     <FaXmark />
                     <span>Batalkan Pesanan</span>
                   </Button>
@@ -522,10 +522,10 @@ export default function Show({ booking, transactionDetail }: {
             </div>
           </Card>
 
-          {booking.transaction_confirmation && (
+          {transaction.transaction_confirmation && (
             <Card body className="p-2 mb-3 rounded-4">
               <h3 className="pb-2">Bukti Pembayaran</h3>
-              <img src={`/storage/${booking.transaction_confirmation.transaction_receipt}`} alt="Bukti Pembayaran" className="w-100" />
+              <img src={`/storage/${transaction.transaction_confirmation.transaction_receipt}`} alt="Bukti Pembayaran" className="w-100" />
             </Card>
           )}
         </Col>

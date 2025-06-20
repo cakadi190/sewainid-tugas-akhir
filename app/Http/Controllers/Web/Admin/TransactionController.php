@@ -7,7 +7,7 @@ use App\Models\Transaction;
 use App\Services\TripayServices;
 use Illuminate\Http\Request;
 
-class BookingController extends Controller
+class TransactionController extends Controller
 {
     public function __construct(
         protected readonly TripayServices $tripay
@@ -21,7 +21,7 @@ class BookingController extends Controller
      */
     public function index()
     {
-        seo()->title('Pemesanan Armada')->generate();
+        seo()->title('Transaksi')->generate();
 
         return inertia('Admin/Booking/Index');
     }
@@ -32,12 +32,14 @@ class BookingController extends Controller
      * @param \App\Models\Transaction $booking
      * @return \Inertia\Response
      */
-    public function show(Transaction $booking)
+    public function show(Transaction $transaction)
     {
-        $booking->load(['carData', 'carData.media', 'user', 'carData.transaction', 'carData.transaction.user', 'transactionConfirmation']);
+        seo()->title("Transaksi #{$transaction->id}")->generate();
 
-        $transactionDetail = $this->tripay->getPayment($booking->payment_references)?->json()['data'];
+        $transaction->load(['carData', 'carData.media', 'user', 'carData.transaction', 'carData.transaction.user', 'transactionConfirmation']);
 
-        return inertia('Admin/Booking/Show', compact('booking', 'transactionDetail'));
+        $transactionDetail = $this->tripay->getPayment($transaction->payment_references)?->json()['data'];
+
+        return inertia('Admin/Booking/Show', compact('transaction', 'transactionDetail'));
     }
 }

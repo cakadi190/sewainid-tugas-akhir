@@ -391,7 +391,7 @@ export default function Sidebar() {
       child: [
         {
           label: 'Daftar Pemesanan',
-          href: route('administrator.booking.index'),
+          href: route('administrator.transaction.index'),
         },
         {
           label: 'Jadwal Sewa',
