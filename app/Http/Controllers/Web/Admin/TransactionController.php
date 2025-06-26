@@ -21,9 +21,9 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        seo()->title('Transaksi')->generate();
+        seo()->title('Data Transaksi')->generate();
 
-        return inertia('Admin/Booking/Index');
+        return inertia('Admin/Transaction/Index');
     }
 
     /**
@@ -40,6 +40,6 @@ class TransactionController extends Controller
 
         $transactionDetail = $this->tripay->getPayment($transaction->payment_references)?->json()['data'];
 
-        return inertia('Admin/Booking/Show', compact('transaction', 'transactionDetail'));
+        return inertia('Admin/Transaction/Show', compact('transaction', 'transactionDetail'));
     }
 }

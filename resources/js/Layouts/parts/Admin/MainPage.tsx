@@ -7,7 +7,7 @@ import { useSidebar } from "@/Hooks/useSidebar";
 const MainPageStyled = styled.main<{ isToggled: boolean }>`
 margin-left: 20rem;
 width: calc(100% - 20rem);
-min-height: 100svh;
+min-height: calc(100svh - 0.5rem);
 transition: all .2s;
 padding-top: 6.5rem;
 display: flex;

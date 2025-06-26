@@ -1,6 +1,6 @@
 import axios from 'axios';
 import * as bootstrap from 'bootstrap';
-import {Tooltip} from "bootstrap";
+import { Popover, Tooltip } from "bootstrap";
 
 // Axios Config
 window.axios = axios;
@@ -13,5 +13,5 @@ document.addEventListener('DOMContentLoaded',
     const popoverTriggerList: HTMLElement[] | null = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
 
     tooltipTriggerList.forEach((tooltipTriggerEl: HTMLElement): Tooltip => new bootstrap.Tooltip(tooltipTriggerEl));
-    popoverTriggerList.forEach((popoverTriggerEl: HTMLElement): Tooltip => new bootstrap.Popover(popoverTriggerEl));
+    popoverTriggerList.forEach((popoverTriggerEl: HTMLElement): Popover => new bootstrap.Popover(popoverTriggerEl));
   });

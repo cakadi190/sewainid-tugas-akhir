@@ -395,7 +395,7 @@ export default function Sidebar() {
         },
         {
           label: 'Jadwal Sewa',
-          href: '#',
+          href: route('administrator.booking'),
         },
       ],
     },
