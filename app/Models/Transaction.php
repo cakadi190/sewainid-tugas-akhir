@@ -122,6 +122,7 @@ class Transaction extends Model
         'rental_status' => RentalStatusEnum::class,
         'status' => TransactionStatusEnum::class,
     ];
+
     /**
      * Retrieve a collection of all possible transaction statuses.
      *

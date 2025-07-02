@@ -8,7 +8,6 @@ use App\Http\Controllers\Controller;
 use App\Interfaces\CrudHelper;
 use App\Models\Transaction;
 use DataTables;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,8 +19,7 @@ class BookingController extends Controller
     public function __construct(
         protected Transaction $_transaction,
         protected CrudHelper $_crudHelper,
-    ) {
-    }
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -29,10 +27,10 @@ class BookingController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = $this->_transaction->with([
-            'transactionConfirmation' => fn($query) => $query->select(['id', 'transaction_id', 'created_at', 'transaction_receipt']),
-            'carData' => fn($query) => $query->select(['id', 'brand', 'car_name']),
-            'driver' => fn($query) => $query->select(['id', 'name', 'phone']),
-            'conductor' => fn($query) => $query->select(['id', 'name', 'phone']),
+            'transactionConfirmation' => fn ($query) => $query->select(['id', 'transaction_id', 'created_at', 'transaction_receipt']),
+            'carData' => fn ($query) => $query->select(['id', 'brand', 'car_name']),
+            'driver' => fn ($query) => $query->select(['id', 'name', 'phone']),
+            'conductor' => fn ($query) => $query->select(['id', 'name', 'phone']),
         ]);
 
         if ($request->boolean('withTrashed')) {
@@ -41,7 +39,7 @@ class BookingController extends Controller
 
         return DataTables::of($query)
             ->orderColumn('name', '-name $1')
-            ->setRowId(fn(Transaction $model): string => $model->id)
+            ->setRowId(fn (Transaction $model): string => $model->id)
             ->make(true);
     }
 
@@ -74,7 +72,7 @@ class BookingController extends Controller
                     case 'updateTransactionStatus':
                         if ($request->hasFile('payment_proof')) {
                             $uploadPath = $request->file('payment_proof')->store('payment_proof', 'public');
-                            Log::info("Payment Proof Upload:", [
+                            Log::info('Payment Proof Upload:', [
                                 'transaction_receipt' => $uploadPath,
                                 'user_id' => auth()->id(),
                                 'transaction_id' => $transaction->id,
@@ -129,12 +127,14 @@ class BookingController extends Controller
                         break;
                 }
             });
+
             return back()->with('success', 'Berhasil memperbarui data pemesanan');
         } catch (Throwable $e) {
             Log::error('Booking update error', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
+
             return back()->with('error', 'Terjadi kesalahan saat memperbarui data pemesanan');
         }
     }

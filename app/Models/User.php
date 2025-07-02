@@ -157,7 +157,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function hasVerifiedEmail()
     {
-        return !is_null($this->email_verified_at);
+        return ! is_null($this->email_verified_at);
     }
 
     /**
@@ -178,8 +178,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Cek apakah driver bebas dan tidak sedang dalam transaksi apa pun.
-     *
-     * @return bool
      */
     public function isDriverFree(): bool
     {
@@ -187,7 +185,7 @@ class User extends Authenticatable implements MustVerifyEmail
             return false;
         }
 
-        return !$this->transactionsAsDriver()
+        return ! $this->transactionsAsDriver()
             ->whereIn('rental_status', [
                 RentalStatusEnum::PENDING,
                 RentalStatusEnum::IN_PROGRESS,
@@ -202,7 +200,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $requiredFields = ['gender', 'pbirth', 'phone', 'dbirth', 'nik', 'kk', 'sim'];
 
-        return collect($requiredFields)->every(fn($field) => is_null($this->$field));
+        return collect($requiredFields)->every(fn ($field) => is_null($this->$field));
     }
 
     /**
@@ -219,21 +217,6 @@ class User extends Authenticatable implements MustVerifyEmail
     public function wishlists(): HasMany
     {
         return $this->hasMany(Wishlist::class);
-    }
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'gender' => GenderUser::class,
-            'role' => RoleUser::class,
-        ];
     }
 
     /**
@@ -268,5 +251,20 @@ class User extends Authenticatable implements MustVerifyEmail
                     RentalStatusEnum::IN_PROGRESS,
                 ]);
             });
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'gender' => GenderUser::class,
+            'role' => RoleUser::class,
+        ];
     }
 }

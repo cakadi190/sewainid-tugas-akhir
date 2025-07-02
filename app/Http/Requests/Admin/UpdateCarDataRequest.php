@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Admin;
 
 use App\Enums\CarConditionEnum;
+use App\Enums\FuelTypeEnum;
+use App\Models\CarData;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -45,15 +47,15 @@ class UpdateCarDataRequest extends FormRequest
                 Rule::unique('car_data')->ignore($this->route('car_datum')),
             ],
             'color' => 'required|string|max:50',
-            'year_of_manufacture' => 'required|integer|digits:4|min:1886', // first cars were made around 1886
-            'model' => 'required|in:' . implode(',', \App\Models\CarData::getAllCarModels()->toArray()),
-            'status' => 'required|in:' . implode(',', \App\Models\CarData::getAllCarStatuses()->toArray()),
+            'year_of_manufacture' => 'required|integer|digits:4|min:1886',
+            'model' => 'required|in:' . implode(',', CarData::getAllCarModels()->toArray()),
+            'status' => 'required|in:' . implode(',', CarData::getAllCarStatuses()->toArray()),
             'condition' => [
                 'required',
                 Rule::in(CarConditionEnum::cases()),
             ],
             'description' => 'nullable|string|max:1000',
-            'gallery.*' => 'file|mimes:jpeg,png|max:10240', // maksimal 10 MB per file
+            'gallery.*' => 'file|mimes:jpeg,png|max:10240',
             'engine_number' => [
                 'required',
                 'string',
@@ -75,7 +77,7 @@ class UpdateCarDataRequest extends FormRequest
             'rent_price' => 'required|integer|min:0',
             'fuel_type' => [
                 'required',
-                Rule::in(\App\Enums\FuelTypeEnum::cases()),
+                Rule::in(FuelTypeEnum::cases()),
             ],
             'vehicle_registration_cert_expiration' => 'required|date',
             'license_plate_expiration' => 'required|date',
