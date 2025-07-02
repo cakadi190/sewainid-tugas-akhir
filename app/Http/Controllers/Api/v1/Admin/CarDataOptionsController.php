@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1\Admin;
 use App\Helpers\SelectHelper;
 use App\Http\Controllers\Controller;
 use App\Models\CarData;
+use Exception;
 use Illuminate\Http\Request;
 
 class CarDataOptionsController extends Controller
@@ -27,7 +28,7 @@ class CarDataOptionsController extends Controller
             );
 
             return $options;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);
         }
     }

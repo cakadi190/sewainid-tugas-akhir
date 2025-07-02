@@ -3,13 +3,13 @@
 namespace App\Models;
 
 use App\Enums\GenderUser;
+use App\Enums\RentalStatusEnum;
 use App\Enums\RoleUser;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
@@ -37,13 +37,12 @@ use Illuminate\Support\Collection;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Illuminate\Support\Facades\Notification> $readNotifications
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Illuminate\Support\Facades\Notification> $unreadNotifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transactions
  * @property-read int|null $transactions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Wishlist> $wishlists
  * @property-read int|null $wishlists_count
+ *
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
@@ -68,6 +67,7 @@ use Illuminate\Support\Collection;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRole($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereSim($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class User extends Authenticatable implements MustVerifyEmail
@@ -109,18 +109,19 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Mendapatkan semua peran pengguna yang tersedia.
      */
-    protected function casts(): array
+    public static function roles(): Collection
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'gender' => GenderUser::class,
-            'role' => RoleUser::class
-        ];
+        return collect(RoleUser::cases())->pluck('value');
+    }
+
+    /**
+     * Mendapatkan semua jenis kelamin pengguna yang tersedia.
+     */
+    public static function genders(): Collection
+    {
+        return collect(GenderUser::cases())->pluck('value');
     }
 
     /**
@@ -160,19 +161,42 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Mendapatkan semua peran pengguna yang tersedia.
-     *
-     * @return Collection
+     * Relasi transaksi sebagai sopir
      */
-    public static function roles(): Collection
+    public function transactionsAsDriver(): HasMany
     {
-        return collect(RoleUser::cases())->pluck('value');
+        return $this->hasMany(Transaction::class, 'driver_id');
+    }
+
+    /**
+     * Relasi transaksi sebagai sopir
+     */
+    public function transactionsAsConductor(): HasMany
+    {
+        return $this->hasMany(Transaction::class, 'conductor_id');
+    }
+
+    /**
+     * Cek apakah driver bebas dan tidak sedang dalam transaksi apa pun.
+     *
+     * @return bool
+     */
+    public function isDriverFree(): bool
+    {
+        if ($this->role !== RoleUser::DRIVER->value) {
+            return false;
+        }
+
+        return !$this->transactionsAsDriver()
+            ->whereIn('rental_status', [
+                RentalStatusEnum::PENDING,
+                RentalStatusEnum::IN_PROGRESS,
+            ])
+            ->exists();
     }
 
     /**
      * Memeriksa apakah data identitas pengguna sudah lengkap
-     *
-     * @return bool
      */
     public function isIdentityUnfilled(): bool
     {
@@ -182,19 +206,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Mendapatkan semua jenis kelamin pengguna yang tersedia.
-     *
-     * @return Collection
-     */
-    public static function genders(): Collection
-    {
-        return collect(GenderUser::cases())->pluck('value');
-    }
-
-    /**
      * Get all of the user's transactions.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function transactions(): HasMany
     {
@@ -203,12 +215,58 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get all of the user's wishlists.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function wishlists(): HasMany
     {
         return $this->hasMany(Wishlist::class);
     }
-}
 
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'gender' => GenderUser::class,
+            'role' => RoleUser::class,
+        ];
+    }
+
+    /**
+     * Scope a query to only include drivers who are free and not currently engaged in any transactions.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeDriverIsFree($query)
+    {
+        return $query->where('role', RoleUser::DRIVER->value)
+            ->whereDoesntHave('transactionsAsDriver', function ($query) {
+                $query->whereIn('rental_status', [
+                    RentalStatusEnum::PENDING,
+                    RentalStatusEnum::IN_PROGRESS,
+                ]);
+            });
+    }
+
+    /**
+     * Scope a query to only include conductors who are free and not currently engaged in any transactions.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeConductorIsFree($query)
+    {
+        return $query->where('role', RoleUser::CONDUCTOR->value)
+            ->whereDoesntHave('transactionsAsConductor', function ($query) {
+                $query->whereIn('rental_status', [
+                    RentalStatusEnum::PENDING,
+                    RentalStatusEnum::IN_PROGRESS,
+                ]);
+            });
+    }
+}

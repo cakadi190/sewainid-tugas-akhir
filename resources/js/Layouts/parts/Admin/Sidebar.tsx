@@ -1,35 +1,32 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import styled from '@emotion/styled';
-import React, { FC, useState } from 'react';
+import ApplicationLogo from "@/Components/ApplicationLogo";
+import { useSidebar } from "@/Hooks/useSidebar";
+import { PageProps } from "@/types";
+import styled from "@emotion/styled";
 import {
   faBars,
+  faCalendarAlt,
+  faCar,
+  faChartLine,
+  faChevronDown,
+  faClipboardList,
+  faFileContract,
   faTachometerAlt,
   faUsers,
-  faCalendarAlt,
-  faMoneyBillWave,
-  faClipboardList,
-  faChartLine,
-  faCog,
   faUserShield,
-  faFileContract,
-  faChevronDown,
+  faWrench,
   IconDefinition,
-  faCar,
-  faBuilding,
-  faWrench
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button } from 'react-bootstrap';
-import { Link, usePage } from '@inertiajs/react';
-import { PageProps } from '@/types';
-import { useSidebar } from '@/Hooks/useSidebar';
-import PerfectScrollbar from 'react-perfect-scrollbar';
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link, usePage } from "@inertiajs/react";
+import React, { FC, useState } from "react";
+import { Button } from "react-bootstrap";
+import PerfectScrollbar from "react-perfect-scrollbar";
 
 // Types
 type MenuList = {
   label: string;
   href?: string;
-  type?: 'menu' | 'heading';
+  type?: "menu" | "heading";
   icon?: IconDefinition | JSX.Element | string;
   child?: MenuList[];
 };
@@ -45,14 +42,20 @@ const SidebarStyle = styled.aside<{ isToggled: boolean }>`
   transition: all 0.3s ease;
   z-index: 1030;
   margin-left: -20rem;
-  background: linear-gradient(-45deg, rgba(var(--bs-body-bg-rgb), .5) 75%, rgba(var(--bs-primary-rgb), .125) 100%);
+  background: linear-gradient(
+    -45deg,
+    rgba(var(--bs-body-bg-rgb), 0.5) 75%,
+    rgba(var(--bs-primary-rgb), 0.125) 100%
+  );
   backdrop-filter: blur(1rem);
   border-right: 1px solid var(--bs-border-color);
 
   @media (992px <= width <= 1400px) {
     width: 18rem;
 
-    ${({ isToggled }) => !isToggled && `
+    ${({ isToggled }) =>
+      !isToggled &&
+      `
       margin-left: -18rem;
     `}
   }
@@ -61,7 +64,9 @@ const SidebarStyle = styled.aside<{ isToggled: boolean }>`
     margin-left: 0;
   }
 
-  ${({ isToggled }) => isToggled && `
+  ${({ isToggled }) =>
+    isToggled &&
+    `
     margin-left: 0;
 
     @media (width <= 992px) {
@@ -130,10 +135,14 @@ const MenuItem = styled.li`
 
 // Modify styled components to properly handle custom props
 const MenuLink = styled(Link, {
-  shouldForwardProp: (prop) => !['hasSubmenu', 'isActive'].includes(prop as string),
-}) <{ hasSubmenu?: boolean; isActive?: boolean }>`
+  shouldForwardProp: (prop) =>
+    !["hasSubmenu", "isActive"].includes(prop as string),
+})<{ hasSubmenu?: boolean; isActive?: boolean }>`
   padding: 0.75rem 1.5rem;
-  color: ${({ isActive }) => (isActive ? 'rgba(var(--bs-primary-rgb), 1)' : 'rgba(var(--bs-dark-rgb), 0.7)')};
+  color: ${({ isActive }) =>
+    isActive
+      ? "rgba(var(--bs-primary-rgb), 1)"
+      : "rgba(var(--bs-dark-rgb), 0.7)"};
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -141,13 +150,20 @@ const MenuLink = styled(Link, {
   transition: all 0.2s ease;
   ${({ hasSubmenu }) => hasSubmenu && `justify-content: space-between;`}
   ${({ isActive }) =>
-    isActive && `
+    isActive &&
+    `
     background: rgba(var(--bs-primary-rgb), 0.05);
   `}
 
   &:hover {
-    background: ${({ isActive }) => isActive ? `rgba(var(--bs-primary-rgb), 0.1)` : `rgba(var(--bs-dark-rgb), 0.05)`};
-    color: ${({ isActive }) => isActive ? `rgba(var(--bs-primary-rgb), 1)` : `rgba(var(--bs-dark-rgb), 0.7)`};
+    background: ${({ isActive }) =>
+      isActive
+        ? `rgba(var(--bs-primary-rgb), 0.1)`
+        : `rgba(var(--bs-dark-rgb), 0.05)`};
+    color: ${({ isActive }) =>
+      isActive
+        ? `rgba(var(--bs-primary-rgb), 1)`
+        : `rgba(var(--bs-dark-rgb), 0.7)`};
   }
 `;
 
@@ -162,8 +178,8 @@ const MenuIconWrapper = styled.span`
 `;
 
 const SubmenuIcon = styled(FontAwesomeIcon, {
-  shouldForwardProp: (prop) => prop !== 'isOpen',
-}) <{ isOpen: boolean }>`
+  shouldForwardProp: (prop) => prop !== "isOpen",
+})<{ isOpen: boolean }>`
   transition: transform 0.2s ease;
   opacity: 0.5;
   min-width: 1.25rem;
@@ -193,8 +209,8 @@ const Submenu = styled.ul<{ isOpen: boolean }>`
 const SubmenuItem = styled.li``;
 
 const SubmenuLink = styled(Link, {
-  shouldForwardProp: (prop) => prop !== 'isActive',
-}) <{ isActive?: boolean }>`
+  shouldForwardProp: (prop) => prop !== "isActive",
+})<{ isActive?: boolean }>`
   padding: 0.5rem 1rem 0.5rem 3.5rem;
   color: rgba(var(--bs-dark-rgb), 0.625);
   text-decoration: none;
@@ -206,7 +222,7 @@ const SubmenuLink = styled(Link, {
   position: relative;
 
   &:before {
-    content: '';
+    content: "";
     position: absolute;
     left: 1.875rem;
     top: 50%;
@@ -218,7 +234,8 @@ const SubmenuLink = styled(Link, {
   }
 
   ${({ isActive }) =>
-    isActive && `
+    isActive &&
+    `
     color: rgba(var(--bs-dark-rgb), 1);
     background: rgba(var(--bs-dark-rgb), 0.05);
 
@@ -231,8 +248,14 @@ const SubmenuLink = styled(Link, {
   `}
 
   &:hover {
-    background: ${({ isActive }) => isActive ? `rgba(var(--bs-dark-rgb), 0.1)` : `rgba(var(--bs-dark-rgb), 0.05)`};
-    color: ${({ isActive }) => isActive ? `rgba(var(--bs-dark-rgb), 1)` : `rgba(var(--bs-dark-rgb), 0.7)`};
+    background: ${({ isActive }) =>
+      isActive
+        ? `rgba(var(--bs-dark-rgb), 0.1)`
+        : `rgba(var(--bs-dark-rgb), 0.05)`};
+    color: ${({ isActive }) =>
+      isActive
+        ? `rgba(var(--bs-dark-rgb), 1)`
+        : `rgba(var(--bs-dark-rgb), 0.7)`};
   }
 
   svg {
@@ -246,7 +269,7 @@ const MenuContext = React.createContext<{
   setActiveMenu: (menuId: string | null) => void;
 }>({
   activeMenu: null,
-  setActiveMenu: () => { },
+  setActiveMenu: () => {},
 });
 
 const MenuItemComponent = ({
@@ -260,7 +283,9 @@ const MenuItemComponent = ({
   const { props } = usePage<PageProps>();
   const isOpen = activeMenu === menuId;
   const isActive = menu.href === props.urlPath.url;
-  const isAnySubActive = menu.child?.some(sub => sub.href === props.urlPath.url);
+  const isAnySubActive = menu.child?.some(
+    (sub) => sub.href === props.urlPath.url
+  );
 
   React.useEffect(() => {
     if (isAnySubActive) {
@@ -271,7 +296,7 @@ const MenuItemComponent = ({
   return (
     <MenuItem>
       <MenuLink
-        href={menu.href ?? '#'}
+        href={menu.href ?? "#"}
         hasSubmenu={!!menu.child}
         isActive={isActive || isAnySubActive}
         onClick={(e) => {
@@ -295,7 +320,7 @@ const MenuItemComponent = ({
             const isSubActive = subMenu.href === props.urlPath.url;
             return (
               <SubmenuItem key={subIndex}>
-                <SubmenuLink href={subMenu.href ?? '#'} isActive={isSubActive}>
+                <SubmenuLink href={subMenu.href ?? "#"} isActive={isSubActive}>
                   {subMenu.icon && (
                     <FontAwesomeIcon icon={subMenu.icon as IconDefinition} />
                   )}
@@ -312,7 +337,7 @@ const MenuItemComponent = ({
 
 const SidebarHeader: FC<{ toggle: () => void }> = ({ toggle }) => (
   <HeaderSidebar>
-    <LogoLink href={'/'}>
+    <LogoLink href={"/"}>
       <ApplicationLogo fill="#000" height={36} />
     </LogoLink>
     <Button variant="link" className="p-0" onClick={toggle}>
@@ -324,7 +349,7 @@ const SidebarHeader: FC<{ toggle: () => void }> = ({ toggle }) => (
 const MenuListComponent = ({ items }: { items: MenuList[] }) => (
   <MenusSidebar>
     {items.map((menu, index) =>
-      menu.type === 'heading' ? (
+      menu.type === "heading" ? (
         <MenuHeading key={index}>{menu.label}</MenuHeading>
       ) : (
         <MenuItemComponent key={index} menu={menu} menuId={`menu-${index}`} />
@@ -333,110 +358,109 @@ const MenuListComponent = ({ items }: { items: MenuList[] }) => (
   </MenusSidebar>
 );
 
-
 export default function Sidebar() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const { toggle, isOpen } = useSidebar();
 
   const menuList: MenuList[] = [
-    { label: 'Dashboard', type: 'heading' },
+    { label: "Dashboard", type: "heading" },
     {
-      label: 'Beranda',
-      href: route('administrator.home'),
-      type: 'menu',
+      label: "Beranda",
+      href: route("administrator.home"),
+      type: "menu",
       icon: faTachometerAlt,
     },
 
-    { label: 'Master Data', type: 'heading' },
+    { label: "Master Data", type: "heading" },
     {
-      label: 'Manajemen Kendaraan',
+      label: "Manajemen Kendaraan",
       icon: faCar,
-      type: 'menu',
-      href: route('administrator.car-data.index'),
+      type: "menu",
+      href: route("administrator.car-data.index"),
     },
     {
-      label: 'Manajemen Pengguna',
-      type: 'menu',
-      href: '#',
+      label: "Manajemen Pengguna",
+      type: "menu",
+      href: "#",
       icon: faUsers,
       child: [
         {
-          label: 'Semua Data',
-          href: '#',
+          label: "Semua Data",
+          href: "#",
         },
         {
-          label: 'Pelanggan',
-          href: '#',
+          label: "Pelanggan",
+          href: "#",
         },
         {
-          label: 'Staff Keuangan',
-          href: '#',
+          label: "Staff Keuangan",
+          href: "#",
         },
         {
-          label: 'Staff Pengemudi',
-          href: '#',
+          label: "Staff Pengemudi",
+          href: "#",
         },
         {
-          label: 'Administrator',
-          href: '#',
+          label: "Administrator",
+          href: "#",
         },
       ],
     },
-    { label: 'Transaksi', type: 'heading' },
+    { label: "Transaksi", type: "heading" },
     {
-      label: 'Pemesanan',
-      type: 'menu',
-      href: '#',
+      label: "Pemesanan",
+      type: "menu",
+      href: "#",
       icon: faCalendarAlt,
       child: [
         {
-          label: 'Daftar Pemesanan',
-          href: route('administrator.transaction.index'),
+          label: "Daftar Pemesanan",
+          href: route("administrator.transaction.index"),
         },
         {
-          label: 'Jadwal Sewa',
-          href: route('administrator.booking'),
+          label: "Jadwal Sewa",
+          href: route("administrator.booking"),
         },
       ],
     },
-    { label: 'Laporan', type: 'heading' },
+    { label: "Laporan", type: "heading" },
     {
-      label: 'Laporan Transaksi',
-      type: 'menu',
-      href: '#',
+      label: "Laporan Transaksi",
+      type: "menu",
+      href: "#",
       icon: faClipboardList,
     },
     {
-      label: 'Laporan Keuangan',
-      type: 'menu',
-      href: '#',
+      label: "Laporan Keuangan",
+      type: "menu",
+      href: "#",
       icon: faChartLine,
     },
 
     {
-      label: 'Catatan Perbaikan',
-      href: route('administrator.car-repair.index'),
-      type: 'menu',
+      label: "Catatan Perbaikan",
+      href: route("administrator.car-repair.index"),
+      type: "menu",
       icon: faWrench,
     },
     {
-      label: 'Catatan Penggunaan',
-      href: route('administrator.car-repair.index'),
-      type: 'menu',
+      label: "Catatan Penggunaan",
+      href: route("administrator.car-repair.index"),
+      type: "menu",
       icon: faClipboardList,
     },
 
-    { label: 'Pengaturan', type: 'heading' },
+    { label: "Pengaturan", type: "heading" },
     {
-      label: 'Persyaratan & Ketentuan',
-      type: 'menu',
-      href: '#',
+      label: "Persyaratan & Ketentuan",
+      type: "menu",
+      href: "#",
       icon: faFileContract,
     },
     {
-      label: 'Keamanan',
-      type: 'menu',
-      href: '#',
+      label: "Keamanan",
+      type: "menu",
+      href: "#",
       icon: faUserShield,
     },
   ];
@@ -451,6 +475,6 @@ export default function Sidebar() {
           </InnerSidebar>
         </PerfectScrollbar>
       </SidebarStyle>
-    </MenuContext.Provider >
+    </MenuContext.Provider>
   );
 }

@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\ServiceProvider;
 
 /**
  * Class ClassLoaderProvider
@@ -13,31 +13,9 @@ use Illuminate\Support\Facades\File;
  * dependency injection to work seamlessly across the application,
  * where the interfaces can be injected into classes, and the container
  * will resolve them to their respective implementations.
- *
- * @package App\Providers
  */
 class ClassLoaderProvider extends ServiceProvider
 {
-    /**
-     * Load files from a specified directory.
-     *
-     * This method searches for PHP files in the given directory path and includes them if they exist.
-     * It uses File::glob to find files and require_once to load them, ensuring each file is loaded only once.
-     *
-     * @param string $path The relative path within the app directory to search for files
-     * @return void
-     */
-    private function fileLoader(string $path): void
-    {
-        $files = File::glob(app_path($path));
-
-        if (empty($files)) return;
-
-        foreach ($files as $file) {
-            require_once $file;
-        }
-    }
-
     /**
      * List of class bindings.
      *
@@ -49,10 +27,10 @@ class ClassLoaderProvider extends ServiceProvider
      * @var array<string, string> The class bindings for interfaces and implementations.
      */
     protected array $_classes = [
-        \App\Interfaces\LicensePlateNumberGenerator::class  => \App\Helpers\LicensePlateNumberGenerator::class,
-        \App\Interfaces\CrudHelper::class                   => \App\Helpers\CrudHelper::class,
-        \App\Interfaces\SecurityHelper::class               => \App\Helpers\SecurityHelper::class,
-        \App\Interfaces\SelectHelper::class                 => \App\Helpers\SelectHelper::class,
+        \App\Interfaces\LicensePlateNumberGenerator::class => \App\Helpers\LicensePlateNumberGenerator::class,
+        \App\Interfaces\CrudHelper::class => \App\Helpers\CrudHelper::class,
+        \App\Interfaces\SecurityHelper::class => \App\Helpers\SecurityHelper::class,
+        \App\Interfaces\SelectHelper::class => \App\Helpers\SelectHelper::class,
     ];
 
     /**
@@ -61,19 +39,16 @@ class ClassLoaderProvider extends ServiceProvider
      * This method is responsible for registering the interface-to-implementation
      * bindings with the service container. It utilizes Laravel's `bind` method,
      * which registers the given interface to its respective implementation.
-     *
-     * @return void
      */
     public function register(): void
     {
-        # Load All Files Inside `FunctionHelpers`
+        // Load All Files Inside `FunctionHelpers`
         $this->fileLoader('/FunctionHelpers/*.php');
 
-        # Autoload Class
+        // Autoload Class
         collect($this->_classes)
             ->each(
-                fn($implementation, $interface) =>
-                $this->app->bind($interface, $implementation)
+                fn ($implementation, $interface) => $this->app->bind($interface, $implementation)
             );
     }
 
@@ -83,11 +58,30 @@ class ClassLoaderProvider extends ServiceProvider
      * This method is intended for performing actions after all services have
      * been registered. Currently, it is empty but can be used to execute any
      * code needed when the application bootstraps.
-     *
-     * @return void
      */
     public function boot(): void
     {
         //
+    }
+
+    /**
+     * Load files from a specified directory.
+     *
+     * This method searches for PHP files in the given directory path and includes them if they exist.
+     * It uses File::glob to find files and require_once to load them, ensuring each file is loaded only once.
+     *
+     * @param  string  $path  The relative path within the app directory to search for files
+     */
+    private function fileLoader(string $path): void
+    {
+        $files = File::glob(app_path($path));
+
+        if (empty($files)) {
+            return;
+        }
+
+        foreach ($files as $file) {
+            require_once $file;
+        }
     }
 }

@@ -13,7 +13,6 @@ class DashboardController extends Controller
      * Sets the SEO title for the page and returns
      * the Inertia response for the admin dashboard.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Inertia\Response
      */
     public function __invoke(Request $request)

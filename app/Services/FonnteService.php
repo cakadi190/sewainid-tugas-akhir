@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\RequestException;
-use Log;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 /**
  * FonnteHelper - Service untuk mengirim WhatsApp via Fonnte API dengan gaya builder.
@@ -30,28 +30,27 @@ class FonnteService
     /**
      * Inisialisasi pesan dan target penerima.
      *
-     * @param string $message Format pesan, bisa pakai {name} dan {var1}.
-     * @param string $target Format target: nomor|nama|var1 (gunakan koma untuk multiple).
-     * @return static
+     * @param  string  $message  Format pesan, bisa pakai {name} dan {var1}.
+     * @param  string  $target  Format target: nomor|nama|var1 (gunakan koma untuk multiple).
      */
     public static function message(string $message, string $target): static
     {
-        $instance = new static();
+        $instance = new static;
         $instance->data['message'] = $message;
         $instance->data['target'] = $target;
         $instance->data['delay'] = 2;
         $instance->data['typing'] = 'false';
         $instance->data['schedule'] = 0;
         $instance->data['countryCode'] = '62';
+
         return $instance;
     }
 
     /**
      * Tambahkan file attachment ke pesan.
      *
-     * @param string $filePath Path lengkap ke file.
-     * @param string|null $filename Nama file (opsional).
-     * @return static
+     * @param  string  $filePath  Path lengkap ke file.
+     * @param  string|null  $filename  Nama file (opsional).
      */
     public function attachment(string $filePath, ?string $filename = null): static
     {
@@ -66,91 +65,77 @@ class FonnteService
     /**
      * Tambahkan gambar URL ke pesan.
      *
-     * @param string $url Link gambar.
-     * @return static
+     * @param  string  $url  Link gambar.
      */
     public function url(string $url): static
     {
         $this->data['url'] = $url;
+
         return $this;
     }
 
     /**
      * Set lokasi pengiriman dalam format koordinat (latitude,longitude).
-     *
-     * @param string $coordinates
-     * @return static
      */
     public function location(string $coordinates): static
     {
         $this->data['location'] = $coordinates;
+
         return $this;
     }
 
     /**
      * Atur waktu penjadwalan pengiriman dalam bentuk UNIX timestamp.
-     *
-     * @param int $timestamp
-     * @return static
      */
     public function schedule(int $timestamp): static
     {
         $this->data['schedule'] = $timestamp;
+
         return $this;
     }
 
     /**
      * Aktifkan atau nonaktifkan animasi mengetik sebelum kirim pesan.
-     *
-     * @param bool $enabled
-     * @return static
      */
     public function typing(bool $enabled = true): static
     {
         $this->data['typing'] = $enabled ? 'true' : 'false';
+
         return $this;
     }
 
     /**
      * Kirim pesan follow-up berdasarkan ID pesan sebelumnya.
-     *
-     * @param int $messageId
-     * @return static
      */
     public function followup(int $messageId): static
     {
         $this->data['followup'] = $messageId;
+
         return $this;
     }
 
     /**
      * Set kode negara (default 62).
-     *
-     * @param string $code
-     * @return static
      */
     public function countryCode(string $code): static
     {
         $this->data['countryCode'] = $code;
+
         return $this;
     }
 
     /**
      * Set delay antara pesan, dalam detik.
-     *
-     * @param int $seconds
-     * @return static
      */
     public function delay(int $seconds): static
     {
         $this->data['delay'] = $seconds;
+
         return $this;
     }
 
     /**
      * Eksekusi permintaan dan kirim pesan ke Fonnte API.
-     *
-     * @return array|string
      */
     public function send(): array|string
     {
@@ -178,7 +163,8 @@ class FonnteService
 
             return $response->json();
         } catch (RequestException $e) {
-            Log::info("Request status", $e->getTrace());
+            Log::info('Request status', $e->getTrace());
+
             return $e->getMessage();
         }
     }

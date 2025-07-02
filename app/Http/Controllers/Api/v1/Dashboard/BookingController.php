@@ -6,15 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
-class TransactionController extends Controller
+class BookingController extends Controller
 {
-    /**
-     * Handle the incoming request.
-     *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function __invoke(Request $request)
     {
         return DataTables::of(auth()->user()->transactions()->latest())

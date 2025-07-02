@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Web\Home;
 use App\Http\Controllers\Controller;
 use App\Models\CarData;
 use Spatie\SchemaOrg\Schema;
-use App\Enums\TransactionStatusEnum;
-use Carbon\Carbon;
 
 class ArmadaController extends Controller
 {
@@ -25,7 +23,7 @@ class ArmadaController extends Controller
             ->numberOfItems($car_data->total())
             ->itemListElement(
                 $car_data->map(
-                    fn($car_data) => Schema::listItem()
+                    fn ($car_data) => Schema::listItem()
                         ->position($loop->iteration ?? 1) // wajib untuk listItem
                         ->item(
                             Schema::car()
@@ -68,7 +66,6 @@ class ArmadaController extends Controller
     /**
      * Menampilkan halaman detail armada yang dipilih.
      *
-     * @param  \App\Models\CarData  $car_data
      * @return \Inertia\Response
      */
     public function show(CarData $car_data)
@@ -111,7 +108,7 @@ class ArmadaController extends Controller
                             Schema::unitPriceSpecification()
                                 ->priceCurrency('IDR')
                                 ->price($car_data->rent_price)
-                        )
+                        ),
                 ]),
             Schema::aggregateRating()
                 ->itemReviewed($car_data->full_name)
@@ -122,4 +119,3 @@ class ArmadaController extends Controller
         return inertia('Home/Armada/Show', compact('car_data', 'disabledCalendar'))->withViewData(compact('schemas'));
     }
 }
-

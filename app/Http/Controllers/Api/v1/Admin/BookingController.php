@@ -3,15 +3,17 @@
 namespace App\Http\Controllers\Api\v1\Admin;
 
 use App\Enums\RentalStatusEnum;
+use App\Enums\TransactionStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Interfaces\CrudHelper;
 use App\Models\Transaction;
-use App\Models\TransactionConfirmation;
 use DataTables;
-use DB;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Log;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class BookingController extends Controller
 {
@@ -29,6 +31,8 @@ class BookingController extends Controller
         $query = $this->_transaction->with([
             'transactionConfirmation' => fn($query) => $query->select(['id', 'transaction_id', 'created_at', 'transaction_receipt']),
             'carData' => fn($query) => $query->select(['id', 'brand', 'car_name']),
+            'driver' => fn($query) => $query->select(['id', 'name', 'phone']),
+            'conductor' => fn($query) => $query->select(['id', 'name', 'phone']),
         ]);
 
         if ($request->boolean('withTrashed')) {
@@ -52,7 +56,7 @@ class BookingController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Transaction $booking)
+    public function show(Transaction $transaction)
     {
         //
     }
@@ -60,29 +64,77 @@ class BookingController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Transaction $booking)
+    public function update(Request $request, Transaction $transaction)
     {
         try {
-            DB::transaction(function () use ($request, $booking) {
-                if ($request->has('action') && $request->action === 'updateTransactionStatus') {
-                    if ($request->payment_proof) {
-                        $uploadPath = $request->payment_proof->store('payment_proof', 'public');
+            DB::transaction(function () use ($request, $transaction) {
+                $action = $request->input('action');
+                Log::info('Booking Update Action:', ['action' => $action]);
+                switch ($action) {
+                    case 'updateTransactionStatus':
+                        if ($request->hasFile('payment_proof')) {
+                            $uploadPath = $request->file('payment_proof')->store('payment_proof', 'public');
+                            Log::info("Payment Proof Upload:", [
+                                'transaction_receipt' => $uploadPath,
+                                'user_id' => auth()->id(),
+                                'transaction_id' => $transaction->id,
+                            ]);
+                            $transaction->transactionConfirmation()->create([
+                                'transaction_receipt' => $uploadPath,
+                                'user_id' => auth()->id(),
+                                'transaction_id' => $transaction->id,
+                            ]);
+                            $transaction->update([
+                                'rental_status' => RentalStatusEnum::PENDING,
+                                'confirmed_at' => now(),
+                            ]);
+                        }
+                        if ($request->filled('status')) {
+                            $transaction->update([
+                                'status' => TransactionStatusEnum::from($request->status),
+                            ]);
+                        }
+                        break;
+                    case 'updateRentStatus':
+                        $newStatus = $request->input('rental_status');
+                        Log::info('Rental Status Update:', [
+                            'current' => $transaction->rental_status,
+                            'new' => $newStatus,
+                        ]);
+                        $transaction->update([
+                            'rental_status' => RentalStatusEnum::from($newStatus),
+                        ]);
+                        break;
+                    case 'assignDriverConductor':
+                        $driverId = $request->input('driver_id');
+                        $conductorId = $request->input('conductor_id');
 
-                        $booking->transactionConfirmation()->create([
-                            'transaction_receipt' => $uploadPath,
-                            'user_id' => auth()->id(),
+                        Log::info('Assign Driver & Conductor:', [
+                            'transaction_id' => $transaction->id,
+                            'driver_id' => $driverId,
+                            'conductor_id' => $conductorId,
                         ]);
 
-                        $booking->update(['rental_status' => RentalStatusEnum::PENDING, 'confirmed_at' => now()]);
-                    }
+                        $updateData = [
+                            'driver_id' => $driverId ?? null,
+                            'conductor_id' => $conductorId ?? null,
+                        ];
 
-                    $booking->update(['status' => $request->status]);
+                        $transaction->update($updateData);
+                        break;
+                    default:
+                        Log::warning('Unknown action type for booking update', [
+                            'action' => $action,
+                        ]);
+                        break;
                 }
             });
-
             return back()->with('success', 'Berhasil memperbarui data pemesanan');
-        } catch (\Exception $e) {
-            Log::error($e);
+        } catch (Throwable $e) {
+            Log::error('Booking update error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
             return back()->with('error', 'Terjadi kesalahan saat memperbarui data pemesanan');
         }
     }
@@ -90,11 +142,11 @@ class BookingController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Transaction $booking, Request $request)
+    public function destroy(Transaction $transaction, Request $request)
     {
         try {
-            return $this->_crudHelper->destroyData($booking, $request);
-        } catch (\Throwable $th) {
+            return $this->_crudHelper->destroyData($transaction, $request);
+        } catch (Throwable $th) {
             return back()->with('error', $th->getMessage());
         }
     }

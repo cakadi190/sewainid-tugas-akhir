@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Enums\CarModelEnum;
-use Illuminate\Database\Seeder;
 use App\Models\CarData;
+use Illuminate\Database\Seeder;
 
 class CarDataSeeder extends Seeder
 {
@@ -288,7 +288,7 @@ class CarDataSeeder extends Seeder
             ],
         ];
 
-        # Use collect and each to iterate over the car data entries
+        // Use collect and each to iterate over the car data entries
         collect($carDataEntries)->each(function ($carData) {
             CarData::factory()->create($carData);
         });

@@ -1,9 +1,15 @@
-import { Link } from '@inertiajs/react';
-import styled from '@emotion/styled';
-import ImageHeader from '@/Assets/Images/Cover-Dashboard.jpg';
-import { Breadcrumb, BreadcrumbItem, Col, Container, Row } from "react-bootstrap";
-import { FC } from 'react';
-import Database from '@/types/database';
+import ImageHeader from "@/Assets/Images/Cover-Dashboard.jpg";
+import Database from "@/types/database";
+import styled from "@emotion/styled";
+import { Link } from "@inertiajs/react";
+import { FC } from "react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  Col,
+  Container,
+  Row,
+} from "react-bootstrap";
 
 const HeaderArmadaDetailStyled = styled.header`
   background-color: #000;
@@ -16,7 +22,7 @@ const HeaderArmadaDetailStyled = styled.header`
   color: white;
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     width: 100%;
     height: 100%;
@@ -48,7 +54,7 @@ const HeaderArmadaDetailStyled = styled.header`
 
   h2.leading {
     font-size: 1.25rem;
-    opacity: .75;
+    opacity: 0.75;
     font-weight: normal;
     line-height: 1.5;
     margin-bottom: 1rem;
@@ -70,7 +76,7 @@ const HeaderArmadaDetailStyled = styled.header`
     .breadcrumb-item,
     .breadcrumb-item::before,
     .breadcrumb-item a {
-      color: rgba(var(--bs-white-rgb), .75);
+      color: rgba(var(--bs-white-rgb), 0.75);
     }
 
     .breadcrumb-item {
@@ -79,21 +85,32 @@ const HeaderArmadaDetailStyled = styled.header`
   }
 `;
 
-const HeaderArmadaDetail: FC<{ carData: Database['CarData'] }> = ({ carData }) => {
+const HeaderArmadaDetail: FC<{ carData: Database["CarData"] }> = ({
+  carData,
+}) => {
   return (
     <HeaderArmadaDetailStyled id="masthead">
       <Container>
         <Row>
           <Col md={8}>
-            <h1>{carData.brand} {carData.car_name}</h1>
-            <h2 className="leading">
-              Lihat detail mobil yang Anda pilih
-            </h2>
+            <h1>
+              {carData.brand} {carData.car_name}
+            </h1>
+            <h2 className="leading">Lihat detail mobil yang Anda pilih</h2>
 
             <Breadcrumb className="m-0" bsPrefix="m-0 breadcrumb">
-              <BreadcrumbItem linkAs={Link} href={route('home')}>Beranda</BreadcrumbItem>
-              <BreadcrumbItem linkAs={Link} href={route('armada.index')}>Daftar Armada</BreadcrumbItem>
-              <BreadcrumbItem active>Detail Kendaraan <strong>{carData.brand} {carData.car_name}</strong></BreadcrumbItem>
+              <BreadcrumbItem linkAs={Link} href={route("home")}>
+                Beranda
+              </BreadcrumbItem>
+              <BreadcrumbItem linkAs={Link} href={route("armada.index")}>
+                Daftar Armada
+              </BreadcrumbItem>
+              <BreadcrumbItem active>
+                Detail Kendaraan{" "}
+                <strong>
+                  {carData.brand} {carData.car_name}
+                </strong>
+              </BreadcrumbItem>
             </Breadcrumb>
           </Col>
         </Row>
@@ -103,4 +120,3 @@ const HeaderArmadaDetail: FC<{ carData: Database['CarData'] }> = ({ carData }) =
 };
 
 export default HeaderArmadaDetail;
-

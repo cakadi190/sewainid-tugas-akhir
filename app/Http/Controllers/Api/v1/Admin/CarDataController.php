@@ -17,8 +17,7 @@ class CarDataController extends Controller
     public function __construct(
         protected CarData $_carData,
         protected CrudHelper $_crudHelper,
-    ) {
-    }
+    ) {}
 
     /**
      * Display a listing of the resource.

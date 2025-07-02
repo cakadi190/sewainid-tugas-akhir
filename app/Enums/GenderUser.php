@@ -25,9 +25,9 @@ enum GenderUser: string
      *
      * @return string Label untuk jenis kelamin dalam bahasa lokal.
      */
-    function label(): string
+    public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::MALE => 'Pria',
             self::FEMALE => 'Wanita',
         };
@@ -38,9 +38,9 @@ enum GenderUser: string
      *
      * @return string Warna yang digunakan untuk menandai jenis kelamin.
      */
-    function color(): string
+    public function color(): string
     {
-        return match($this) {
+        return match ($this) {
             self::MALE => 'primary',
             self::FEMALE => 'success',
         };

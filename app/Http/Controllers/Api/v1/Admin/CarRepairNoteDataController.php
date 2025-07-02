@@ -17,8 +17,7 @@ class CarRepairNoteDataController extends Controller
     public function __construct(
         protected CarRepairNoteData $_carRepairNoteData,
         protected CrudHelper $_crudHelper,
-    ) {
-    }
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -32,8 +31,9 @@ class CarRepairNoteDataController extends Controller
         }
 
         return DataTables::of($query)
-            ->addColumn('car_brand', function(CarRepairNoteData $car_repair) {
+            ->addColumn('car_brand', function (CarRepairNoteData $car_repair) {
                 $carData = $car_repair->carData;
+
                 return "{$carData->brand} {$carData->car_name} ({$carData->license_plate})";
             })
             ->make(true);
@@ -53,6 +53,7 @@ class CarRepairNoteDataController extends Controller
     public function show(CarRepairNoteData $car_repair, Request $request): JsonResponse
     {
         $car_repair->load('carData');
+
         return $this->_crudHelper->singleData($car_repair, $request, [], ['repair-gallery']);
     }
 

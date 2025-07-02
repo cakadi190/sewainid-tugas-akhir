@@ -11,6 +11,12 @@ export default defineConfig({
       cert: fs.readFileSync('C:/laragon/etc/ssl/localhost/localhost.crt.pem'),
     },
     host: 'localhost',
+    port: 5174,
+    cors: {
+      origin: [
+        'https://sewain.local.id'
+      ]
+    },
   },
   plugins: [
     laravel({

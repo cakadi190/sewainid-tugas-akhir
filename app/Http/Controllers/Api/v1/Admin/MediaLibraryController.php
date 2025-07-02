@@ -17,11 +17,12 @@ class MediaLibraryController extends Controller
     public function show(int $mediaId, Request $request)
     {
         $media = Media::findOrFail($mediaId);
+
         return response()->json([
             'data' => $media,
             'status' => 'success',
             'code' => 200,
-            'request' => returnConditionIfFalse(app()->environment('development'), $request->all())
+            'request' => returnConditionIfFalse(app()->environment('development'), $request->all()),
         ]);
     }
 

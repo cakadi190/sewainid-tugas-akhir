@@ -1,9 +1,9 @@
-import { Button, Form, Modal, FormFloating } from 'react-bootstrap';
-import { useForm } from '@inertiajs/react';
-import { FormEventHandler, useRef, useState } from 'react';
+import { useForm } from "@inertiajs/react";
+import { FormEventHandler, useRef, useState } from "react";
+import { Button, Form, FormFloating, Modal } from "react-bootstrap";
 
 export default function DeleteUserForm({
-  className = '',
+  className = "",
 }: {
   className?: string;
 }) {
@@ -19,7 +19,7 @@ export default function DeleteUserForm({
     errors,
     clearErrors,
   } = useForm({
-    password: '',
+    password: "",
   });
 
   const confirmUserDeletion = () => {
@@ -29,7 +29,7 @@ export default function DeleteUserForm({
   const deleteUser: FormEventHandler = (e) => {
     e.preventDefault();
 
-    destroy(route('profile.destroy'), {
+    destroy(route("profile.destroy"), {
       preserveScroll: true,
       onSuccess: () => closeModal(),
       onError: () => passwordInput.current?.focus(),
@@ -48,9 +48,9 @@ export default function DeleteUserForm({
       <header>
         <h2 className="h5">Hapus Akun</h2>
         <p className="small text-muted">
-          Setelah akun Anda dihapus, semua sumber daya dan data
-          akan dihapus secara permanen. Sebelum menghapus akun Anda,
-          silakan unduh data atau informasi yang Anda ingin simpan.
+          Setelah akun Anda dihapus, semua sumber daya dan data akan dihapus
+          secara permanen. Sebelum menghapus akun Anda, silakan unduh data atau
+          informasi yang Anda ingin simpan.
         </p>
       </header>
 
@@ -64,14 +64,16 @@ export default function DeleteUserForm({
         </Modal.Header>
         <Modal.Body>
           <p>
-            Apakah Anda yakin ingin menghapus akun Anda? Setelah akun Anda dihapus, semua sumber daya dan data akan dihapus secara permanen. Silakan masukkan kata sandi Anda untuk mengonfirmasi.
+            Apakah Anda yakin ingin menghapus akun Anda? Setelah akun Anda
+            dihapus, semua sumber daya dan data akan dihapus secara permanen.
+            Silakan masukkan kata sandi Anda untuk mengonfirmasi.
           </p>
           <FormFloating className="mb-3">
             <Form.Control
               id="password"
               type="password"
               value={data.password}
-              onChange={(e) => setData('password', e.target.value)}
+              onChange={(e) => setData("password", e.target.value)}
               ref={passwordInput}
               isInvalid={!!errors.password}
               placeholder="Kata Sandi"
@@ -94,4 +96,3 @@ export default function DeleteUserForm({
     </section>
   );
 }
-

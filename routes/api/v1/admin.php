@@ -10,7 +10,7 @@ Route::prefix('options')->name('options.')->group(function () {
     Route::any('car-data', \App\Http\Controllers\Api\v1\Admin\CarDataOptionsController::class)->name('car-data');
 });
 
-Route::controller(\App\Http\Controllers\Api\v1\Admin\TransactionController::class)->name('transaction.')->prefix('transaction')->group(function() {
+Route::controller(\App\Http\Controllers\Api\v1\Admin\TransactionController::class)->name('transaction.')->prefix('transaction')->group(function () {
     Route::post('{transaction}/send-reminder', 'sendReminder')->name('send-reminder');
     Route::post('{transaction}/pdf', 'pdf')->name('pdf');
 });
@@ -20,3 +20,8 @@ Route::controller(\App\Http\Controllers\Api\v1\Admin\MediaLibraryController::cla
         Route::get('{media}', 'show')->name('show');
         Route::delete('{media}', 'delete')->name('delete');
     });
+
+Route::controller(\App\Http\Controllers\Api\v1\Admin\UserAssignController::class)->prefix('user-assign')->name('user-assign.')->group(function () {
+    Route::get('driver', 'driver')->name('driver');
+    Route::get('conductor', 'conductor')->name('conductor');
+});

@@ -3,16 +3,16 @@
 namespace App\Models;
 
 use App\Enums\CarConditionEnum;
-use Carbon\Carbon;
-use Carbon\CarbonPeriod;
-use Illuminate\Database\Eloquent\Model;
 use App\Enums\CarModelEnum;
 use App\Enums\CarStatusEnum;
 use App\Enums\CarTransmissionEnum;
 use App\Enums\FuelTypeEnum;
 use App\Enums\TransactionStatusEnum;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
@@ -67,6 +67,7 @@ use Spatie\Sluggable\SlugOptions;
  * @property-read int|null $review_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transaction
  * @property-read int|null $transaction_count
+ *
  * @method static \Database\Factories\CarDataFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData newQuery()
@@ -107,11 +108,12 @@ use Spatie\Sluggable\SlugOptions;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereVehicleRegistrationCertExpiration($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereVehicleRegistrationCertNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarData whereYearOfManufacture($value)
+ *
  * @mixin \Eloquent
  */
 class CarData extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, HasSlug;
+    use HasFactory, HasSlug, InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -154,18 +156,6 @@ class CarData extends Model implements HasMedia
     ];
 
     /**
-     * Get the full name of the car by combining the brand and car name.
-     *
-     * @return string The full name of the car.
-     */
-    public function fullName(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => "{$this->brand} {$this->car_name}",
-        );
-    }
-
-    /**
      * The attributes that should be cast.
      *
      * @var array<string, string>
@@ -177,17 +167,6 @@ class CarData extends Model implements HasMedia
         'transmission' => CarTransmissionEnum::class,
         'fuel_type' => FuelTypeEnum::class,
     ];
-
-    /**
-     * Get the options for generating the slug.
-     */
-    public function getSlugOptions(): SlugOptions
-    {
-        return SlugOptions::create()
-            ->generateSlugsFrom(['brand', 'car_name'])
-            ->saveSlugsTo('slug')
-            ->slugsShouldBeNoLongerThan(128);
-    }
 
     /**
      * Mengambil semua model mobil yang ada dalam CarModelEnum.
@@ -240,6 +219,29 @@ class CarData extends Model implements HasMedia
     }
 
     /**
+     * Get the full name of the car by combining the brand and car name.
+     *
+     * @return string The full name of the car.
+     */
+    public function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => "{$this->brand} {$this->car_name}",
+        );
+    }
+
+    /**
+     * Get the options for generating the slug.
+     */
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom(['brand', 'car_name'])
+            ->saveSlugsTo('slug')
+            ->slugsShouldBeNoLongerThan(128);
+    }
+
+    /**
      * Relasi dengan model Review.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Review>
@@ -273,7 +275,7 @@ class CarData extends Model implements HasMedia
                 return CarbonPeriod::create($transaction->pickup_date, $transaction->return_date)
                     ->toArray();
             })
-            ->map(fn($date) => $date->setTimezone('Asia/Jakarta')->format('Y-m-d'))
+            ->map(fn ($date) => $date->setTimezone('Asia/Jakarta')->format('Y-m-d'))
             ->unique()
             ->values()
             ->toArray();
@@ -281,17 +283,13 @@ class CarData extends Model implements HasMedia
 
     /**
      * Determine if the given date is not in the car's unavailable dates.
-     *
-     * @param string|Carbon|null $date
-     * @return bool
      */
     public function isNotOnUnavailableDate(string|Carbon|null $date): bool
     {
-        return !is_null($date)
-            && !collect($this->getUnavailableDate())
+        return ! is_null($date)
+            && ! collect($this->getUnavailableDate())
                 ->contains($date instanceof Carbon ? $date->toDateString() : (string) $date);
     }
-
 
     /**
      * Register media conversions for the CarData model.
@@ -300,10 +298,8 @@ class CarData extends Model implements HasMedia
      * a 300x300 boundary using the 'Contain' fit method. The conversion is processed
      * without being queued.
      *
-     * @param \Spatie\MediaLibrary\MediaCollections\Models\Media|null $media
-     *        Optional media instance for which conversions are registered.
-     *
-     * @return void
+     * @param  \Spatie\MediaLibrary\MediaCollections\Models\Media|null  $media
+     *                                                                          Optional media instance for which conversions are registered.
      */
     public function registerMediaConversions(?Media $media = null): void
     {

@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $transaction_receipt
  * @property string $transaction_id
  * @property int|null $user_id
+ * @property-read \App\Models\User|null $user
+ *
  * @method static \Database\Factories\TransactionConfirmationFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TransactionConfirmation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TransactionConfirmation newQuery()
@@ -25,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TransactionConfirmation whereTransactionReceipt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TransactionConfirmation whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TransactionConfirmation whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class TransactionConfirmation extends Model
@@ -46,8 +49,6 @@ class TransactionConfirmation extends Model
 
     /**
      * Get the user that owns the TransactionConfirmation
-     *
-     * @return BelongsTo
      */
     public function user(): BelongsTo
     {

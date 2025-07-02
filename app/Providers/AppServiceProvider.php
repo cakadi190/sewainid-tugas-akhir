@@ -6,7 +6,6 @@ use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
-use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
     {
         RedirectIfAuthenticated::redirectUsing(function (Request $request) {
             $userRole = $request->user()->getAttribute('role');
+
             return route($userRole !== 'user' ? 'administrator.home' : 'dashboard');
         });
 

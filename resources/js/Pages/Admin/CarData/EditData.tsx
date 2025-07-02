@@ -1,48 +1,81 @@
-import { useState, FormEvent } from "react";
-import { Button, Modal, Form, Spinner, Row, Col, Card } from "react-bootstrap";
-import { useForm } from "@inertiajs/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
-import { createPortal } from "react-dom";
-import { getCarConditionLabel, getCarFuelTypeLabel, getCarModelLabel, getCarStatusLabel, getCarTransmissionLabel } from "@/Helpers/EnumHelper";
-import { renderSwalModal } from "@/Helpers/swal";
 import ImageUploader from "@/Components/Dropzone";
-import Database from "@/types/database";
-import SeparatorText from "@/Components/SeparatorText";
-import { currencyFormat } from "@/Helpers/number";
 import ImageGallery from "@/Components/ImageGallery";
+import SeparatorText from "@/Components/SeparatorText";
+import {
+  CarConditionEnum,
+  CarModelEnum,
+  CarStatusEnum,
+  CarTransmissionEnum,
+  FuelEnum,
+} from "@/Helpers/enum";
+import {
+  getCarConditionLabel,
+  getCarFuelTypeLabel,
+  getCarModelLabel,
+  getCarStatusLabel,
+  getCarTransmissionLabel,
+} from "@/Helpers/EnumHelper";
+import { currencyFormat } from "@/Helpers/number";
+import { renderSwalModal } from "@/Helpers/swal";
+import Database from "@/types/database";
 import { MediaLibrary } from "@/types/medialibrary";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useForm } from "@inertiajs/react";
 import axios from "axios";
-import { CarConditionEnum, CarModelEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum } from "@/Helpers/enum";
+import { FormEvent, useState } from "react";
+import { Button, Card, Col, Form, Modal, Row, Spinner } from "react-bootstrap";
+import { createPortal } from "react-dom";
 
-type CarFormData = Omit<Database['CarData'], 'deleted_at' | 'created_at' | 'id' | 'updated_at'> & {
+type CarFormData = Omit<
+  Database["CarData"],
+  "deleted_at" | "created_at" | "id" | "updated_at"
+> & {
   gallery: File[] | string[];
-  _method: 'PUT' | 'POST';
+  _method: "PUT" | "POST";
 };
 
-export default function EditData({ id, onSuccess: onSuccessAction, label }: { id: number; onSuccess?: () => void; label?: string }) {
+export default function EditData({
+  id,
+  onSuccess: onSuccessAction,
+  label,
+}: {
+  id: number;
+  onSuccess?: () => void;
+  label?: string;
+}) {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [galleryData, setGalleryData] = useState<MediaLibrary[] | null | undefined>(null);
+  const [galleryData, setGalleryData] = useState<
+    MediaLibrary[] | null | undefined
+  >(null);
 
-  const { data: formData, setData, post, processing, reset, errors, clearErrors } = useForm<CarFormData>('edit_car_data', {
-    _method: 'PUT',
-    car_name: '',
-    brand: '',
-    frame_number: '',
-    engine_number: '',
-    license_plate: '',
-    license_plate_expiration: '',
-    vehicle_registration_cert_number: '',
-    vehicle_registration_cert_expiration: '',
-    color: '',
+  const {
+    data: formData,
+    setData,
+    post,
+    processing,
+    reset,
+    errors,
+    clearErrors,
+  } = useForm<CarFormData>("edit_car_data", {
+    _method: "PUT",
+    car_name: "",
+    brand: "",
+    frame_number: "",
+    engine_number: "",
+    license_plate: "",
+    license_plate_expiration: "",
+    vehicle_registration_cert_number: "",
+    vehicle_registration_cert_expiration: "",
+    color: "",
     year_of_manufacture: 0,
-    vehicle_ownership_book_number: '',
+    vehicle_ownership_book_number: "",
     transmission: CarTransmissionEnum.MT,
     model: CarModelEnum.MINI_VAN,
     status: CarStatusEnum.READY,
     condition: CarConditionEnum.EXCELLENT,
-    description: '',
+    description: "",
     rent_price: 0,
     doors: 0,
     seats: 0,
@@ -59,7 +92,7 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
     traction_control: true,
     baby_seat: true,
     gallery: [],
-    gps_imei: ''
+    gps_imei: "",
   });
 
   const onOpen = () => setShowModal(true);
@@ -72,25 +105,29 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
   const onClickModal = () => {
     setLoading(true);
 
-    axios.get(route('v1.admin.car-data.show', id))
+    axios
+      .get(route("v1.admin.car-data.show", id))
       .then((result) => {
         const { data } = result.data;
 
         setGalleryData(data.gallery);
 
         setData({
-          _method: 'PUT',
+          _method: "PUT",
           car_name: data.car_name,
           brand: data.brand,
           frame_number: data.frame_number,
           engine_number: data.engine_number,
           license_plate: data.license_plate,
           license_plate_expiration: data.license_plate_expiration,
-          vehicle_registration_cert_number: data.vehicle_registration_cert_number,
-          vehicle_registration_cert_expiration: data.vehicle_registration_cert_expiration,
+          vehicle_registration_cert_number:
+            data.vehicle_registration_cert_number,
+          vehicle_registration_cert_expiration:
+            data.vehicle_registration_cert_expiration,
           color: data.color,
           year_of_manufacture: data.year_of_manufacture,
-          vehicle_ownership_book_number: data.vehicle_ownership_book_number || '',
+          vehicle_ownership_book_number:
+            data.vehicle_ownership_book_number || "",
           transmission: data.transmission,
           model: data.model,
           status: data.status,
@@ -112,7 +149,7 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
           traction_control: data.traction_control,
           baby_seat: data.baby_seat,
           gallery: [],
-          gps_imei: data.gps_imei
+          gps_imei: data.gps_imei,
         });
 
         onOpen();
@@ -123,7 +160,7 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
   const submitData = (e: FormEvent) => {
     e.preventDefault();
 
-    post(route('v1.admin.car-data.update', id), {
+    post(route("v1.admin.car-data.update", id), {
       forceFormData: true,
       onSuccess() {
         onClose();
@@ -131,12 +168,12 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
       },
       onError(error) {
         // Display error message using SweetAlert
-        renderSwalModal('error', {
-          title: 'Kesalahan!',
+        renderSwalModal("error", {
+          title: "Kesalahan!",
           // @ts-ignore
-          text: error.response?.data?.error || 'Terjadi kesalahan!',
-        })
-      }
+          text: error.response?.data?.error || "Terjadi kesalahan!",
+        });
+      },
     });
   };
 
@@ -144,12 +181,17 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
     <div className="my-auto">
       <Button
         variant="success"
-        style={{ height: label ? 'auto' : '32px', width: label ? 'auto' : '32px' }}
+        style={{
+          height: label ? "auto" : "32px",
+          width: label ? "auto" : "32px",
+        }}
         className="gap-2 d-flex justify-content-center align-items-center"
         size="sm"
         onClick={onClickModal}
       >
-        {(loading || processing) ? <Spinner size="sm" /> : (
+        {loading || processing ? (
+          <Spinner size="sm" />
+        ) : (
           <>
             <FontAwesomeIcon icon={faEdit} />
             {label}
@@ -157,7 +199,7 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
         )}
       </Button>
 
-      {createPortal((
+      {createPortal(
         <Modal show={showModal} size="lg" onHide={onClose}>
           <Modal.Header closeButton>
             <Modal.Title as="h5">Ubah Data Kendaraan</Modal.Title>
@@ -175,7 +217,9 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       isInvalid={!!errors.car_name}
                     />
                     <Form.Label>Nama</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.car_name}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.car_name}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </div>
 
@@ -189,7 +233,9 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       isInvalid={!!errors.brand}
                     />
                     <Form.Label>Brand / Merk</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.brand}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.brand}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </div>
 
@@ -197,18 +243,31 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                   <Form.Floating>
                     <Form.Select
                       value={formData.transmission}
-                      onChange={(e) => setData("transmission", e.target.value as CarTransmissionEnum)}
+                      onChange={(e) =>
+                        setData(
+                          "transmission",
+                          e.target.value as CarTransmissionEnum
+                        )
+                      }
                       isInvalid={!!errors.transmission}
                     >
-                      <option disabled value="">Pilih Salah Satu</option>
-                      {Object.values(CarTransmissionEnum).map((transmission) => (
-                        <option key={transmission} value={transmission}>
-                          {getCarTransmissionLabel(transmission as CarTransmissionEnum)}
-                        </option>
-                      ))}
+                      <option disabled value="">
+                        Pilih Salah Satu
+                      </option>
+                      {Object.values(CarTransmissionEnum).map(
+                        (transmission) => (
+                          <option key={transmission} value={transmission}>
+                            {getCarTransmissionLabel(
+                              transmission as CarTransmissionEnum
+                            )}
+                          </option>
+                        )
+                      )}
                     </Form.Select>
                     <Form.Label>Transmisi</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.transmission}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.transmission}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </div>
 
@@ -216,10 +275,14 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                   <Form.Floating>
                     <Form.Select
                       value={formData.fuel_type}
-                      onChange={(e) => setData("fuel_type", e.target.value as FuelEnum)}
+                      onChange={(e) =>
+                        setData("fuel_type", e.target.value as FuelEnum)
+                      }
                       isInvalid={!!errors.fuel_type}
                     >
-                      <option disabled value="">Pilih Salah Satu</option>
+                      <option disabled value="">
+                        Pilih Salah Satu
+                      </option>
                       {Object.values(FuelEnum).map((fuel) => (
                         <option key={fuel} value={fuel}>
                           {getCarFuelTypeLabel(fuel as FuelEnum)}
@@ -227,7 +290,9 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       ))}
                     </Form.Select>
                     <Form.Label>Jenis Bahan Bakar</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.fuel_type}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.fuel_type}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </div>
 
@@ -235,10 +300,14 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                   <Form.Floating>
                     <Form.Select
                       value={formData.model}
-                      onChange={(e) => setData("model", e.target.value as CarModelEnum)}
+                      onChange={(e) =>
+                        setData("model", e.target.value as CarModelEnum)
+                      }
                       isInvalid={!!errors.model}
                     >
-                      <option disabled value="">Pilih Salah Satu</option>
+                      <option disabled value="">
+                        Pilih Salah Satu
+                      </option>
                       {Object.values(CarModelEnum).map((model) => (
                         <option key={model} value={model}>
                           {getCarModelLabel(model as CarModelEnum)}
@@ -246,7 +315,9 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       ))}
                     </Form.Select>
                     <Form.Label>Model</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.model}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.model}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </div>
 
@@ -256,11 +327,15 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       type="number"
                       placeholder="Tahun Pembuatan"
                       value={formData.year_of_manufacture}
-                      onChange={(e) => setData("year_of_manufacture", parseInt(e.target.value))}
+                      onChange={(e) =>
+                        setData("year_of_manufacture", parseInt(e.target.value))
+                      }
                       isInvalid={!!errors.year_of_manufacture}
                     />
                     <Form.Label>Tahun Pembuatan</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.year_of_manufacture}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.year_of_manufacture}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </div>
 
@@ -274,7 +349,9 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       isInvalid={!!errors.frame_number}
                     />
                     <Form.Label>Nomor Rangka</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.frame_number}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.frame_number}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </div>
 
@@ -288,7 +365,9 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       isInvalid={!!errors.engine_number}
                     />
                     <Form.Label>Nomor Mesin</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.engine_number}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.engine_number}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </div>
 
@@ -302,7 +381,9 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       isInvalid={!!errors.license_plate}
                     />
                     <Form.Label>Nomor Polisi</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.license_plate}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.license_plate}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </div>
 
@@ -312,11 +393,15 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       type="date"
                       placeholder="Masa Berlaku Nomor Polisi"
                       value={formData.license_plate_expiration}
-                      onChange={(e) => setData("license_plate_expiration", e.target.value)}
+                      onChange={(e) =>
+                        setData("license_plate_expiration", e.target.value)
+                      }
                       isInvalid={!!errors.license_plate_expiration}
                     />
                     <Form.Label>Masa Berlaku Nomor Polisi</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.license_plate_expiration}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.license_plate_expiration}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </div>
 
@@ -326,11 +411,18 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       type="text"
                       placeholder="Nomor STNK"
                       value={formData.vehicle_registration_cert_number}
-                      onChange={(e) => setData("vehicle_registration_cert_number", e.target.value)}
+                      onChange={(e) =>
+                        setData(
+                          "vehicle_registration_cert_number",
+                          e.target.value
+                        )
+                      }
                       isInvalid={!!errors.vehicle_registration_cert_number}
                     />
                     <Form.Label>Nomor STNK</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.vehicle_registration_cert_number}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.vehicle_registration_cert_number}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </div>
 
@@ -340,11 +432,20 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       type="date"
                       placeholder="Masa Berlaku Sertifikat Registrasi Kendaraan"
                       value={formData.vehicle_registration_cert_expiration}
-                      onChange={(e) => setData("vehicle_registration_cert_expiration", e.target.value)}
+                      onChange={(e) =>
+                        setData(
+                          "vehicle_registration_cert_expiration",
+                          e.target.value
+                        )
+                      }
                       isInvalid={!!errors.vehicle_registration_cert_expiration}
                     />
-                    <Form.Label>Masa Berlaku Sertifikat Registrasi Kendaraan</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.vehicle_registration_cert_expiration}</Form.Control.Feedback>
+                    <Form.Label>
+                      Masa Berlaku Sertifikat Registrasi Kendaraan
+                    </Form.Label>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.vehicle_registration_cert_expiration}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </div>
 
@@ -358,7 +459,9 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       isInvalid={!!errors.color}
                     />
                     <Form.Label>Warna</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.color}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.color}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </div>
 
@@ -367,7 +470,7 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                     <Form.Control
                       type="number"
                       placeholder="0"
-                      value={formData.mileage ?? ''}
+                      value={formData.mileage ?? ""}
                       onChange={(e) => {
                         const value = parseInt(e.target.value);
                         setData("mileage", isNaN(value) ? 0 : value);
@@ -375,7 +478,9 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       isInvalid={!!errors.mileage}
                     />
                     <Form.Label>Kilometer Berjalan</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.mileage}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.mileage}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </div>
 
@@ -385,11 +490,15 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       type="text"
                       placeholder="Nomor BPKB"
                       value={formData.vehicle_ownership_book_number}
-                      onChange={(e) => setData("vehicle_ownership_book_number", e.target.value)}
+                      onChange={(e) =>
+                        setData("vehicle_ownership_book_number", e.target.value)
+                      }
                       isInvalid={!!errors.vehicle_ownership_book_number}
                     />
                     <Form.Label>Nomor BPKB</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.vehicle_ownership_book_number}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.vehicle_ownership_book_number}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </div>
               </Row>
@@ -399,17 +508,23 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                   <Form.Control
                     as="textarea"
                     placeholder="Deskripsi"
-                    value={String(formData.description || '')}
+                    value={String(formData.description || "")}
                     onChange={(e) => setData("description", e.target.value)}
-                    style={{ height: '100px' }}
+                    style={{ height: "100px" }}
                     isInvalid={!!errors.description}
                   />
                   <Form.Label>Deskripsi</Form.Label>
-                  <Form.Control.Feedback type="invalid">{errors.description}</Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">
+                    {errors.description}
+                  </Form.Control.Feedback>
                 </Form.Floating>
               </div>
 
-              <SeparatorText align="start" wrapperClassName="pt-0 mb-5" label="Biaya Sewa" />
+              <SeparatorText
+                align="start"
+                wrapperClassName="pt-0 mb-5"
+                label="Biaya Sewa"
+              />
 
               <div className="mb-3 form-group">
                 <Form.Floating>
@@ -417,11 +532,15 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                     type="number"
                     placeholder="0"
                     value={formData.rent_price}
-                    onChange={(e) => setData("rent_price", parseInt(e.target.value))}
+                    onChange={(e) =>
+                      setData("rent_price", parseInt(e.target.value))
+                    }
                     isInvalid={!!errors.rent_price}
                   />
                   <Form.Label>Harga Sewa Harian</Form.Label>
-                  <Form.Control.Feedback type="invalid">{errors.rent_price}</Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">
+                    {errors.rent_price}
+                  </Form.Control.Feedback>
                 </Form.Floating>
               </div>
 
@@ -429,26 +548,36 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                 <Row className="g-3">
                   <Col md={4}>
                     <Card body className="text-center bg-light">
-                      <Card.Title className="mb-0 fw-bold">{currencyFormat(formData.rent_price)}</Card.Title>
+                      <Card.Title className="mb-0 fw-bold">
+                        {currencyFormat(formData.rent_price)}
+                      </Card.Title>
                       <Card.Text className="mb-0">Harian</Card.Text>
                     </Card>
                   </Col>
                   <Col md={4}>
                     <Card body className="text-center bg-light">
-                      <Card.Title className="mb-0 fw-bold">{currencyFormat(formData.rent_price * 7)}</Card.Title>
+                      <Card.Title className="mb-0 fw-bold">
+                        {currencyFormat(formData.rent_price * 7)}
+                      </Card.Title>
                       <Card.Text className="mb-0">Mingguan</Card.Text>
                     </Card>
                   </Col>
                   <Col md={4}>
                     <Card body className="text-center bg-light">
-                      <Card.Title className="mb-0 fw-bold">{currencyFormat(formData.rent_price * 30)}</Card.Title>
+                      <Card.Title className="mb-0 fw-bold">
+                        {currencyFormat(formData.rent_price * 30)}
+                      </Card.Title>
                       <Card.Text className="mb-0">Bulanan</Card.Text>
                     </Card>
                   </Col>
                 </Row>
               </div>
 
-              <SeparatorText align="start" wrapperClassName="pt-0 mb-5" label="Fitur Kendaraan" />
+              <SeparatorText
+                align="start"
+                wrapperClassName="pt-0 mb-5"
+                label="Fitur Kendaraan"
+              />
 
               <Row className="mb-3 g-3">
                 <Col md={6}>
@@ -457,11 +586,15 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       type="number"
                       placeholder="Jumlah Pintu"
                       value={formData.doors}
-                      onChange={(e) => setData("doors", parseInt(e.target.value))}
+                      onChange={(e) =>
+                        setData("doors", parseInt(e.target.value))
+                      }
                       isInvalid={!!errors.doors}
                     />
                     <Form.Label>Jumlah Pintu</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.doors}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.doors}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </Col>
                 <Col md={6}>
@@ -470,11 +603,15 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       type="number"
                       placeholder="Jumlah Kursi"
                       value={formData.seats}
-                      onChange={(e) => setData("seats", parseInt(e.target.value))}
+                      onChange={(e) =>
+                        setData("seats", parseInt(e.target.value))
+                      }
                       isInvalid={!!errors.seats}
                     />
                     <Form.Label>Jumlah Kursi</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.seats}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.seats}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </Col>
                 <Col md={12}>
@@ -483,11 +620,15 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       type="number"
                       placeholder="Kecepatan Maksimal"
                       value={formData.max_speed}
-                      onChange={(e) => setData("max_speed", parseInt(e.target.value))}
+                      onChange={(e) =>
+                        setData("max_speed", parseInt(e.target.value))
+                      }
                       isInvalid={!!errors.max_speed}
                     />
                     <Form.Label>Kecepatan Maksimal</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.max_speed}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.max_speed}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </Col>
                 <Col md={4}>
@@ -496,11 +637,15 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       type="number"
                       placeholder="Kapasitas Bagasi Besar"
                       value={formData.big_luggage}
-                      onChange={(e) => setData("big_luggage", parseInt(e.target.value))}
+                      onChange={(e) =>
+                        setData("big_luggage", parseInt(e.target.value))
+                      }
                       isInvalid={!!errors.big_luggage}
                     />
                     <Form.Label>Kapasitas Bagasi Besar</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.big_luggage}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.big_luggage}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </Col>
                 <Col md={4}>
@@ -509,11 +654,15 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       type="number"
                       placeholder="Kapasitas Bagasi Sedang"
                       value={formData.med_luggage}
-                      onChange={(e) => setData("med_luggage", parseInt(e.target.value))}
+                      onChange={(e) =>
+                        setData("med_luggage", parseInt(e.target.value))
+                      }
                       isInvalid={!!errors.med_luggage}
                     />
                     <Form.Label>Kapasitas Bagasi Sedang</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.med_luggage}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.med_luggage}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </Col>
                 <Col md={4}>
@@ -522,11 +671,15 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       type="number"
                       placeholder="Kapasitas Bagasi Kecil"
                       value={formData.small_luggage}
-                      onChange={(e) => setData("small_luggage", parseInt(e.target.value))}
+                      onChange={(e) =>
+                        setData("small_luggage", parseInt(e.target.value))
+                      }
                       isInvalid={!!errors.small_luggage}
                     />
                     <Form.Label>Kapasitas Bagasi Kecil</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.small_luggage}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.small_luggage}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </Col>
               </Row>
@@ -544,7 +697,8 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       id="ac-checkbox"
                     />
                     <Form.Text className="text-muted">
-                      Jika ya, maka akan disertakan dalam daftar fitur kendaraan.
+                      Jika ya, maka akan disertakan dalam daftar fitur
+                      kendaraan.
                     </Form.Text>
                   </div>
                 </Col>
@@ -558,7 +712,8 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       id="audio-checkbox"
                     />
                     <Form.Text className="text-muted">
-                      Jika ya, maka akan disertakan dalam daftar fitur kendaraan.
+                      Jika ya, maka akan disertakan dalam daftar fitur
+                      kendaraan.
                     </Form.Text>
                   </div>
                 </Col>
@@ -572,7 +727,8 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       id="abs-checkbox"
                     />
                     <Form.Text className="text-muted">
-                      Jika ya, maka akan disertakan dalam daftar fitur kendaraan.
+                      Jika ya, maka akan disertakan dalam daftar fitur
+                      kendaraan.
                     </Form.Text>
                   </div>
                 </Col>
@@ -586,7 +742,8 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       id="child-lock-checkbox"
                     />
                     <Form.Text className="text-muted">
-                      Jika ya, maka akan disertakan dalam daftar fitur kendaraan.
+                      Jika ya, maka akan disertakan dalam daftar fitur
+                      kendaraan.
                     </Form.Text>
                   </div>
                 </Col>
@@ -596,11 +753,14 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       type="checkbox"
                       label="Kontrol Traksi"
                       checked={formData.traction_control}
-                      onChange={(e) => setData("traction_control", e.target.checked)}
+                      onChange={(e) =>
+                        setData("traction_control", e.target.checked)
+                      }
                       id="traction-control-checkbox"
                     />
                     <Form.Text className="text-muted">
-                      Jika ya, maka akan disertakan dalam daftar fitur kendaraan.
+                      Jika ya, maka akan disertakan dalam daftar fitur
+                      kendaraan.
                     </Form.Text>
                   </div>
                 </Col>
@@ -614,7 +774,8 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       id="baby-seat-checkbox"
                     />
                     <Form.Text className="text-muted">
-                      Jika ya, maka akan disertakan dalam daftar fitur kendaraan.
+                      Jika ya, maka akan disertakan dalam daftar fitur
+                      kendaraan.
                     </Form.Text>
                   </div>
                 </Col>
@@ -628,12 +789,14 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                     <Form.Control
                       type="text"
                       placeholder="Nomor IMEI atau ID pada GPS"
-                      value={formData.gps_imei || ''}
+                      value={formData.gps_imei || ""}
                       onChange={(e) => setData("gps_imei", e.target.value)}
                       isInvalid={!!errors.gps_imei}
                     />
                     <Form.Label>Nomor IMEI atau ID pada GPS</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.gps_imei}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.gps_imei}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </div>
 
@@ -641,10 +804,14 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                   <Form.Floating>
                     <Form.Select
                       value={formData.status}
-                      onChange={(e) => setData("status", e.target.value as CarStatusEnum)}
+                      onChange={(e) =>
+                        setData("status", e.target.value as CarStatusEnum)
+                      }
                       isInvalid={!!errors.status}
                     >
-                      <option disabled value="">Pilih Salah Satu</option>
+                      <option disabled value="">
+                        Pilih Salah Satu
+                      </option>
                       {Object.values(CarStatusEnum).map((status) => (
                         <option key={status} value={status}>
                           {getCarStatusLabel(status as CarStatusEnum)}
@@ -652,7 +819,9 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       ))}
                     </Form.Select>
                     <Form.Label>Status</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.status}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.status}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </div>
 
@@ -660,10 +829,14 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                   <Form.Floating>
                     <Form.Select
                       value={formData.condition}
-                      onChange={(e) => setData("condition", e.target.value as CarConditionEnum)}
+                      onChange={(e) =>
+                        setData("condition", e.target.value as CarConditionEnum)
+                      }
                       isInvalid={!!errors.condition}
                     >
-                      <option disabled value="">Pilih Salah Satu</option>
+                      <option disabled value="">
+                        Pilih Salah Satu
+                      </option>
                       {Object.values(CarConditionEnum).map((condition) => (
                         <option key={condition} value={condition}>
                           {getCarConditionLabel(condition as CarConditionEnum)}
@@ -671,7 +844,9 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                       ))}
                     </Form.Select>
                     <Form.Label>Kondisi</Form.Label>
-                    <Form.Control.Feedback type="invalid">{errors.status}</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.status}
+                    </Form.Control.Feedback>
                   </Form.Floating>
                 </div>
               </Row>
@@ -679,10 +854,12 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
               <div>
                 <Form.Label>Unggah Berkas</Form.Label>
 
-                {(galleryData && galleryData?.length > 0) && (
+                {galleryData && galleryData?.length > 0 && (
                   <Card body className="mb-3">
                     <h6>Yang Sudah Diunggah</h6>
-                    <ImageGallery initialData={galleryData as unknown as MediaLibrary[]} />
+                    <ImageGallery
+                      initialData={galleryData as unknown as MediaLibrary[]}
+                    />
                   </Card>
                 )}
 
@@ -692,16 +869,21 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
                   form={{
                     data: formData,
                     setData,
-                    errors
+                    errors,
                   }}
                   maxFileSize={10}
                   maxTotalFileSize={50}
                   maxFiles={3}
-                  acceptedFileTypes={['image/jpeg', 'image/png']}
+                  acceptedFileTypes={["image/jpeg", "image/png"]}
                 />
               </div>
 
-              <Button variant="primary" className="d-none" disabled={processing} onClick={submitData}>
+              <Button
+                variant="primary"
+                className="d-none"
+                disabled={processing}
+                onClick={submitData}
+              >
                 {processing ? <Spinner size="sm" /> : "Simpan Perubahan"}
               </Button>
             </form>
@@ -710,13 +892,17 @@ export default function EditData({ id, onSuccess: onSuccessAction, label }: { id
             <Button variant="secondary" disabled={processing} onClick={onClose}>
               Tutup
             </Button>
-            <Button variant="primary" disabled={processing} onClick={submitData}>
+            <Button
+              variant="primary"
+              disabled={processing}
+              onClick={submitData}
+            >
               {processing ? <Spinner size="sm" /> : "Simpan Perubahan"}
             </Button>
           </Modal.Footer>
-        </Modal>
-      ), document.body)}
+        </Modal>,
+        document.body
+      )}
     </div>
   );
 }
-

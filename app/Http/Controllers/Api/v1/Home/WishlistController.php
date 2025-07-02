@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1\Home;
 
 use App\Http\Controllers\Controller;
 use App\Models\Wishlist;
+use Exception;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -11,8 +12,7 @@ class WishlistController extends Controller
 {
     public function __construct(
         protected readonly Wishlist $wishlist
-    ) {
-    }
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -25,9 +25,9 @@ class WishlistController extends Controller
                     'carData' => function ($query) {
                         $query->with([
                             'media',
-                            'review' // Load semua review tanpa agregasi di sini
+                            'review', // Load semua review tanpa agregasi di sini
                         ]);
-                    }
+                    },
                 ])
                 ->where('user_id', auth()->id())
                 ->select([
@@ -36,9 +36,9 @@ class WishlistController extends Controller
                 ])
                 ->latest()
                 ->get()
-                ->map(fn($wishlist) => $request->boolean('only_id') ? [
+                ->map(fn ($wishlist) => $request->boolean('only_id') ? [
                     'id' => $wishlist->id,
-                    'car_data_id' => $wishlist->car_data_id
+                    'car_data_id' => $wishlist->car_data_id,
                 ] : [
                     'id' => $wishlist->id,
                     'car_data_id' => $wishlist->carData->id,
@@ -62,12 +62,12 @@ class WishlistController extends Controller
                 'data' => $wishlists,
                 'success' => true,
                 'message' => 'Success fetching wishlist',
-                'code' => Response::HTTP_OK
+                'code' => Response::HTTP_OK,
             ]);
-        } catch (\Exception $th) {
+        } catch (Exception $th) {
             return response()->json([
                 'success' => false,
-                'message' => $th->getMessage()
+                'message' => $th->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -81,7 +81,7 @@ class WishlistController extends Controller
 
         $this->wishlist->firstOrCreate([
             'user_id' => auth()->id(),
-            'car_data_id' => $request->input('car_id')
+            'car_data_id' => $request->input('car_id'),
         ]);
 
         return redirect(route('wishlist'));

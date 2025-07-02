@@ -7,8 +7,6 @@ namespace App\Enums;
  *
  * Enum ini mendefinisikan tipe-tipe model mobil yang umum disewa di Indonesia,
  * serta menyediakan label yang mudah dibaca dan warna untuk setiap tipe menggunakan kelas bootstrap.
- *
- * @package App\Enums
  */
 enum CarModelEnum: string
 {
@@ -29,7 +27,7 @@ enum CarModelEnum: string
      */
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::MINI_VAN => 'Mini Van',
             self::VAN => 'Van',
             self::CITY_CAR => 'City Car',
@@ -50,7 +48,7 @@ enum CarModelEnum: string
      */
     public function color(): string
     {
-        return match($this) {
+        return match ($this) {
             self::MINI_VAN, self::VAN, self::PICKUP => 'primary',
             self::CITY_CAR, self::HATCHBACK => 'success',
             self::SEDAN => 'info',

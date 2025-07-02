@@ -4,9 +4,9 @@ namespace App\Services;
 
 use App\TransferObjects\Tripay\TripayCustomerData;
 use App\TransferObjects\Tripay\TripayOrderItem;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Http\Client\Response;
 use Exception;
+use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 class TripayServices
@@ -28,38 +28,11 @@ class TripayServices
     }
 
     /**
-     * Setup base URL berdasarkan mode
-     *
-     * @param string|null $url
-     * @return string
-     */
-    private function setupBaseUrl(?string $url = null): string
-    {
-        return ($this->mode ? 'https://tripay.co.id/api-sandbox/' : 'https://tripay.co.id/api/') . trim($url, '/');
-    }
-
-    /**
-     * Melakukan request ke API Tripay
-     *
-     * @param string|null $url
-     * @param array|null $params
-     * @param string|null $method
-     * @return Response
-     */
-    private function fetch(?string $url = null, ?array $params = null, ?string $method = 'GET'): Response
-    {
-        $method = strtolower($method);
-
-        return Http::withHeaders([
-                    "Authorization" => "Bearer {$this->apiKey}"
-                ])->$method($this->setupBaseUrl($url), $params);
-    }
-
-    /**
      * Retrieve payment channels from the Tripay API and optionally filter them by a search term.
      *
-     * @param string|null $search Optional search term to filter payment channels by name.
+     * @param  string|null  $search  Optional search term to filter payment channels by name.
      * @return \Illuminate\Support\Collection A collection of payment channels, filtered by the search term if provided.
+     *
      * @throws \Illuminate\Http\Client\RequestException If the HTTP request fails.
      */
     public function getChannels(?string $search = null): \Illuminate\Support\Collection
@@ -69,22 +42,23 @@ class TripayServices
         $response->throw();
 
         return collect($response->json()['data'])
-            ->when($search, fn($collection) => $collection->filter(fn($item) => Str::contains(strtolower($item['name']), strtolower($search)) || Str::contains(strtolower($item['code']), strtolower($search))));
+            ->when($search, fn ($collection) => $collection->filter(fn ($item) => Str::contains(strtolower($item['name']), strtolower($search)) || Str::contains(strtolower($item['code']), strtolower($search))));
     }
 
     /**
      * Send a payment request to the Tripay API.
      *
-     * @param string $method The payment method to use.
-     * @param string $trxId The transaction ID.
-     * @param TripayCustomerData $customerData The customer data.
-     * @param TripayOrderItem[] $items The items to be paid.
-     * @throws \Illuminate\Http\Client\RequestException If the HTTP request fails.
+     * @param  string  $method  The payment method to use.
+     * @param  string  $trxId  The transaction ID.
+     * @param  TripayCustomerData  $customerData  The customer data.
+     * @param  TripayOrderItem[]  $items  The items to be paid.
      * @return Response The response from the Tripay API.
+     *
+     * @throws \Illuminate\Http\Client\RequestException If the HTTP request fails.
      */
     public function requestPayment(string $method, string $trxId, TripayCustomerData $customerData, array $items)
     {
-        $amount = collect($items)->sum(fn($item) => $item->price * $item->quantity);
+        $amount = collect($items)->sum(fn ($item) => $item->price * $item->quantity);
         $sign = hash_hmac('sha256', "{$this->merchantCode}{$trxId}{$amount}", $this->privateKey);
         $expired = time() + 2 * 60 * 60;
 
@@ -98,16 +72,17 @@ class TripayServices
             'order_items' => $items,
             'return_url' => url("/transactions/{$trxId}"),
             'expired' => $expired,
-            'signature' => $sign
+            'signature' => $sign,
         ], method: 'POST');
     }
 
     /**
      * Retrieve a payment status from the Tripay API by reference.
      *
-     * @param string $ref The transaction reference from the Tripay API.
+     * @param  string  $ref  The transaction reference from the Tripay API.
      * @return Response The response from the Tripay API.
-     * @throws \Exception If the transaction reference is empty.
+     *
+     * @throws Exception If the transaction reference is empty.
      */
     public function getPayment(string $ref)
     {
@@ -116,5 +91,25 @@ class TripayServices
         }
 
         return $this->fetch('transaction/detail', params: ['reference' => $ref], method: 'GET');
+    }
+
+    /**
+     * Setup base URL berdasarkan mode
+     */
+    private function setupBaseUrl(?string $url = null): string
+    {
+        return ($this->mode ? 'https://tripay.co.id/api-sandbox/' : 'https://tripay.co.id/api/') . trim($url, '/');
+    }
+
+    /**
+     * Melakukan request ke API Tripay
+     */
+    private function fetch(?string $url = null, ?array $params = null, ?string $method = 'GET'): Response
+    {
+        $method = strtolower($method);
+
+        return Http::withHeaders([
+            'Authorization' => "Bearer {$this->apiKey}",
+        ])->$method($this->setupBaseUrl($url), $params);
     }
 }

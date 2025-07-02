@@ -67,7 +67,7 @@ const MapPreview: React.FC = () => {
     const fetchGps = async () => {
       try {
         const res = await fetch(
-          'https://gps.kodinus.id/api/gps-history/device/019176185977/current'
+          'https://gps.kodinus.biz.id/api/gps-history/device/019176185977/current'
         );
         const data = await res.json();
         setGpsData(data);

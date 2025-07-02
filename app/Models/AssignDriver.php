@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Transaction;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $user_id
  * @property-read Transaction $transaction
  * @property-read User $user
+ *
  * @method static \Database\Factories\AssignDriverFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AssignDriver newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AssignDriver newQuery()
@@ -27,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AssignDriver whereTransactionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AssignDriver whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AssignDriver whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class AssignDriver extends Model
@@ -46,8 +46,6 @@ class AssignDriver extends Model
 
     /**
      * Get the transaction that owns the AssignDriver
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function transaction(): BelongsTo
     {
@@ -56,12 +54,9 @@ class AssignDriver extends Model
 
     /**
      * Get the user that is assigned as the driver.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 }
-

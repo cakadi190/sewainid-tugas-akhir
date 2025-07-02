@@ -28,6 +28,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property-read \App\Models\CarData|null $carData
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, Media> $media
  * @property-read int|null $media_count
+ *
  * @method static \Database\Factories\CarRepairNoteDataFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData newQuery()
@@ -43,6 +44,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereRepairDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRepairNoteData whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class CarRepairNoteData extends Model implements HasMedia
@@ -55,6 +57,7 @@ class CarRepairNoteData extends Model implements HasMedia
      * Retrieve a collection of all possible car repair note statuses.
      *
      * @var array<string>
+     *
      * @return \Illuminate\Support\Collection|null A collection of CarRepairNoteStatusEnum cases, or null if none.
      */
     protected $fillable = [
@@ -90,10 +93,8 @@ class CarRepairNoteData extends Model implements HasMedia
      * a 300x300 boundary using the 'Contain' fit method. The conversion is processed
      * without being queued.
      *
-     * @param \Spatie\MediaLibrary\MediaCollections\Models\Media|null $media
-     *        Optional media instance for which conversions are registered.
-     *
-     * @return void
+     * @param  \Spatie\MediaLibrary\MediaCollections\Models\Media|null  $media
+     *                                                                          Optional media instance for which conversions are registered.
      */
     public function registerMediaConversions(?Media $media = null): void
     {
@@ -103,4 +104,3 @@ class CarRepairNoteData extends Model implements HasMedia
             ->nonQueued();
     }
 }
-

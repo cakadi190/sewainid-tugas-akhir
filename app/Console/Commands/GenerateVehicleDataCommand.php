@@ -2,10 +2,11 @@
 
 namespace App\Console\Commands;
 
-use App\Helpers\VehicleRegCodeGenerator;
-use App\Helpers\IndonesianVinGenerator;
 use App\Helpers\CarEngineNumberGenerator;
+use App\Helpers\IndonesianVinGenerator;
 use App\Helpers\LicensePlateNumberGenerator;
+use App\Helpers\VehicleRegCodeGenerator;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
@@ -58,8 +59,9 @@ class GenerateVehicleDataCommand extends Command
             }
 
             return self::SUCCESS;
-        } catch (\Exception $e) {
-            $this->error("Error: " . $e->getMessage());
+        } catch (Exception $e) {
+            $this->error('Error: ' . $e->getMessage());
+
             return self::FAILURE;
         }
     }
@@ -67,8 +69,8 @@ class GenerateVehicleDataCommand extends Command
     /**
      * Menghasilkan data kendaraan acak berdasarkan nama lengkap kendaraan
      *
-     * @param string $vehicleName Nama lengkap kendaraan
-     * @param string|null $region Kode wilayah untuk registrasi kendaraan
+     * @param  string  $vehicleName  Nama lengkap kendaraan
+     * @param  string|null  $region  Kode wilayah untuk registrasi kendaraan
      * @return array Data kendaraan yang dihasilkan
      */
     private function generateVehicleData(string $vehicleName, ?string $region): array
@@ -76,8 +78,8 @@ class GenerateVehicleDataCommand extends Command
         // Membuat instance dari generator yang diperlukan
         $regionCode = $region ?? $this->getRegionCodeFromName($vehicleName);
         $regCodeGenerator = new VehicleRegCodeGenerator($regionCode);
-        $vinGenerator = new IndonesianVinGenerator();
-        $licensePlateGenerator = new LicensePlateNumberGenerator();
+        $vinGenerator = new IndonesianVinGenerator;
+        $licensePlateGenerator = new LicensePlateNumberGenerator;
 
         // Menghasilkan nomor plat berdasarkan wilayah yang dapat ditentukan
         $licensePlate = $licensePlateGenerator->generateLicensePlate($this->getRegionNameFromCode($regionCode));
@@ -90,15 +92,14 @@ class GenerateVehicleDataCommand extends Command
             'license_plate' => $licensePlate,
             'generated_at' => now()->format('Y-m-d H:i:s'),
             'vehicle_ownership' => Str::random(8),
-            'imei' => sprintf('%02d%06d%06d', rand(1, 99), rand(1, 999999), rand(1, 999999))
+            'imei' => sprintf('%02d%06d%06d', rand(1, 99), rand(1, 999999), rand(1, 999999)),
         ];
     }
 
     /**
      * Menampilkan output dalam bentuk tabel
      *
-     * @param array $results Data kendaraan yang akan ditampilkan
-     * @return void
+     * @param  array  $results  Data kendaraan yang akan ditampilkan
      */
     private function displayTableOutput(array $results): void
     {
@@ -110,7 +111,7 @@ class GenerateVehicleDataCommand extends Command
             'Nomor BPKB',
             'Plat Nomor',
             'IMEI GPS',
-            'Dibuat Pada'
+            'Dibuat Pada',
         ];
 
         $rows = collect($results)->map(function ($item) {
@@ -132,7 +133,7 @@ class GenerateVehicleDataCommand extends Command
     /**
      * Mengonversi nama kendaraan menjadi kode wilayah
      *
-     * @param string $vehicleName Nama lengkap kendaraan
+     * @param  string  $vehicleName  Nama lengkap kendaraan
      * @return string Kode wilayah yang dihasilkan
      */
     private function getRegionCodeFromName(string $vehicleName): string
@@ -153,7 +154,7 @@ class GenerateVehicleDataCommand extends Command
     /**
      * Mengonversi kode wilayah menjadi nama wilayah
      *
-     * @param string $regionCode Kode wilayah
+     * @param  string  $regionCode  Kode wilayah
      * @return string|null Nama wilayah
      */
     private function getRegionNameFromCode(string $regionCode): ?string
@@ -164,10 +165,9 @@ class GenerateVehicleDataCommand extends Command
             'D' => 'West Java',
             'AB' => 'DI Yogyakarta',
             'L' => 'East Java',
-            'DK' => 'Bali'
+            'DK' => 'Bali',
         ];
 
         return $regionMap[$regionCode] ?? null;
     }
 }
-

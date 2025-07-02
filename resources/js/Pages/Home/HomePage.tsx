@@ -1,14 +1,12 @@
+import ArmadaCategorySection from "@/Components/GlobalPartial/ArmadaCategory";
+import ArmadaListSection from "@/Components/GlobalPartial/ArmadaList";
 import AuthenticatedUser from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import HeaderHome from "./Partials/Header";
-import ArmadaListSection from "@/Components/GlobalPartial/ArmadaList";
-import ArmadaCategorySection from "@/Components/GlobalPartial/ArmadaCategory";
 
 export default function HomePage() {
   return (
-    <AuthenticatedUser
-      header={<HeaderHome />}
-    >
+    <AuthenticatedUser header={<HeaderHome />}>
       <Head title="Beranda" />
 
       <div className="pt-5">
@@ -16,5 +14,5 @@ export default function HomePage() {
         <ArmadaCategorySection />
       </div>
     </AuthenticatedUser>
-  )
+  );
 }

@@ -1,11 +1,11 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Card from 'react-bootstrap/Card';
-import GlobalHeader from '@/Components/GlobalPartial/HeaderComponent';
-import DashboardImage from '@/Assets/Images/Cover-Dashboard.jpg';
+import DashboardImage from "@/Assets/Images/Cover-Dashboard.jpg";
+import GlobalHeader from "@/Components/GlobalPartial/HeaderComponent";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { Head, Link } from "@inertiajs/react";
+import Card from "react-bootstrap/Card";
+import Col from "react-bootstrap/Col";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
 
 export default function Dashboard() {
   return (
@@ -16,8 +16,8 @@ export default function Dashboard() {
           description="Selamat datang di dasbor! Disinilah Anda dapat melihat informasi tentang permintaan, riwayat, dan melihat tagihan sewa mobil Anda."
           backgroundImage={DashboardImage}
           breadcrumbItems={[
-            { label: 'Beranda', url: route('home') },
-            { label: 'Beranda Dasbor' },
+            { label: "Beranda", url: route("home") },
+            { label: "Beranda Dasbor" },
           ]}
         />
       }
@@ -31,7 +31,15 @@ export default function Dashboard() {
               <Card.Body className="text-dark">
                 <p>You're logged in!</p>
 
-                <Link method="post" href={route('logout')} as="button" type="button" className="btn btn-primary">Keluar</Link>
+                <Link
+                  method="post"
+                  href={route("logout")}
+                  as="button"
+                  type="button"
+                  className="btn btn-primary"
+                >
+                  Keluar
+                </Link>
               </Card.Body>
             </Card>
           </Col>

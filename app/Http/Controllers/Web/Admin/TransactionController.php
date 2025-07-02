@@ -5,14 +5,12 @@ namespace App\Http\Controllers\Web\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
 use App\Services\TripayServices;
-use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
     public function __construct(
         protected readonly TripayServices $tripay
-    ) {
-    }
+    ) {}
 
     /**
      * Show the admin booking index page.
@@ -29,7 +27,7 @@ class TransactionController extends Controller
     /**
      * Display the specified booking details.
      *
-     * @param \App\Models\Transaction $booking
+     * @param  \App\Models\Transaction  $booking
      * @return \Inertia\Response
      */
     public function show(Transaction $transaction)

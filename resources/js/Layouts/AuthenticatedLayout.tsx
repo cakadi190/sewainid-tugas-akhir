@@ -1,9 +1,9 @@
-import { PropsWithChildren, ReactNode } from 'react';
-import Sidebar from './parts/Admin/Sidebar';
-import MainPage from './parts/Admin/MainPage';
-import Navbar from './parts/Admin/Navbar';
-import NavbarUserMain from './parts/User/Navbar';
-import Footer from './parts/User/Footer';
+import { PropsWithChildren, ReactNode } from "react";
+import MainPage from "./parts/Admin/MainPage";
+import Navbar from "./parts/Admin/Navbar";
+import Sidebar from "./parts/Admin/Sidebar";
+import Footer from "./parts/User/Footer";
+import NavbarUserMain from "./parts/User/Navbar";
 
 /**
  * Tipe props untuk komponen Authenticated.
@@ -12,7 +12,7 @@ import Footer from './parts/User/Footer';
  * @property {ReactNode} [header] - Header yang akan ditampilkan dalam layout.
  */
 type AuthenticatedProps = PropsWithChildren<{
-  header?: ReactNode
+  header?: ReactNode;
 }>;
 
 /**
@@ -27,7 +27,7 @@ type AuthenticatedProps = PropsWithChildren<{
  */
 export default function AuthenticatedUser({
   children,
-  header
+  header,
 }: AuthenticatedProps) {
   return (
     <div className="min-vh-100">
@@ -37,7 +37,7 @@ export default function AuthenticatedUser({
       <Footer />
     </div>
   );
-};
+}
 
 /**
  * Komponen AuthenticatedAdmin digunakan untuk mengatur tata letak utama untuk admin yang telah terautentikasi.
@@ -49,10 +49,7 @@ export default function AuthenticatedUser({
  *
  * @returns {JSX.Element} - Komponen JSX yang merepresentasikan layout untuk admin yang telah terautentikasi.
  */
-export function AuthenticatedAdmin({
-  children,
-  header
-}: AuthenticatedProps) {
+export function AuthenticatedAdmin({ children, header }: AuthenticatedProps) {
   return (
     <>
       <Sidebar />
@@ -64,4 +61,4 @@ export function AuthenticatedAdmin({
       </MainPage>
     </>
   );
-};
+}

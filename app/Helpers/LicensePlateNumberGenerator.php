@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Interfaces\LicensePlateNumberGenerator as LicensePlateNumberGeneratorInterface;
+use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -16,11 +17,12 @@ use Illuminate\Support\Str;
  * Format plat kendaraan: [Kode Wilayah] [Angka] [Huruf]
  * Contoh: B 1234 ABC
  *
- * @package LicensePlate
  * @author Cak Adi
+ *
  * @version 2.1.0
  */
-class LicensePlateNumberGenerator implements LicensePlateNumberGeneratorInterface {
+class LicensePlateNumberGenerator implements LicensePlateNumberGeneratorInterface
+{
     /**
      * Daftar kode wilayah untuk setiap provinsi di Indonesia menggunakan Collection
      */
@@ -72,8 +74,44 @@ class LicensePlateNumberGenerator implements LicensePlateNumberGeneratorInterfac
             'South Papua' => ['PA'],
             'Central Papua' => ['PC'],
             'Highland Papua' => ['PG'],
-            'Southwest Papua' => ['PD']
+            'Southwest Papua' => ['PD'],
         ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws Exception Jika wilayah yang diberikan tidak terdaftar
+     */
+    public function generateLicensePlate(?string $region = null): string
+    {
+        $region = $region ?? $this->regionCodes->keys()->random();
+
+        if (! $this->regionCodes->has($region)) {
+            throw new Exception("Wilayah '{$region}' tidak valid");
+        }
+
+        $regionCode = collect($this->regionCodes->get($region))->random();
+        $number = $this->generateNumber();
+        $backLetters = $this->generateBackLetters();
+
+        return sprintf('%s %s %s', $regionCode, $number, $backLetters);
+    }
+
+    /**
+     * Mendapatkan daftar wilayah
+     */
+    public function getRegionList(): array
+    {
+        return $this->regionCodes->keys()->toArray();
+    }
+
+    /**
+     * Mendapatkan kode wilayah berdasarkan nama wilayah
+     */
+    public function getRegionCode(string $region): ?array
+    {
+        return $this->regionCodes->get($region);
     }
 
     /**
@@ -81,8 +119,9 @@ class LicensePlateNumberGenerator implements LicensePlateNumberGeneratorInterfac
      *
      * @return string Angka yang dihasilkan dengan '0' sebagai padding di depan jika perlu
      */
-    private function generateNumber(): string {
-        return Str::padLeft((string)random_int(1, 9999), random_int(1, 4), '0');
+    private function generateNumber(): string
+    {
+        return Str::padLeft((string) random_int(1, 9999), random_int(1, 4), '0');
     }
 
     /**
@@ -93,50 +132,11 @@ class LicensePlateNumberGenerator implements LicensePlateNumberGeneratorInterfac
      *
      * @return string Kombinasi huruf yang dihasilkan
      */
-    private function generateBackLetters(): string {
+    private function generateBackLetters(): string
+    {
         return collect(range('A', 'Z'))
-            ->reject(fn($char) => in_array($char, ['I', 'O']))
+            ->reject(fn ($char) => in_array($char, ['I', 'O']))
             ->random(random_int(1, 3))
             ->implode('');
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Exception Jika wilayah yang diberikan tidak terdaftar
-     */
-    public function generateLicensePlate(?string $region = null): string {
-        $region = $region ?? $this->regionCodes->keys()->random();
-
-        if (!$this->regionCodes->has($region)) {
-            throw new \Exception("Wilayah '$region' tidak valid");
-        }
-
-        $regionCode = collect($this->regionCodes->get($region))->random();
-        $number = $this->generateNumber();
-        $backLetters = $this->generateBackLetters();
-
-        return sprintf("%s %s %s", $regionCode, $number, $backLetters);
-    }
-
-    /**
-     * Mendapatkan daftar wilayah
-     *
-     * @return array
-     */
-    public function getRegionList(): array
-    {
-        return $this->regionCodes->keys()->toArray();
-    }
-
-    /**
-     * Mendapatkan kode wilayah berdasarkan nama wilayah
-     *
-     * @param string $region
-     * @return array|null
-     */
-    public function getRegionCode(string $region): ?array
-    {
-        return $this->regionCodes->get($region);
     }
 }

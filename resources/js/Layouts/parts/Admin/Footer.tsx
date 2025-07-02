@@ -7,7 +7,10 @@ const Footer: React.FC = () => {
       <Container fluid className="py-3">
         <Row>
           <Col lg={6} className="text-muted">
-            &copy; {new Date().getFullYear()} <Link href="/">Sewain.id</Link> oleh <a href="https://www.kodinus.id">PT Kodingin Digital Nusantara</a>. Semua hak dilindungi.
+            &copy; {new Date().getFullYear()} <Link href="/">Sewain.id</Link>{" "}
+            oleh{" "}
+            <a href="https://www.kodinus.id">PT Kodingin Digital Nusantara</a>.
+            Semua hak dilindungi.
           </Col>
           {/* <Col lg={6} className="text-lg-end">
             <a href="#home" className="text-decoration-none me-3">Beranda</a>

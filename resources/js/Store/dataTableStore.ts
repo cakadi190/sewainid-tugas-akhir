@@ -1,5 +1,5 @@
-import { create } from 'zustand'
 import { DataTableRef } from '@/Components/DataTable'
+import { create } from 'zustand'
 
 interface DataTableState {
   dataTableRef: React.RefObject<DataTableRef> | null

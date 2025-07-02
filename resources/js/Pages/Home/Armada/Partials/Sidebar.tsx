@@ -1,14 +1,18 @@
-import { FC, useCallback, useEffect, useState, memo } from "react";
-import { Form, FormFloating, Button, FloatingLabel } from "react-bootstrap";
-import RangeSlider from "react-bootstrap-range-slider";
-import { router } from "@inertiajs/react";
 import { CarModelEnum, CarTransmissionEnum, FuelEnum } from "@/Helpers/enum";
-import { getCarFuelTypeLabel, getCarModelLabel, getCarTransmissionLabel } from "@/Helpers/EnumHelper";
+import {
+  getCarFuelTypeLabel,
+  getCarModelLabel,
+  getCarTransmissionLabel,
+} from "@/Helpers/EnumHelper";
 import { useDebounce } from "@/Hooks/useDebounce";
 import styled from "@emotion/styled";
-import Flatpickr from "react-flatpickr";
+import { router } from "@inertiajs/react";
 import { Indonesian } from "flatpickr/dist/l10n/id";
+import { FC, memo, useCallback, useEffect, useState } from "react";
+import { Button, FloatingLabel, Form, FormFloating } from "react-bootstrap";
+import RangeSlider from "react-bootstrap-range-slider";
 import "react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css";
+import Flatpickr from "react-flatpickr";
 
 export interface FilterState {
   model: string;
@@ -77,170 +81,213 @@ const FilterSidebar: FC<FilterSidebarProps> = ({ filters, setFilters }) => {
   const [activeFilters, setActiveFilters] = useState(0);
 
   // State yang digunakan untuk menampilkan nilai slider
-  const [yearFromDisplay, setYearFromDisplay] = useState<number>(Number(localFilters.year_from) || minYear);
-  const [yearToDisplay, setYearToDisplay] = useState<number>(Number(localFilters.year_to) || maxYear);
-  const [priceMinDisplay, setPriceMinDisplay] = useState<number>(Number(localFilters.price_min) || 0);
-  const [priceMaxDisplay, setPriceMaxDisplay] = useState<number>(Number(localFilters.price_max) || maxPriceLimit);
+  const [yearFromDisplay, setYearFromDisplay] = useState<number>(
+    Number(localFilters.year_from) || minYear
+  );
+  const [yearToDisplay, setYearToDisplay] = useState<number>(
+    Number(localFilters.year_to) || maxYear
+  );
+  const [priceMinDisplay, setPriceMinDisplay] = useState<number>(
+    Number(localFilters.price_min) || 0
+  );
+  const [priceMaxDisplay, setPriceMaxDisplay] = useState<number>(
+    Number(localFilters.price_max) || maxPriceLimit
+  );
 
   // State untuk date range
-  const [dateRange, setDateRange] = useState<Date[]>([
-    localFilters.pickup_date ? new Date(localFilters.pickup_date) : null,
-    localFilters.return_date ? new Date(localFilters.return_date) : null
-  ].filter(Boolean) as Date[]);
+  const [dateRange, setDateRange] = useState<Date[]>(
+    [
+      localFilters.pickup_date ? new Date(localFilters.pickup_date) : null,
+      localFilters.return_date ? new Date(localFilters.return_date) : null,
+    ].filter(Boolean) as Date[]
+  );
 
   const updateFilters = useCallback((newFilters: FilterState) => {
-    const nonEmptyFilters = Object.entries(newFilters).reduce((acc, [key, value]) => {
-      if (value !== "" && value !== 0 && value !== null && value !== undefined) {
-        acc[key] = value;
-      }
-      return acc;
-    }, {} as Record<string, any>);
+    const nonEmptyFilters = Object.entries(newFilters).reduce(
+      (acc, [key, value]) => {
+        if (
+          value !== "" &&
+          value !== 0 &&
+          value !== null &&
+          value !== undefined
+        ) {
+          acc[key] = value;
+        }
+        return acc;
+      },
+      {} as Record<string, any>
+    );
 
-    router.get(route('armada.index'), nonEmptyFilters, {
+    router.get(route("armada.index"), nonEmptyFilters, {
       preserveState: true,
       replace: true,
-      only: ['cars']
+      only: ["cars"],
     });
   }, []);
 
   const debouncedUpdateFilters = useDebounce(updateFilters, 500);
 
-  const handleFilterChange = useCallback((e: React.ChangeEvent<HTMLElement>) => {
-    const target = e.target as HTMLInputElement | HTMLSelectElement;
-    const { name, value, type } = target;
-    const updatedValue = type === 'number' || type === 'range' ? (value ? parseInt(value) : 0) : value;
+  const handleFilterChange = useCallback(
+    (e: React.ChangeEvent<HTMLElement>) => {
+      const target = e.target as HTMLInputElement | HTMLSelectElement;
+      const { name, value, type } = target;
+      const updatedValue =
+        type === "number" || type === "range"
+          ? value
+            ? parseInt(value)
+            : 0
+          : value;
 
-    const newFilters = {
-      ...localFilters,
-      [name]: updatedValue
-    };
+      const newFilters = {
+        ...localFilters,
+        [name]: updatedValue,
+      };
 
-    setLocalFilters(newFilters);
-    setFilters(newFilters);
+      setLocalFilters(newFilters);
+      setFilters(newFilters);
 
-    debouncedUpdateFilters(newFilters);
-  }, [localFilters, setFilters, debouncedUpdateFilters]);
+      debouncedUpdateFilters(newFilters);
+    },
+    [localFilters, setFilters, debouncedUpdateFilters]
+  );
 
   // Handler untuk slider tahun
-  const handleYearFromChange = useCallback((value: number) => {
-    setYearFromDisplay(value);
-
-    // Pastikan year_from tidak lebih besar dari year_to
-    const yearTo = Number(localFilters.year_to) || maxYear;
-
-    const newFilters = {
-      ...localFilters,
-      year_from: value
-    };
-
-    // Jika year_from lebih besar dari year_to, update juga year_to
-    if (value > yearTo) {
-      newFilters.year_to = value;
-      setYearToDisplay(value);
-    }
-
-    setLocalFilters(newFilters);
-    setFilters(newFilters);
-    debouncedUpdateFilters(newFilters);
-  }, [localFilters, setFilters, debouncedUpdateFilters, maxYear]);
-
-  const handleYearToChange = useCallback((value: number) => {
-    setYearToDisplay(value);
-
-    // Pastikan year_to tidak lebih kecil dari year_from
-    const yearFrom = Number(localFilters.year_from) || minYear;
-
-    const newFilters = {
-      ...localFilters,
-      year_to: value
-    };
-
-    // Jika year_to lebih kecil dari year_from, update juga year_from
-    if (value < yearFrom) {
-      newFilters.year_from = value;
+  const handleYearFromChange = useCallback(
+    (value: number) => {
       setYearFromDisplay(value);
-    }
 
-    setLocalFilters(newFilters);
-    setFilters(newFilters);
-    debouncedUpdateFilters(newFilters);
-  }, [localFilters, setFilters, debouncedUpdateFilters, minYear]);
+      // Pastikan year_from tidak lebih besar dari year_to
+      const yearTo = Number(localFilters.year_to) || maxYear;
+
+      const newFilters = {
+        ...localFilters,
+        year_from: value,
+      };
+
+      // Jika year_from lebih besar dari year_to, update juga year_to
+      if (value > yearTo) {
+        newFilters.year_to = value;
+        setYearToDisplay(value);
+      }
+
+      setLocalFilters(newFilters);
+      setFilters(newFilters);
+      debouncedUpdateFilters(newFilters);
+    },
+    [localFilters, setFilters, debouncedUpdateFilters, maxYear]
+  );
+
+  const handleYearToChange = useCallback(
+    (value: number) => {
+      setYearToDisplay(value);
+
+      // Pastikan year_to tidak lebih kecil dari year_from
+      const yearFrom = Number(localFilters.year_from) || minYear;
+
+      const newFilters = {
+        ...localFilters,
+        year_to: value,
+      };
+
+      // Jika year_to lebih kecil dari year_from, update juga year_from
+      if (value < yearFrom) {
+        newFilters.year_from = value;
+        setYearFromDisplay(value);
+      }
+
+      setLocalFilters(newFilters);
+      setFilters(newFilters);
+      debouncedUpdateFilters(newFilters);
+    },
+    [localFilters, setFilters, debouncedUpdateFilters, minYear]
+  );
 
   // Handler untuk slider harga
-  const handlePriceMinChange = useCallback((value: number) => {
-    setPriceMinDisplay(value);
-
-    // Pastikan price_min tidak lebih besar dari price_max
-    const priceMax = Number(localFilters.price_max) || maxPriceLimit;
-
-    const newFilters = {
-      ...localFilters,
-      price_min: value
-    };
-
-    // Jika price_min lebih besar dari price_max, update juga price_max
-    if (value > priceMax) {
-      newFilters.price_max = value;
-      setPriceMaxDisplay(value);
-    }
-
-    setLocalFilters(newFilters);
-    setFilters(newFilters);
-    debouncedUpdateFilters(newFilters);
-  }, [localFilters, setFilters, debouncedUpdateFilters, maxPriceLimit]);
-
-  const handlePriceMaxChange = useCallback((value: number) => {
-    setPriceMaxDisplay(value);
-
-    // Pastikan price_max tidak lebih kecil dari price_min
-    const priceMin = Number(localFilters.price_min) || 0;
-
-    const newFilters = {
-      ...localFilters,
-      price_max: value
-    };
-
-    // Jika price_max lebih kecil dari price_min, update juga price_min
-    if (value < priceMin) {
-      newFilters.price_min = value;
+  const handlePriceMinChange = useCallback(
+    (value: number) => {
       setPriceMinDisplay(value);
-    }
 
-    setLocalFilters(newFilters);
-    setFilters(newFilters);
-    debouncedUpdateFilters(newFilters);
-  }, [localFilters, setFilters, debouncedUpdateFilters]);
+      // Pastikan price_min tidak lebih besar dari price_max
+      const priceMax = Number(localFilters.price_max) || maxPriceLimit;
+
+      const newFilters = {
+        ...localFilters,
+        price_min: value,
+      };
+
+      // Jika price_min lebih besar dari price_max, update juga price_max
+      if (value > priceMax) {
+        newFilters.price_max = value;
+        setPriceMaxDisplay(value);
+      }
+
+      setLocalFilters(newFilters);
+      setFilters(newFilters);
+      debouncedUpdateFilters(newFilters);
+    },
+    [localFilters, setFilters, debouncedUpdateFilters, maxPriceLimit]
+  );
+
+  const handlePriceMaxChange = useCallback(
+    (value: number) => {
+      setPriceMaxDisplay(value);
+
+      // Pastikan price_max tidak lebih kecil dari price_min
+      const priceMin = Number(localFilters.price_min) || 0;
+
+      const newFilters = {
+        ...localFilters,
+        price_max: value,
+      };
+
+      // Jika price_max lebih kecil dari price_min, update juga price_min
+      if (value < priceMin) {
+        newFilters.price_min = value;
+        setPriceMinDisplay(value);
+      }
+
+      setLocalFilters(newFilters);
+      setFilters(newFilters);
+      debouncedUpdateFilters(newFilters);
+    },
+    [localFilters, setFilters, debouncedUpdateFilters]
+  );
 
   const formatPriceToRupiah = (price: number) => {
-    return new Intl.NumberFormat('id-ID').format(price);
+    return new Intl.NumberFormat("id-ID").format(price);
   };
 
   // Handler untuk date range picker
-  const handleDateRangeChange = useCallback((dates: Date[]) => {
-    setDateRange(dates);
+  const handleDateRangeChange = useCallback(
+    (dates: Date[]) => {
+      setDateRange(dates);
 
-    const formatUTCDate = (date: Date) => {
-      return date ?
-        date.getUTCFullYear() + '-' +
-        String(date.getUTCMonth() + 1).padStart(2, '0') + '-' +
-        String(date.getUTCDate()).padStart(2, '0') :
-        '';
-    };
+      const formatUTCDate = (date: Date) => {
+        return date
+          ? date.getUTCFullYear() +
+              "-" +
+              String(date.getUTCMonth() + 1).padStart(2, "0") +
+              "-" +
+              String(date.getUTCDate()).padStart(2, "0")
+          : "";
+      };
 
-    const newFilters = {
-      ...localFilters,
-      pickup_date: dates[0] ? formatUTCDate(dates[0]) : '',
-      return_date: dates[1] ? formatUTCDate(dates[1]) : ''
-    };
+      const newFilters = {
+        ...localFilters,
+        pickup_date: dates[0] ? formatUTCDate(dates[0]) : "",
+        return_date: dates[1] ? formatUTCDate(dates[1]) : "",
+      };
 
-    setLocalFilters(newFilters);
-    setFilters(newFilters);
-    debouncedUpdateFilters(newFilters);
-  }, [localFilters, setFilters, debouncedUpdateFilters]);
+      setLocalFilters(newFilters);
+      setFilters(newFilters);
+      debouncedUpdateFilters(newFilters);
+    },
+    [localFilters, setFilters, debouncedUpdateFilters]
+  );
 
   const handleResetFilters = useCallback(() => {
     const emptyFilters = Object.keys(filters).reduce((acc, key) => {
-      acc[key] = key.includes('price') ? 0 : '';
+      acc[key] = key.includes("price") ? 0 : "";
       return acc;
     }, {} as FilterState);
 
@@ -251,12 +298,12 @@ const FilterSidebar: FC<FilterSidebarProps> = ({ filters, setFilters }) => {
     setPriceMinDisplay(0);
     setPriceMaxDisplay(maxPriceLimit);
     setDateRange([]);
-    router.get(route('armada.index'), {}, { preserveState: true });
+    router.get(route("armada.index"), {}, { preserveState: true });
   }, [filters, setFilters, minYear, maxYear, maxPriceLimit]);
 
   useEffect(() => {
     const count = Object.entries(localFilters).reduce((acc, [key, value]) => {
-      return value && key !== 'search' ? acc + 1 : acc;
+      return value && key !== "search" ? acc + 1 : acc;
     }, 0);
 
     setActiveFilters(count);
@@ -273,10 +320,12 @@ const FilterSidebar: FC<FilterSidebarProps> = ({ filters, setFilters }) => {
       setPriceMaxDisplay(Number(filters.price_max) || maxPriceLimit);
 
       // Update date range
-      setDateRange([
-        filters.pickup_date ? new Date(filters.pickup_date) : null,
-        filters.return_date ? new Date(filters.return_date) : null
-      ].filter(Boolean) as Date[]);
+      setDateRange(
+        [
+          filters.pickup_date ? new Date(filters.pickup_date) : null,
+          filters.return_date ? new Date(filters.return_date) : null,
+        ].filter(Boolean) as Date[]
+      );
     }
   }, [filters, minYear, maxYear, maxPriceLimit]);
 
@@ -288,7 +337,7 @@ const FilterSidebar: FC<FilterSidebarProps> = ({ filters, setFilters }) => {
             type="search"
             placeholder="Cari Nama Kendaraan"
             name="search"
-            value={localFilters.search || ''}
+            value={localFilters.search || ""}
             onChange={handleFilterChange}
           />
           <label>Cari</label>
@@ -301,12 +350,14 @@ const FilterSidebar: FC<FilterSidebarProps> = ({ filters, setFilters }) => {
         <Form.Floating className="mb-3">
           <Form.Select
             name="model"
-            value={localFilters.model || ''}
+            value={localFilters.model || ""}
             onChange={handleFilterChange}
           >
             <option value="">Semua</option>
             {Object.values(CarModelEnum).map((model) => (
-              <option key={model} value={model}>{getCarModelLabel(model)}</option>
+              <option key={model} value={model}>
+                {getCarModelLabel(model)}
+              </option>
             ))}
           </Form.Select>
           <Form.Label>Model</Form.Label>
@@ -374,12 +425,14 @@ const FilterSidebar: FC<FilterSidebarProps> = ({ filters, setFilters }) => {
         <Form.Floating className="mb-3">
           <Form.Select
             name="fuel_type"
-            value={localFilters.fuel_type || ''}
+            value={localFilters.fuel_type || ""}
             onChange={handleFilterChange}
           >
             <option value="">Semua</option>
             {Object.values(FuelEnum).map((fuel) => (
-              <option key={fuel} value={fuel}>{getCarFuelTypeLabel(fuel)}</option>
+              <option key={fuel} value={fuel}>
+                {getCarFuelTypeLabel(fuel)}
+              </option>
             ))}
           </Form.Select>
           <Form.Label>Jenis Bahan Bakar</Form.Label>
@@ -388,13 +441,15 @@ const FilterSidebar: FC<FilterSidebarProps> = ({ filters, setFilters }) => {
         <Form.Floating className="mb-3">
           <Form.Select
             name="transmission"
-            value={localFilters.transmission || ''}
+            value={localFilters.transmission || ""}
             onChange={handleFilterChange}
           >
             <option value="">Semua</option>
-            {Object.values(CarTransmissionEnum).map((transmission) =>
-              <option key={transmission} value={transmission}>{getCarTransmissionLabel(transmission)}</option>
-            )}
+            {Object.values(CarTransmissionEnum).map((transmission) => (
+              <option key={transmission} value={transmission}>
+                {getCarTransmissionLabel(transmission)}
+              </option>
+            ))}
           </Form.Select>
           <Form.Label>Transmisi</Form.Label>
         </Form.Floating>
@@ -437,7 +492,8 @@ const FilterSidebar: FC<FilterSidebarProps> = ({ filters, setFilters }) => {
           </SliderContainer>
 
           <RangeValue>
-            Range: Rp {formatPriceToRupiah(priceMinDisplay)} - Rp {formatPriceToRupiah(priceMaxDisplay)}
+            Range: Rp {formatPriceToRupiah(priceMinDisplay)} - Rp{" "}
+            {formatPriceToRupiah(priceMaxDisplay)}
           </RangeValue>
         </Form.Group>
       </FilterSection>

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\v1\Home;
 use App\Enums\RentalStatusEnum;
 use App\Enums\RoleUser;
 use App\Enums\TransactionStatusEnum;
-use App\Services\TripayServices;
 use App\Http\Controllers\Controller;
 use App\Models\CarData;
 use App\Models\Transaction;
@@ -13,16 +12,19 @@ use App\Models\User;
 use App\Notifications\InvoiceCreatedToAdmin;
 use App\Notifications\InvoiceCreatedToUser;
 use App\Services\FonnteService;
+use App\Services\TripayServices;
 use App\TransferObjects\Tripay\TripayCustomerData;
 use App\TransferObjects\Tripay\TripayOrderItem;
 use Carbon\Carbon;
-use Http;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Session\Store;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
-use Log;
 use sirajcse\UniqueIdGenerator\UniqueIdGenerator;
+use Throwable;
 
 /**
  * Mengelola proses checkout rental mobil
@@ -35,8 +37,7 @@ class CheckoutController extends Controller
         protected readonly Store $session,
         protected readonly TripayServices $tripay,
         protected readonly FonnteService $fonnte
-    ) {
-    }
+    ) {}
 
     /**
      * Menambah atau mengupdate data rental dalam session
@@ -46,7 +47,7 @@ class CheckoutController extends Controller
         $isUpdate = $request->boolean('update');
         $hasOrder = $this->session->has('order');
 
-        if (!$isUpdate && $hasOrder) {
+        if (! $isUpdate && $hasOrder) {
             throw ValidationException::withMessages([
                 'order' => 'Anda sudah memiliki order. ERR_ALREADY_HAVE_ORDER',
             ]);
@@ -62,7 +63,7 @@ class CheckoutController extends Controller
         /** @var CarData $carData */
         $carData = $this->carData->findOrFail($validated['car_id']);
 
-        if (!$carData->isNotOnUnavailableDate($validated['pickup_date']) || !$carData->isNotOnUnavailableDate($validated['return_date'])) {
+        if (! $carData->isNotOnUnavailableDate($validated['pickup_date']) || ! $carData->isNotOnUnavailableDate($validated['return_date'])) {
             throw ValidationException::withMessages([
                 'order' => 'Tanggal tidak tersedia. ERR_FORBIDDEN_DATE',
             ]);
@@ -82,6 +83,7 @@ class CheckoutController extends Controller
     public function cancel()
     {
         $this->session->forget('order');
+
         return redirect()->route('home');
     }
 
@@ -112,13 +114,13 @@ class CheckoutController extends Controller
             /** @var CarData $car */
             $car = $this->carData->where('id', $order['car_id'])->lockForUpdate()->first();
 
-            if (!$car) {
+            if (! $car) {
                 throw ValidationException::withMessages([
                     'order' => 'Mobil tidak ditemukan. ERR_CAR_NOT_FOUND',
                 ]);
             }
 
-            if (!$car->isNotOnUnavailableDate($order['pickup_date']) || !$car->isNotOnUnavailableDate($order['return_date'])) {
+            if (! $car->isNotOnUnavailableDate($order['pickup_date']) || ! $car->isNotOnUnavailableDate($order['return_date'])) {
                 throw ValidationException::withMessages([
                     'order' => 'Tanggal tidak tersedia. ERR_FORBIDDEN_DATE',
                 ]);
@@ -131,12 +133,12 @@ class CheckoutController extends Controller
 
             $items->push(new TripayOrderItem(
                 sku: "TAX-{$car->id}-{$trxId}",
-                name: "Pajak Biaya Rental",
+                name: 'Pajak Biaya Rental',
                 price: $tax,
                 quantity: 1,
             ));
 
-            $totalPay = $items->sum(fn($item) => $item->price * $item->quantity);
+            $totalPay = $items->sum(fn ($item) => $item->price * $item->quantity);
 
             $response = $this->tripay->requestPayment(
                 method: $validated['payment_method'],
@@ -146,7 +148,7 @@ class CheckoutController extends Controller
             );
 
             if ($response->failed()) {
-                throw new \Exception($response->json()['message'] ?? 'Gagal memproses pembayaran.');
+                throw new Exception($response->json()['message'] ?? 'Gagal memproses pembayaran.');
             }
 
             $dataResponse = $response->json();
@@ -188,53 +190,17 @@ class CheckoutController extends Controller
             DB::commit();
 
             return redirect()->route('dashboard.transaction.show', $transaction->id);
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             DB::rollBack();
             report($th);
+
             return back()->with('error', $th->getMessage());
         }
     }
 
     /**
-     * Sends an email notification to all admin users about a new transaction.
-     *
-     * This function retrieves all users with the 'admin' role and sends them
-     * a notification regarding a new transaction using the InvoiceCreatedToAdmin
-     * notification.
-     *
-     * @param string $trxId The transaction ID for which the notification is sent.
-     */
-    private function sendEmailToAdmin(string $trxId)
-    {
-        $admins = User::role([RoleUser::ADMIN, RoleUser::MONETARY])->get();
-
-        foreach ($admins as $admin) {
-            $admin->notify(new InvoiceCreatedToAdmin($trxId, $admin->name));
-        }
-    }
-
-    /**
-     * Sends an email notification to the user about a new transaction.
-     *
-     * This function sends a notification to the authenticated user regarding a new transaction
-     * using the InvoiceCreatedToUser notification.
-     *
-     * @param string $trxId The transaction ID for which the notification is sent.
-     * @param string $name The user's name.
-     * @param int $amount The total amount of the transaction.
-     */
-    private function sendEmailToUser(string $trxId, string $name, int $amount)
-    {
-        auth()->user()->notify(new InvoiceCreatedToUser($name, $trxId, $amount));
-    }
-
-    /**
      * Send data order trip into GPS API Server
      *
-     * @param float $latitude
-     * @param float $longitude
-     * @param string|null $device
-     * @return void
      * @throws \Illuminate\Validation\ValidationException
      */
     public function sendOrderToGpsApi(float $latitude, float $longitude, ?string $device = null): void
@@ -245,7 +211,7 @@ class CheckoutController extends Controller
 
         $user = auth()->user();
 
-        if (!$user) {
+        if (! $user) {
             return;
         }
 
@@ -256,15 +222,15 @@ class CheckoutController extends Controller
 
         $isImei = is_imei($device);
 
-        if (!$isImei) {
+        if (! $isImei) {
             $data['deviceId'] = $device;
         } else {
             $data['imei'] = $device;
         }
 
         try {
-            Http::post("https://gps.kodinus.id/api/order-trip/create", $data);
-        } catch (\Throwable $e) {
+            Http::post('https://gps.kodinus.biz.id/api/order-trip/create', $data);
+        } catch (Throwable $e) {
             report($e);
         }
     }
@@ -272,15 +238,14 @@ class CheckoutController extends Controller
     /**
      * Send a WhatsApp message to the user containing the transaction
      * id, amount, and a link to the transaction detail page.
-     *
-     * @param Transaction $transaction
      */
     protected function sendWhatsappMessage(Transaction $transaction): void
     {
         $user = auth()->user();
 
-        if (!$user || !$user->phone) {
+        if (! $user || ! $user->phone) {
             Log::warning('WhatsApp message not sent: User not authenticated or phone number missing.');
+
             return;
         }
 
@@ -312,7 +277,7 @@ MSG;
             $this->fonnte->message($message, $phoneNumber)
                 ->typing()
                 ->send();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             report($e);
         }
     }
@@ -323,8 +288,6 @@ MSG;
      * This method retrieves the current order from the session and deletes the
      * corresponding car data from the authenticated user's wishlist. It then
      * clears the order from the session.
-     *
-     * @return void
      */
     protected function cleanUpSessionAndWishlist(): void
     {
@@ -353,7 +316,7 @@ MSG;
      */
     protected function calculateTax($items): float
     {
-        return $items->sum(fn($item) => $item->price * $item->quantity) * 0.11;
+        return $items->sum(fn ($item) => $item->price * $item->quantity) * 0.11;
     }
 
     /**
@@ -371,7 +334,7 @@ MSG;
                 image_url: $car->getFirstMediaUrl('images'),
             ),
             new TripayOrderItem(
-                name: "Biaya Operasional Layanan",
+                name: 'Biaya Operasional Layanan',
                 price: 50000,
                 quantity: 1,
             ),
@@ -380,12 +343,45 @@ MSG;
         if ($withDriver) {
             $items->push(new TripayOrderItem(
                 sku: "DRIVER-{$car->id}-{$trxId}",
-                name: "Biaya Driver Rental",
+                name: 'Biaya Driver Rental',
                 price: 250000,
                 quantity: $rentDays,
             ));
         }
 
         return $items;
+    }
+
+    /**
+     * Sends an email notification to all admin users about a new transaction.
+     *
+     * This function retrieves all users with the 'admin' role and sends them
+     * a notification regarding a new transaction using the InvoiceCreatedToAdmin
+     * notification.
+     *
+     * @param  string  $trxId  The transaction ID for which the notification is sent.
+     */
+    private function sendEmailToAdmin(string $trxId)
+    {
+        $admins = User::role([RoleUser::ADMIN, RoleUser::MONETARY])->get();
+
+        foreach ($admins as $admin) {
+            $admin->notify(new InvoiceCreatedToAdmin($trxId, $admin->name));
+        }
+    }
+
+    /**
+     * Sends an email notification to the user about a new transaction.
+     *
+     * This function sends a notification to the authenticated user regarding a new transaction
+     * using the InvoiceCreatedToUser notification.
+     *
+     * @param  string  $trxId  The transaction ID for which the notification is sent.
+     * @param  string  $name  The user's name.
+     * @param  int  $amount  The total amount of the transaction.
+     */
+    private function sendEmailToUser(string $trxId, string $name, int $amount)
+    {
+        auth()->user()->notify(new InvoiceCreatedToUser($name, $trxId, $amount));
     }
 }

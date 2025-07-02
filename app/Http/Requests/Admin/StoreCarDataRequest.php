@@ -3,12 +3,12 @@
 namespace App\Http\Requests\Admin;
 
 use App\Enums\CarConditionEnum;
-use App\Enums\FuelTypeEnum;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 use App\Enums\CarModelEnum;
 use App\Enums\CarStatusEnum;
 use App\Enums\CarTransmissionEnum;
+use App\Enums\FuelTypeEnum;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreCarDataRequest extends FormRequest
 {
@@ -120,4 +120,3 @@ class StoreCarDataRequest extends FormRequest
         ];
     }
 }
-

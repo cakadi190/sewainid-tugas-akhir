@@ -17,7 +17,7 @@ enum FuelTypeEnum: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::GASOLINE => 'Bensin',
             self::DIESEL => 'Solar / Diesel',
             self::ELECTRIC => 'Listrik',

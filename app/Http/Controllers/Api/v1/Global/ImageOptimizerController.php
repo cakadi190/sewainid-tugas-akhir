@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Api\v1\Global;
 
 use App\Http\Controllers\Controller;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Validator;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Gd\Driver;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 use Ramsey\Uuid\Uuid;
 
 class ImageOptimizerController extends Controller
@@ -23,13 +24,12 @@ class ImageOptimizerController extends Controller
      */
     public function __construct()
     {
-        $this->imageManager = new ImageManager(new Driver());
+        $this->imageManager = new ImageManager(new Driver);
     }
 
     /**
      * Optimize and resize an image from URL and return it as a data stream
      *
-     * @param Request $request
      * @return \Illuminate\Http\Response
      */
     public function __invoke(Request $request)
@@ -67,8 +67,9 @@ class ImageOptimizerController extends Controller
             // Return the processed image
             return $this->createImageResponse($encodedImage, $contentType, $format);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Image optimization error: ' . $e->getMessage());
+
             return response()->json(['error' => 'Failed to optimize image: ' . $e->getMessage()], 500);
         }
     }
@@ -76,7 +77,6 @@ class ImageOptimizerController extends Controller
     /**
      * Validate the incoming request.
      *
-     * @param Request $request
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validateRequest(Request $request)
@@ -93,7 +93,6 @@ class ImageOptimizerController extends Controller
     /**
      * Fetch image from the given URL.
      *
-     * @param string $imageUrl
      * @return string|null
      */
     protected function fetchImageFromUrl(string $imageUrl)
@@ -108,18 +107,18 @@ class ImageOptimizerController extends Controller
     /**
      * Resize the image based on provided dimensions.
      *
-     * @param mixed $image Intervention/Image instance
-     * @param int|null $width
-     * @param int|null $height
+     * @param  mixed  $image  Intervention/Image instance
+     * @param  int|null  $width
+     * @param  int|null  $height
      * @return mixed The processed image
      */
     protected function resizeImage($image, $width = null, $height = null)
     {
         if ($width && $height) {
             $image->resize(width: $width, height: $height);
-        } elseif ($width && !$height) {
+        } elseif ($width && ! $height) {
             $image->resize(width: $width);
-        } elseif (!$width && $height) {
+        } elseif (! $width && $height) {
             $image->resize(height: $height);
         }
 
@@ -128,9 +127,9 @@ class ImageOptimizerController extends Controller
         $currentHeight = $image->height();
 
         if (($width && $currentWidth > $width) || ($height && $currentHeight > $height)) {
-            if ($width && !$height) {
+            if ($width && ! $height) {
                 $image->resize(width: min($width, $currentWidth));
-            } elseif (!$width && $height) {
+            } elseif (! $width && $height) {
                 $image->resize(height: min($height, $currentHeight));
             } else {
                 $image->resize(
@@ -146,9 +145,7 @@ class ImageOptimizerController extends Controller
     /**
      * Encode the image to the specified format.
      *
-     * @param \Intervention\Image\Interfaces\ImageInterface $image
-     * @param string $format
-     * @param int $quality
+     * @param  \Intervention\Image\Interfaces\ImageInterface  $image
      * @return array [encodedImage, contentType]
      */
     protected function encodeImage($image, string $format, int $quality)
@@ -173,9 +170,7 @@ class ImageOptimizerController extends Controller
     /**
      * Create the HTTP response with the image.
      *
-     * @param mixed $encodedImage Image encoded with Intervention/Image
-     * @param string $contentType
-     * @param string $format
+     * @param  mixed  $encodedImage  Image encoded with Intervention/Image
      * @return \Illuminate\Http\Response
      */
     protected function createImageResponse($encodedImage, string $contentType, string $format)

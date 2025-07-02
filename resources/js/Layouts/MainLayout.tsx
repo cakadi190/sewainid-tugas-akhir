@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
-import Authenticated, { AuthenticatedAdmin } from './AuthenticatedLayout';
+import { ReactNode } from "react";
+import Authenticated, { AuthenticatedAdmin } from "./AuthenticatedLayout";
 
 /**
  * Tipe props untuk komponen MainLayout.
@@ -30,13 +30,9 @@ export default function MainLayout({ children, header, isAdmin }: MainProps) {
   return (
     <>
       {isAdmin ? (
-        <AuthenticatedAdmin header={header}>
-          {children}
-        </AuthenticatedAdmin>
+        <AuthenticatedAdmin header={header}>{children}</AuthenticatedAdmin>
       ) : (
-        <Authenticated header={header}>
-          {children}
-        </Authenticated>
+        <Authenticated header={header}>{children}</Authenticated>
       )}
     </>
   );

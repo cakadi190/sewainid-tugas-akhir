@@ -1,10 +1,18 @@
-import { Button, Form, Alert, FormFloating, Row, Col, Card } from 'react-bootstrap';
-import { Link, useForm, usePage } from '@inertiajs/react';
-import { FormEventHandler, useState, useEffect } from 'react';
-import { PageProps } from '@/types';
-import { GenderUser } from '@/Helpers/enum';
-import { getGenderLabel } from '@/Helpers/EnumHelper';
-import { FaPencil } from 'react-icons/fa6';
+import { GenderUser } from "@/Helpers/enum";
+import { getGenderLabel } from "@/Helpers/EnumHelper";
+import { PageProps } from "@/types";
+import { Link, useForm, usePage } from "@inertiajs/react";
+import { FormEventHandler, useEffect, useState } from "react";
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  Form,
+  FormFloating,
+  Row,
+} from "react-bootstrap";
+import { FaPencil } from "react-icons/fa6";
 
 type UpdateProfileInformationTypes = {
   mustVerifyEmail: boolean;
@@ -15,7 +23,7 @@ type UpdateProfileInformationTypes = {
 export default function UpdateProfileInformation({
   mustVerifyEmail,
   status,
-  className = '',
+  className = "",
 }: UpdateProfileInformationTypes) {
   const user = usePage<PageProps>().props.auth.user;
   const [avatar, setAvatar] = useState<File | null>(null);
@@ -25,15 +33,15 @@ export default function UpdateProfileInformation({
     useForm({
       name: user.name,
       email: user.email,
-      gender: user.gender || '',
-      pbirth: user.pbirth || '',
-      dbirth: user.dbirth || '',
-      nik: user.nik || '',
-      kk: user.kk || '',
-      sim: user.sim || '',
+      gender: user.gender || "",
+      pbirth: user.pbirth || "",
+      dbirth: user.dbirth || "",
+      nik: user.nik || "",
+      kk: user.kk || "",
+      sim: user.sim || "",
       avatar: null as unknown as File,
-      address: user.address || '',
-      phone: user.phone || '', // Added phone field
+      address: user.address || "",
+      phone: user.phone || "", // Added phone field
     });
 
   // Generate Google API avatar URL based on email or name
@@ -43,7 +51,7 @@ export default function UpdateProfileInformation({
       return user.avatar; // Use existing avatar if already set
     } else {
       // Generate avatar from Google API using name
-      const name = encodeURIComponent(data.name || 'User');
+      const name = encodeURIComponent(data.name || "User");
       // Using Google's UI Avatars API with name
       return `https://ui-avatars.com/api/?name=${name}&background=random&color=fff&size=150`;
     }
@@ -55,21 +63,21 @@ export default function UpdateProfileInformation({
     if (avatar) {
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
-        if (key !== 'avatar' || (key === 'avatar' && avatar)) {
+        if (key !== "avatar" || (key === "avatar" && avatar)) {
           formData.append(key, data[key as keyof typeof data]);
         }
       });
 
       if (avatar) {
-        formData.append('avatar', avatar);
+        formData.append("avatar", avatar);
       }
 
-      patch(route('profile.update'), {
+      patch(route("profile.update"), {
         data: formData,
         forceFormData: true,
       });
     } else {
-      patch(route('profile.update'));
+      patch(route("profile.update"));
     }
   };
 
@@ -99,18 +107,30 @@ export default function UpdateProfileInformation({
       </header>
 
       <Form onSubmit={submit} className="mt-4">
-        <Row className='g-3'>
+        <Row className="g-3">
           <Col md={3} className="mb-4">
             <div className="text-center">
-              <div className="position-relative d-inline-block" style={{ aspectRatio: '1/1' }}>
+              <div
+                className="position-relative d-inline-block"
+                style={{ aspectRatio: "1/1" }}
+              >
                 <img
                   src={avatarPreview || getGoogleAvatar()}
                   alt={data.name}
                   className="rounded-circle img-thumbnail"
-                  style={{ width: '150px', height: '150px', objectFit: 'cover', aspectRatio: '1/1' }}
+                  style={{
+                    width: "150px",
+                    height: "150px",
+                    objectFit: "cover",
+                    aspectRatio: "1/1",
+                  }}
                 />
                 <div className="bottom-0 position-absolute end-0">
-                  <label htmlFor="avatar-upload" className="btn btn-sm btn-primary rounded-circle" style={{ aspectRatio: '1/1' }}>
+                  <label
+                    htmlFor="avatar-upload"
+                    className="btn btn-sm btn-primary rounded-circle"
+                    style={{ aspectRatio: "1/1" }}
+                  >
                     <FaPencil />
                   </label>
                   <input
@@ -123,20 +143,24 @@ export default function UpdateProfileInformation({
                 </div>
               </div>
               <p className="mt-2 small text-muted">Foto Profil</p>
-              {errors.avatar && <div className="text-danger small">{errors.avatar}</div>}
+              {errors.avatar && (
+                <div className="text-danger small">{errors.avatar}</div>
+              )}
             </div>
           </Col>
 
           <Col md={9}>
-            <Row className='g-3'>
+            <Row className="g-3">
               <Col md={12}>
-                <Card.Header className="px-0 pt-0 pb-2 mb-3 bg-white fw-bold border-bottom">Identitas</Card.Header>
+                <Card.Header className="px-0 pt-0 pb-2 mb-3 bg-white fw-bold border-bottom">
+                  Identitas
+                </Card.Header>
 
                 <FormFloating>
                   <Form.Control
                     type="text"
                     value={data.name}
-                    onChange={(e) => setData('name', e.target.value)}
+                    onChange={(e) => setData("name", e.target.value)}
                     required
                     isInvalid={!!errors.name}
                     placeholder="name"
@@ -155,7 +179,7 @@ export default function UpdateProfileInformation({
                   <Form.Control
                     type="text"
                     value={data.phone}
-                    onChange={(e) => setData('phone', e.target.value)}
+                    onChange={(e) => setData("phone", e.target.value)}
                     isInvalid={!!errors.phone}
                     placeholder="Nomor Telepon"
                     maxLength={15}
@@ -172,7 +196,7 @@ export default function UpdateProfileInformation({
                   <Form.Control
                     type="email"
                     value={data.email}
-                    onChange={(e) => setData('email', e.target.value)}
+                    onChange={(e) => setData("email", e.target.value)}
                     required
                     isInvalid={!!errors.email}
                     placeholder="Email"
@@ -190,7 +214,7 @@ export default function UpdateProfileInformation({
                 <FormFloating>
                   <Form.Select
                     value={data.gender}
-                    onChange={(e) => setData('gender', e.target.value)}
+                    onChange={(e) => setData("gender", e.target.value)}
                     isInvalid={!!errors.gender}
                   >
                     <option value="">Pilih jenis kelamin</option>
@@ -208,7 +232,9 @@ export default function UpdateProfileInformation({
               </Col>
 
               <Col md={12}>
-                <Card.Header className="px-0 pt-2 pb-2 bg-white fw-bold border-bottom">Tanggal Lahir</Card.Header>
+                <Card.Header className="px-0 pt-2 pb-2 bg-white fw-bold border-bottom">
+                  Tanggal Lahir
+                </Card.Header>
               </Col>
 
               <Col md={4}>
@@ -216,7 +242,7 @@ export default function UpdateProfileInformation({
                   <Form.Control
                     type="text"
                     value={data.pbirth}
-                    onChange={(e) => setData('pbirth', e.target.value)}
+                    onChange={(e) => setData("pbirth", e.target.value)}
                     isInvalid={!!errors.pbirth}
                     placeholder="Tempat Lahir"
                     maxLength={60}
@@ -233,7 +259,7 @@ export default function UpdateProfileInformation({
                   <Form.Control
                     type="date"
                     value={data.dbirth}
-                    onChange={(e) => setData('dbirth', e.target.value)}
+                    onChange={(e) => setData("dbirth", e.target.value)}
                     isInvalid={!!errors.dbirth}
                     placeholder="Tanggal Lahir"
                   />
@@ -245,7 +271,9 @@ export default function UpdateProfileInformation({
               </Col>
 
               <Col md={12}>
-                <Card.Header className="px-0 pt-2 pb-2 bg-white fw-bold border-bottom">Identitas Pengemudi</Card.Header>
+                <Card.Header className="px-0 pt-2 pb-2 bg-white fw-bold border-bottom">
+                  Identitas Pengemudi
+                </Card.Header>
               </Col>
 
               <Col md={4}>
@@ -253,7 +281,7 @@ export default function UpdateProfileInformation({
                   <Form.Control
                     type="text"
                     value={data.nik}
-                    onChange={(e) => setData('nik', e.target.value)}
+                    onChange={(e) => setData("nik", e.target.value)}
                     isInvalid={!!errors.nik}
                     placeholder="NIK"
                     maxLength={16}
@@ -270,7 +298,7 @@ export default function UpdateProfileInformation({
                   <Form.Control
                     type="text"
                     value={data.kk}
-                    onChange={(e) => setData('kk', e.target.value)}
+                    onChange={(e) => setData("kk", e.target.value)}
                     isInvalid={!!errors.kk}
                     placeholder="Nomor KK"
                     maxLength={16}
@@ -287,7 +315,7 @@ export default function UpdateProfileInformation({
                   <Form.Control
                     type="text"
                     value={data.sim}
-                    onChange={(e) => setData('sim', e.target.value)}
+                    onChange={(e) => setData("sim", e.target.value)}
                     isInvalid={!!errors.sim}
                     placeholder="Nomor SIM"
                     maxLength={12}
@@ -300,7 +328,9 @@ export default function UpdateProfileInformation({
               </Col>
 
               <Col md={12}>
-                <Card.Header className="px-0 pt-2 pb-2 bg-white fw-bold border-bottom">Alamat Lengkap</Card.Header>
+                <Card.Header className="px-0 pt-2 pb-2 bg-white fw-bold border-bottom">
+                  Alamat Lengkap
+                </Card.Header>
               </Col>
 
               <Col md="12">
@@ -308,10 +338,10 @@ export default function UpdateProfileInformation({
                   <Form.Control
                     as="textarea"
                     cols={10}
-                    style={{ height: '150px' }}
+                    style={{ height: "150px" }}
                     type="text"
                     value={data.address}
-                    onChange={(e) => setData('address', e.target.value)}
+                    onChange={(e) => setData("address", e.target.value)}
                     isInvalid={!!errors.address}
                     placeholder="Alamat"
                     maxLength={255}
@@ -329,7 +359,7 @@ export default function UpdateProfileInformation({
                 <p className="small text-muted">
                   Alamat email Anda belum diverifikasi.
                   <Link
-                    href={route('verification.send')}
+                    href={route("verification.send")}
                     method="post"
                     as="button"
                     className="p-0 ms-1 btn btn-link text-muted"
@@ -338,9 +368,10 @@ export default function UpdateProfileInformation({
                   </Link>
                 </p>
 
-                {status === 'verification-link-sent' && (
+                {status === "verification-link-sent" && (
                   <Alert variant="success" className="mt-2">
-                    Tautan verifikasi baru telah dikirimkan ke alamat email Anda.
+                    Tautan verifikasi baru telah dikirimkan ke alamat email
+                    Anda.
                   </Alert>
                 )}
               </div>
@@ -363,4 +394,3 @@ export default function UpdateProfileInformation({
     </section>
   );
 }
-

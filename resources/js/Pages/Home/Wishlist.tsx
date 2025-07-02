@@ -1,12 +1,14 @@
-import AuthenticatedUser from "@/Layouts/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
-import DashboardImage from '@/Assets/Images/Cover-Dashboard.jpg';
-import { useCallback, useEffect, useState } from "react";
-import { FetchSuccess } from "@/types";
-import WishlistCard, { IntrinsicTypeData } from "@/Components/LoopPartial/WishlistArmadaLoop";
+import DashboardImage from "@/Assets/Images/Cover-Dashboard.jpg";
 import EmptyState from "@/Components/EmptyState";
-import { FaArrowLeft } from "react-icons/fa6";
 import GlobalHeader from "@/Components/GlobalPartial/HeaderComponent";
+import WishlistCard, {
+  IntrinsicTypeData,
+} from "@/Components/LoopPartial/WishlistArmadaLoop";
+import AuthenticatedUser from "@/Layouts/AuthenticatedLayout";
+import { FetchSuccess } from "@/types";
+import { Head, Link } from "@inertiajs/react";
+import { useCallback, useEffect, useState } from "react";
+import { FaArrowLeft } from "react-icons/fa6";
 
 export default function WishlistPage() {
   const [wishlist, setWishlist] = useState<IntrinsicTypeData[] | null>(null);
@@ -17,7 +19,8 @@ export default function WishlistPage() {
     setLoading(true);
     try {
       const response = await fetch(route("v1.home.wishlist.index"));
-      const data: FetchSuccess<IntrinsicTypeData[] | null> = await response.json();
+      const data: FetchSuccess<IntrinsicTypeData[] | null> =
+        await response.json();
       setWishlist(data.data);
       setLoading(false);
     } catch (error) {
@@ -31,23 +34,25 @@ export default function WishlistPage() {
   }, [fetchWishlist]);
 
   return (
-    <AuthenticatedUser header={
-      <GlobalHeader
-        title="Daftar Armada Favorit"
-        description="Selamat datang di wishlist! Disinilah Anda dapat melihat daftar keinginan mobil Anda."
-        backgroundImage={DashboardImage}
-        breadcrumbItems={[
-          { label: 'Beranda', url: route('home') },
-          { label: 'Daftar Armada Favorit' },
-        ]}
-      />
-    }>
+    <AuthenticatedUser
+      header={
+        <GlobalHeader
+          title="Daftar Armada Favorit"
+          description="Selamat datang di wishlist! Disinilah Anda dapat melihat daftar keinginan mobil Anda."
+          backgroundImage={DashboardImage}
+          breadcrumbItems={[
+            { label: "Beranda", url: route("home") },
+            { label: "Daftar Armada Favorit" },
+          ]}
+        />
+      }
+    >
       <Head title="Daftar Armada Favorit" />
 
       <div className="gap-3 py-5 d-flex flex-column">
-        <div style={{ width: 'fit-content' }}>
+        <div style={{ width: "fit-content" }}>
           <Link
-            href={route('armada.index')}
+            href={route("armada.index")}
             className="gap-2 btn btn-light d-flex align-items-center"
           >
             <FaArrowLeft />
@@ -65,7 +70,7 @@ export default function WishlistPage() {
         )}
         {!loading && !error && wishlist && wishlist.length > 0 && (
           <ul className="gap-3 list-unstyled d-flex flex-column">
-            {wishlist.map(car => (
+            {wishlist.map((car) => (
               <li key={car.id}>
                 <WishlistCard onDelete={fetchWishlist} {...car} />
               </li>
@@ -87,4 +92,3 @@ export default function WishlistPage() {
     </AuthenticatedUser>
   );
 }
-

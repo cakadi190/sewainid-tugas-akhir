@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1\Global;
 
 use App\Http\Controllers\Controller;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -13,8 +14,6 @@ use Illuminate\Support\Facades\Log;
  *
  * Controller ini bertugas untuk mencari lokasi menggunakan Google Places API
  * berdasarkan nama tempat yang diberikan user (misalnya: "Gembira Loka Zoo").
- *
- * @package App\Http\Controllers
  */
 class GmapPlaceController extends Controller
 {
@@ -23,8 +22,6 @@ class GmapPlaceController extends Controller
      *
      * Endpoint: GET /places/search?query={nama_tempat}
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
      *
      * @throws \Illuminate\Validation\ValidationException
      *
@@ -67,7 +64,7 @@ class GmapPlaceController extends Controller
                 ], 400);
             }
 
-            $results = collect($data['results'])->map(fn($place) => [
+            $results = collect($data['results'])->map(fn ($place) => [
                 'name' => $place['name'],
                 'address' => $place['formatted_address'] ?? null,
                 'latitude' => $place['geometry']['location']['lat'],
@@ -78,7 +75,7 @@ class GmapPlaceController extends Controller
             return response()->json([
                 'results' => $results,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e->getMessage(), $e->getTrace());
 
             return response()->json([

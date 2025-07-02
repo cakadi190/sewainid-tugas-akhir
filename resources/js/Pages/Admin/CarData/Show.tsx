@@ -1,60 +1,152 @@
-import { compactCurrencyFormat, currencyFormat, mileageFormat, speedFormat } from "@/Helpers/number";
-import { AuthenticatedAdmin } from "@/Layouts/AuthenticatedLayout";
-import Database from "@/types/database";
-import { Head, Link, usePage } from "@inertiajs/react";
-import { Badge, Breadcrumb, BreadcrumbItem, Button, Card, Col, Modal, Nav, Row, Tab } from "react-bootstrap";
-import { FaChevronRight, FaMapPin, FaUser } from "react-icons/fa6";
-import { FaExclamationTriangle } from "react-icons/fa";
-import { FaArrowLeft, FaCalendar, FaClock, FaGasPump, FaTag } from "react-icons/fa6";
-import dayjs from "@/Helpers/dayjs";
-import { parseAntiXss } from "@/Helpers/string";
-import { MediaLibrary } from "@/types/medialibrary";
 import ImageGallery from "@/Components/ImageGallery";
-import { GridContainer, GridItem } from "@/InternalBorderGrid";
-import { PiBabyCarriage, PiCarProfileDuotone, PiLock, PiMusicNote, PiPalette, PiSeat, PiShield, PiSnowflake, PiSpeedometer, PiTag, PiTire } from "react-icons/pi";
-import { getCarConditionLabel, getCarFuelTypeLabel, getCarModelLabel, getCarStatusColor, getCarStatusIcon, getCarStatusLabel, getCarTransmissionLabel, getRentalStatusColor, getRentalStatusLabel } from "@/Helpers/EnumHelper";
-import { GiGearStickPattern } from "react-icons/gi";
 import LabelValue from "@/Components/LabelValue";
-import EditData from "./EditData";
-import { twMerge } from "tailwind-merge";
-import { CarConditionEnum, CarModelEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum, RentalStatusEnum } from "@/Helpers/enum";
-import { ShowModalTrackProvider, useShowModalTrack } from "@/Context/TrackingModalContext";
-import 'leaflet/dist/leaflet.css';
-import ModalTrackingMap from "./TrackingMap";
-import MapPreview from "./MapPreview";
+import {
+  ShowModalTrackProvider,
+  useShowModalTrack,
+} from "@/Context/TrackingModalContext";
+import dayjs from "@/Helpers/dayjs";
+import {
+  CarConditionEnum,
+  CarModelEnum,
+  CarStatusEnum,
+  CarTransmissionEnum,
+  FuelEnum,
+  RentalStatusEnum,
+} from "@/Helpers/enum";
+import {
+  getCarConditionLabel,
+  getCarFuelTypeLabel,
+  getCarModelLabel,
+  getCarStatusColor,
+  getCarStatusIcon,
+  getCarStatusLabel,
+  getCarTransmissionLabel,
+  getRentalStatusColor,
+  getRentalStatusLabel,
+} from "@/Helpers/EnumHelper";
+import {
+  compactCurrencyFormat,
+  currencyFormat,
+  mileageFormat,
+  speedFormat,
+} from "@/Helpers/number";
+import { parseAntiXss } from "@/Helpers/string";
+import { GridContainer, GridItem } from "@/InternalBorderGrid";
+import { AuthenticatedAdmin } from "@/Layouts/AuthenticatedLayout";
 import { PageProps } from "@/types";
+import Database from "@/types/database";
+import { MediaLibrary } from "@/types/medialibrary";
+import { Head, Link, usePage } from "@inertiajs/react";
+import "leaflet/dist/leaflet.css";
+import {
+  Badge,
+  Breadcrumb,
+  BreadcrumbItem,
+  Button,
+  Card,
+  Col,
+  Nav,
+  Row,
+  Tab,
+} from "react-bootstrap";
+import { FaExclamationTriangle } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaCalendar,
+  FaChevronRight,
+  FaClock,
+  FaGasPump,
+  FaMapPin,
+  FaTag,
+  FaUser,
+} from "react-icons/fa6";
+import { GiGearStickPattern } from "react-icons/gi";
+import {
+  PiBabyCarriage,
+  PiCarProfileDuotone,
+  PiLock,
+  PiMusicNote,
+  PiPalette,
+  PiSeat,
+  PiShield,
+  PiSnowflake,
+  PiSpeedometer,
+  PiTag,
+  PiTire,
+} from "react-icons/pi";
+import { twMerge } from "tailwind-merge";
+import EditData from "./EditData";
+import MapPreview from "./MapPreview";
+import ModalTrackingMap from "./TrackingMap";
 
 interface ShowProps {
-  car_data: Database['CarData'] & { transaction: Database['Transaction'] };
+  car_data: Database["CarData"] & { transaction: Database["Transaction"] };
 }
 
-const CarDetailHeader: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
+const CarDetailHeader: React.FC<{ carData: Database["CarData"] }> = ({
+  carData,
+}) => {
   return (
-    <div className="gap-2 d-flex flex-column flex-lg-row justify-content-between position-relative" style={{ zIndex: 500 }}>
+    <div
+      className="gap-2 d-flex flex-column flex-lg-row justify-content-between position-relative"
+      style={{ zIndex: 500 }}
+    >
       <div className="gap-2 d-flex flex-column flex-lg-row">
         <div>
-          <Link href={route('administrator.car-data.index')} className="gap-2 btn btn-light d-flex align-items-center"><FaArrowLeft /><span className="d-lg-none">Kembali Ke Beranda</span></Link>
+          <Link
+            href={route("administrator.car-data.index")}
+            className="gap-2 btn btn-light d-flex align-items-center"
+          >
+            <FaArrowLeft />
+            <span className="d-lg-none">Kembali Ke Beranda</span>
+          </Link>
         </div>
 
         <div className="flex-column d-flex">
-          <h3 className="h4 fw-semibold">{carData.brand} {carData.car_name}</h3>
+          <h3 className="h4 fw-semibold">
+            {carData.brand} {carData.car_name}
+          </h3>
           <Breadcrumb className="m-0" bsPrefix="m-0 breadcrumb">
-            <BreadcrumbItem linkAs={Link} href={route('administrator.home')}>Dasbor Beranda</BreadcrumbItem>
-            <BreadcrumbItem linkAs={Link} href={route('administrator.car-data.index')}>Data Kendaraan</BreadcrumbItem>
-            <BreadcrumbItem active>Detail Kendaraan <strong>{carData.brand} {carData.car_name}</strong></BreadcrumbItem>
+            <BreadcrumbItem linkAs={Link} href={route("administrator.home")}>
+              Dasbor Beranda
+            </BreadcrumbItem>
+            <BreadcrumbItem
+              linkAs={Link}
+              href={route("administrator.car-data.index")}
+            >
+              Data Kendaraan
+            </BreadcrumbItem>
+            <BreadcrumbItem active>
+              Detail Kendaraan{" "}
+              <strong>
+                {carData.brand} {carData.car_name}
+              </strong>
+            </BreadcrumbItem>
           </Breadcrumb>
         </div>
       </div>
 
       <div className="gap-2 d-flex align-items-center">
-        <div className={'text-' + getCarStatusColor(carData.status as CarStatusEnum)}>{getCarStatusIcon(carData.status as CarStatusEnum)}</div>
-        <Card.Title className="mb-0">{getCarStatusLabel(carData.status as CarStatusEnum)}</Card.Title>
+        <div
+          className={
+            "text-" + getCarStatusColor(carData.status as CarStatusEnum)
+          }
+        >
+          {getCarStatusIcon(carData.status as CarStatusEnum)}
+        </div>
+        <Card.Title className="mb-0">
+          {getCarStatusLabel(carData.status as CarStatusEnum)}
+        </Card.Title>
       </div>
     </div>
   );
 };
 
-const InfoCard: React.FC<{ icon: React.ReactNode, title: string, value: string }> = ({ icon, title, value }) => {
+const InfoCard: React.FC<{
+  icon: React.ReactNode;
+  title: string;
+  value: string;
+}> = ({ icon, title, value }) => {
   return (
     <GridItem>
       {icon}
@@ -64,7 +156,9 @@ const InfoCard: React.FC<{ icon: React.ReactNode, title: string, value: string }
   );
 };
 
-const CarInfoCards: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
+const CarInfoCards: React.FC<{ carData: Database["CarData"] }> = ({
+  carData,
+}) => {
   return (
     <div className="mt-4">
       {/* Tampilan untuk ukuran layar extra small hingga large */}
@@ -122,18 +216,25 @@ const CarInfoCards: React.FC<{ carData: Database['CarData'] }> = ({ carData }) =
   );
 };
 
-const PriceCard: React.FC<{ label: string, price: number }> = ({ label, price }) => {
+const PriceCard: React.FC<{ label: string; price: number }> = ({
+  label,
+  price,
+}) => {
   return (
     <Col md="4">
       <Card body className="text-center bg-light">
-        <Card.Title className="mb-0 fw-bold">{compactCurrencyFormat(price)}</Card.Title>
+        <Card.Title className="mb-0 fw-bold">
+          {compactCurrencyFormat(price)}
+        </Card.Title>
         <Card.Text className="mb-0">{label}</Card.Text>
       </Card>
     </Col>
   );
 };
 
-const PricingInfo: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
+const PricingInfo: React.FC<{ carData: Database["CarData"] }> = ({
+  carData,
+}) => {
   return (
     <Card body>
       <div className="mb-3 d-flex justify-content-between">
@@ -150,15 +251,20 @@ const PricingInfo: React.FC<{ carData: Database['CarData'] }> = ({ carData }) =>
   );
 };
 
-const CarMainDetails: React.FC<{ carData: Database['CarData'] & { media?: MediaLibrary[] } }> = ({ carData }) => {
+const CarMainDetails: React.FC<{
+  carData: Database["CarData"] & { media?: MediaLibrary[] };
+}> = ({ carData }) => {
   return (
     <Card body className="rounded-4">
       <MapPreview />
 
-      {(carData.media && carData.media?.length > 0) && (
+      {carData.media && carData.media?.length > 0 && (
         <div className="py-3 my-3 border-top border-bottom">
           <h6>Galeri Foto Kendaraan</h6>
-          <ImageGallery readOnly initialData={carData.media as unknown as MediaLibrary[]} />
+          <ImageGallery
+            readOnly
+            initialData={carData.media as unknown as MediaLibrary[]}
+          />
         </div>
       )}
 
@@ -166,7 +272,12 @@ const CarMainDetails: React.FC<{ carData: Database['CarData'] & { media?: MediaL
 
       <Card body className="mb-4">
         <strong>Deskripsi</strong>
-        <p className="mt-2 mb-0" dangerouslySetInnerHTML={{ __html: parseAntiXss(carData.description || '-') }} />
+        <p
+          className="mt-2 mb-0"
+          dangerouslySetInnerHTML={{
+            __html: parseAntiXss(carData.description || "-"),
+          }}
+        />
       </Card>
 
       <PricingInfo carData={carData} />
@@ -174,10 +285,15 @@ const CarMainDetails: React.FC<{ carData: Database['CarData'] & { media?: MediaL
   );
 };
 
-const CarStatus: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
-  const plateDaysRemaining = dayjs(carData.license_plate_expiration).diff(dayjs(), 'day');
-  const certDaysRemaining = dayjs(carData.vehicle_registration_cert_expiration).diff(dayjs(), 'day');
-  const lastUsage = dayjs().diff('2025-04-01', 'day');
+const CarStatus: React.FC<{ carData: Database["CarData"] }> = ({ carData }) => {
+  const plateDaysRemaining = dayjs(carData.license_plate_expiration).diff(
+    dayjs(),
+    "day"
+  );
+  const certDaysRemaining = dayjs(
+    carData.vehicle_registration_cert_expiration
+  ).diff(dayjs(), "day");
+  const lastUsage = dayjs().diff("2025-04-01", "day");
 
   return (
     <Card body className="rounded-4">
@@ -185,8 +301,16 @@ const CarStatus: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
 
       <div className="pt-4 pb-3 mb-4 justify-content-between d-flex border-bottom">
         <div className="gap-2 d-flex align-items-center">
-          <div className={'text-' + getCarStatusColor(carData.status as CarStatusEnum)}>{getCarStatusIcon(carData.status as CarStatusEnum)}</div>
-          <Card.Title className="mb-0">{getCarStatusLabel(carData.status as CarStatusEnum)}</Card.Title>
+          <div
+            className={
+              "text-" + getCarStatusColor(carData.status as CarStatusEnum)
+            }
+          >
+            {getCarStatusIcon(carData.status as CarStatusEnum)}
+          </div>
+          <Card.Title className="mb-0">
+            {getCarStatusLabel(carData.status as CarStatusEnum)}
+          </Card.Title>
         </div>
 
         <div>
@@ -197,26 +321,30 @@ const CarStatus: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
       <div className="gap-2 pb-3 mb-2 d-flex flex-column">
         <div className="d-flex justify-content-between">
           <div className="text-muted">Posisi Saat Ini</div>
-          <div className="fw-bold">{(() => {
-            switch (carData.status) {
-              case CarStatusEnum.BORROWED:
-                return 'Dipinjam';
-              case CarStatusEnum.READY:
-                return 'Diam Di Garasi';
-              case CarStatusEnum.SOLD:
-                return 'Sudah Dijual';
-              case CarStatusEnum.MISSING:
-                return 'Sedang Dicari';
-              case CarStatusEnum.REPAIR:
-                return 'Di Bengkel';
-              case CarStatusEnum.CRASH:
-                return 'Diam Di Garasi';
-            }
-          })()}</div>
+          <div className="fw-bold">
+            {(() => {
+              switch (carData.status) {
+                case CarStatusEnum.BORROWED:
+                  return "Dipinjam";
+                case CarStatusEnum.READY:
+                  return "Diam Di Garasi";
+                case CarStatusEnum.SOLD:
+                  return "Sudah Dijual";
+                case CarStatusEnum.MISSING:
+                  return "Sedang Dicari";
+                case CarStatusEnum.REPAIR:
+                  return "Di Bengkel";
+                case CarStatusEnum.CRASH:
+                  return "Diam Di Garasi";
+              }
+            })()}
+          </div>
         </div>
         <div className="d-flex justify-content-between">
           <div className="text-muted">Kondisi Kendaraan</div>
-          <div className="fw-bold">{getCarConditionLabel(carData.condition as CarConditionEnum)}</div>
+          <div className="fw-bold">
+            {getCarConditionLabel(carData.condition as CarConditionEnum)}
+          </div>
         </div>
         <div className="d-flex justify-content-between">
           <div className="text-muted">Terakhir Digunakan</div>
@@ -231,25 +359,31 @@ const CarStatus: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
         <Card className="mb-3 bg-light">
           <Card.Body className="flex-wrap d-flex justify-content-between">
             <div className="gap-1 d-flex flex-column">
-              <Card.Title className="mb-0 fw-bold h6">{carData.license_plate}</Card.Title>
+              <Card.Title className="mb-0 fw-bold h6">
+                {carData.license_plate}
+              </Card.Title>
               <Card.Text className="mb-0">Nomor Polisi</Card.Text>
             </div>
             <div className="d-flex align-items-end flex-column">
               <small className="mb-1 d-flex">Masa Berlaku</small>
               <Badge bg="light" text="dark" className="border">
-                {dayjs(carData.license_plate_expiration).format('DD MMM YYYY')}
+                {dayjs(carData.license_plate_expiration).format("DD MMM YYYY")}
               </Badge>
             </div>
-            {((plateDaysRemaining <= 31 && plateDaysRemaining >= 0) || plateDaysRemaining < 0) && (
-              <div className="mt-1 flex-grow-1" style={{ flexBasis: '100%' }}>
+            {((plateDaysRemaining <= 31 && plateDaysRemaining >= 0) ||
+              plateDaysRemaining < 0) && (
+              <div className="mt-1 flex-grow-1" style={{ flexBasis: "100%" }}>
                 {plateDaysRemaining <= 31 && plateDaysRemaining >= 0 && (
                   <small className="gap-1 text-danger">
-                    <FaExclamationTriangle />&nbsp;&nbsp;Segera diperpanjang karena masa berlaku akan habis!
+                    <FaExclamationTriangle />
+                    &nbsp;&nbsp;Segera diperpanjang karena masa berlaku akan
+                    habis!
                   </small>
                 )}
                 {plateDaysRemaining < 0 && (
                   <small className="gap-1 text-danger">
-                    <FaExclamationTriangle />&nbsp;&nbsp;Sudah kadaluarsa! Segera perpanjang.
+                    <FaExclamationTriangle />
+                    &nbsp;&nbsp;Sudah kadaluarsa! Segera perpanjang.
                   </small>
                 )}
               </div>
@@ -261,25 +395,33 @@ const CarStatus: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
         <Card className="bg-light">
           <Card.Body className="flex-wrap d-flex justify-content-between">
             <div className="gap-1 d-flex flex-column">
-              <Card.Title className="mb-0 fw-bold h6">{carData.vehicle_registration_cert_number}</Card.Title>
+              <Card.Title className="mb-0 fw-bold h6">
+                {carData.vehicle_registration_cert_number}
+              </Card.Title>
               <Card.Text className="mb-0">Nomor STNK</Card.Text>
             </div>
             <div className="d-flex align-items-end flex-column">
               <small className="mb-1 d-flex">Masa Berlaku</small>
               <Badge bg="light" text="dark" className="border">
-                {dayjs(carData.vehicle_registration_cert_expiration).format('DD MMM YYYY')}
+                {dayjs(carData.vehicle_registration_cert_expiration).format(
+                  "DD MMM YYYY"
+                )}
               </Badge>
             </div>
-            {((certDaysRemaining <= 31 && certDaysRemaining >= 0) || certDaysRemaining < 0) && (
-              <div className="mt-1 flex-grow-1" style={{ flexBasis: '100%' }}>
+            {((certDaysRemaining <= 31 && certDaysRemaining >= 0) ||
+              certDaysRemaining < 0) && (
+              <div className="mt-1 flex-grow-1" style={{ flexBasis: "100%" }}>
                 {certDaysRemaining <= 31 && certDaysRemaining >= 0 && (
                   <small className="gap-1 text-danger">
-                    <FaExclamationTriangle />&nbsp;&nbsp;Segera diperpanjang karena masa berlaku akan habis!
+                    <FaExclamationTriangle />
+                    &nbsp;&nbsp;Segera diperpanjang karena masa berlaku akan
+                    habis!
                   </small>
                 )}
                 {certDaysRemaining < 0 && (
                   <small className="gap-1 text-danger">
-                    <FaExclamationTriangle />&nbsp;&nbsp;Sudah kadaluarsa! Segera perpanjang.
+                    <FaExclamationTriangle />
+                    &nbsp;&nbsp;Sudah kadaluarsa! Segera perpanjang.
                   </small>
                 )}
               </div>
@@ -296,30 +438,46 @@ const CarStatus: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
           <Card className="bg-light">
             <Card.Body className="d-flex justify-content-between align-items-start">
               <div className="gap-1 d-flex flex-column">
-                <Card.Title className="mb-0 fw-bold h6">{dayjs('2025-07-15').format('DD MMM YYYY')}</Card.Title>
-                <Card.Text className="mb-0">Penyewa: Agus Dwi Setyawan</Card.Text>
+                <Card.Title className="mb-0 fw-bold h6">
+                  {dayjs("2025-07-15").format("DD MMM YYYY")}
+                </Card.Title>
+                <Card.Text className="mb-0">
+                  Penyewa: Agus Dwi Setyawan
+                </Card.Text>
               </div>
-              <Badge as="div" bg="light" text="dark" className="border">Akan Datang</Badge>
+              <Badge as="div" bg="light" text="dark" className="border">
+                Akan Datang
+              </Badge>
             </Card.Body>
           </Card>
 
           <Card className="bg-light">
             <Card.Body className="d-flex justify-content-between align-items-start">
               <div className="gap-1 d-flex flex-column">
-                <Card.Title className="mb-0 fw-bold h6">{dayjs('2025-07-01').format('DD MMM YYYY')}</Card.Title>
+                <Card.Title className="mb-0 fw-bold h6">
+                  {dayjs("2025-07-01").format("DD MMM YYYY")}
+                </Card.Title>
                 <Card.Text className="mb-0">Penyewa: Rudi Wicaksono</Card.Text>
               </div>
-              <Badge as="div" bg="light" text="dark" className="border">Akan Datang</Badge>
+              <Badge as="div" bg="light" text="dark" className="border">
+                Akan Datang
+              </Badge>
             </Card.Body>
           </Card>
 
           <Card className="bg-light">
             <Card.Body className="d-flex justify-content-between align-items-start">
               <div className="gap-1 d-flex flex-column">
-                <Card.Title className="mb-0 fw-bold h6">{dayjs('2025-04-01').format('DD MMM YYYY')}</Card.Title>
-                <Card.Text className="mb-0">Penyewa: Ahmad Syariffuddin</Card.Text>
+                <Card.Title className="mb-0 fw-bold h6">
+                  {dayjs("2025-04-01").format("DD MMM YYYY")}
+                </Card.Title>
+                <Card.Text className="mb-0">
+                  Penyewa: Ahmad Syariffuddin
+                </Card.Text>
               </div>
-              <Badge as="div" bg="success">Selesai</Badge>
+              <Badge as="div" bg="success">
+                Selesai
+              </Badge>
             </Card.Body>
           </Card>
         </div>
@@ -328,7 +486,7 @@ const CarStatus: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
   );
 };
 
-const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
+const CarSpecification = ({ carData }: { carData: Database["CarData"] }) => {
   return (
     <>
       <h4 className="mb-1 fw-bold">Spesifikasi Kendaraan</h4>
@@ -350,7 +508,9 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <PiTag size={24} />
               <div>
                 <h6 className="mb-0 fw-bold">Model</h6>
-                <p className="mb-0">{getCarModelLabel(carData.model as unknown as CarModelEnum)}</p>
+                <p className="mb-0">
+                  {getCarModelLabel(carData.model as unknown as CarModelEnum)}
+                </p>
               </div>
             </div>
           </GridItem>
@@ -359,7 +519,11 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <GiGearStickPattern size={24} />
               <div>
                 <h6 className="mb-0 fw-bold">Transmisi</h6>
-                <p className="mb-0">{getCarTransmissionLabel(carData.transmission as unknown as CarTransmissionEnum)}</p>
+                <p className="mb-0">
+                  {getCarTransmissionLabel(
+                    carData.transmission as unknown as CarTransmissionEnum
+                  )}
+                </p>
               </div>
             </div>
           </GridItem>
@@ -425,7 +589,15 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <Card.Body className="flex-row gap-2 align-items-center d-flex">
                 <PiSnowflake size={24} />
                 <strong className="mb-0 fw-bold">Air Conditioner (AC)</strong>
-                <Badge className={twMerge("ms-auto border", carData.ac ? 'text-white' : 'text-dark')} bg={carData.ac ? 'dark' : 'white'}>{carData.ac ? 'Ada' : 'Tidak Ada'}</Badge>
+                <Badge
+                  className={twMerge(
+                    "ms-auto border",
+                    carData.ac ? "text-white" : "text-dark"
+                  )}
+                  bg={carData.ac ? "dark" : "white"}
+                >
+                  {carData.ac ? "Ada" : "Tidak Ada"}
+                </Badge>
               </Card.Body>
             </Card>
           </Col>
@@ -434,7 +606,15 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <Card.Body className="flex-row gap-2 align-items-center d-flex">
                 <PiMusicNote size={24} />
                 <strong className="mb-0 fw-bold">Audio Entertainment</strong>
-                <Badge className={twMerge("ms-auto border", carData.audio ? 'text-white' : 'text-dark')} bg={carData.audio ? 'dark' : 'white'}>{carData.audio ? 'Ada' : 'Tidak Ada'}</Badge>
+                <Badge
+                  className={twMerge(
+                    "ms-auto border",
+                    carData.audio ? "text-white" : "text-dark"
+                  )}
+                  bg={carData.audio ? "dark" : "white"}
+                >
+                  {carData.audio ? "Ada" : "Tidak Ada"}
+                </Badge>
               </Card.Body>
             </Card>
           </Col>
@@ -443,7 +623,15 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <Card.Body className="flex-row gap-2 align-items-center d-flex">
                 <PiShield size={24} />
                 <strong className="mb-0 fw-bold">ABS</strong>
-                <Badge className={twMerge("ms-auto border", carData.abs ? 'text-white' : 'text-dark')} bg={carData.abs ? 'dark' : 'white'}>{carData.abs ? 'Ada' : 'Tidak Ada'}</Badge>
+                <Badge
+                  className={twMerge(
+                    "ms-auto border",
+                    carData.abs ? "text-white" : "text-dark"
+                  )}
+                  bg={carData.abs ? "dark" : "white"}
+                >
+                  {carData.abs ? "Ada" : "Tidak Ada"}
+                </Badge>
               </Card.Body>
             </Card>
           </Col>
@@ -452,7 +640,15 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <Card.Body className="flex-row gap-2 align-items-center d-flex">
                 <PiLock size={24} />
                 <strong className="mb-0 fw-bold">Child-Lock</strong>
-                <Badge className={twMerge("ms-auto border", carData.child_lock ? 'text-white' : 'text-dark')} bg={carData.child_lock ? 'dark' : 'white'}>{carData.child_lock ? 'Ada' : 'Tidak Ada'}</Badge>
+                <Badge
+                  className={twMerge(
+                    "ms-auto border",
+                    carData.child_lock ? "text-white" : "text-dark"
+                  )}
+                  bg={carData.child_lock ? "dark" : "white"}
+                >
+                  {carData.child_lock ? "Ada" : "Tidak Ada"}
+                </Badge>
               </Card.Body>
             </Card>
           </Col>
@@ -461,7 +657,15 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <Card.Body className="flex-row gap-2 align-items-center d-flex">
                 <PiTire size={24} />
                 <strong className="mb-0 fw-bold">Traction Control</strong>
-                <Badge className={twMerge("ms-auto border", carData.traction_control ? 'text-white' : 'text-dark')} bg={carData.traction_control ? 'dark' : 'white'}>{carData.traction_control ? 'Ada' : 'Tidak Ada'}</Badge>
+                <Badge
+                  className={twMerge(
+                    "ms-auto border",
+                    carData.traction_control ? "text-white" : "text-dark"
+                  )}
+                  bg={carData.traction_control ? "dark" : "white"}
+                >
+                  {carData.traction_control ? "Ada" : "Tidak Ada"}
+                </Badge>
               </Card.Body>
             </Card>
           </Col>
@@ -470,7 +674,15 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <Card.Body className="flex-row gap-2 align-items-center d-flex">
                 <PiBabyCarriage size={24} />
                 <strong className="mb-0 fw-bold">Kursi Bayi</strong>
-                <Badge className={twMerge("ms-auto border", carData.baby_seat ? 'text-white' : 'text-dark')} bg={carData.baby_seat ? 'dark' : 'white'}>{carData.baby_seat ? 'Ada' : 'Tidak Ada'}</Badge>
+                <Badge
+                  className={twMerge(
+                    "ms-auto border",
+                    carData.baby_seat ? "text-white" : "text-dark"
+                  )}
+                  bg={carData.baby_seat ? "dark" : "white"}
+                >
+                  {carData.baby_seat ? "Ada" : "Tidak Ada"}
+                </Badge>
               </Card.Body>
             </Card>
           </Col>
@@ -480,7 +692,7 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
   );
 };
 
-const CarRegistration = ({ carData }: { carData: Database['CarData'] }) => {
+const CarRegistration = ({ carData }: { carData: Database["CarData"] }) => {
   const { showModalTrack, setShowModalTrack } = useShowModalTrack();
 
   return (
@@ -490,32 +702,54 @@ const CarRegistration = ({ carData }: { carData: Database['CarData'] }) => {
 
       <Row className="g-1">
         <Col md="6" xxl="4">
-          <LabelValue label="Nomor Rangka" value={<span className="font-mono">{carData.frame_number}</span>} bottomBorder={false} />
+          <LabelValue
+            label="Nomor Rangka"
+            value={<span className="font-mono">{carData.frame_number}</span>}
+            bottomBorder={false}
+          />
         </Col>
         <Col md="6" xxl="4">
-          <LabelValue label="Nomor Mesin" value={<span className="font-mono">{carData.engine_number}</span>} bottomBorder={false} />
+          <LabelValue
+            label="Nomor Mesin"
+            value={<span className="font-mono">{carData.engine_number}</span>}
+            bottomBorder={false}
+          />
         </Col>
         <Col md="6" xxl="4">
-          <LabelValue label="Nomor Polisi / TNKB" value={<span className="font-mono">{carData.license_plate || '-'}</span>} bottomBorder={false} />
+          <LabelValue
+            label="Nomor Polisi / TNKB"
+            value={
+              <span className="font-mono">{carData.license_plate || "-"}</span>
+            }
+            bottomBorder={false}
+          />
         </Col>
         <Col md="6" xxl="4">
           <LabelValue
             label="Masa Berlaku Nomor Polisi"
-            value={dayjs(carData.license_plate_expiration).format('DD MMMM YYYY')}
+            value={dayjs(carData.license_plate_expiration).format(
+              "DD MMMM YYYY"
+            )}
             bottomBorder={false}
           />
         </Col>
         <Col md="6" xxl="4">
           <LabelValue
             label="Nomor STNK"
-            value={<span className="font-mono">{carData.vehicle_registration_cert_number}</span>}
+            value={
+              <span className="font-mono">
+                {carData.vehicle_registration_cert_number}
+              </span>
+            }
             bottomBorder={false}
           />
         </Col>
         <Col md="6" xxl="4">
           <LabelValue
             label="Masa Berlaku Nomor STNK"
-            value={dayjs(carData.vehicle_registration_cert_expiration).format('DD MMMM YYYY')}
+            value={dayjs(carData.vehicle_registration_cert_expiration).format(
+              "DD MMMM YYYY"
+            )}
             bottomBorder={false}
           />
         </Col>
@@ -528,9 +762,16 @@ const CarRegistration = ({ carData }: { carData: Database['CarData'] }) => {
               <div className="w-full d-flex justify-content-between align-items-center">
                 <div>
                   <Card.Title className="fw-bold">IMEI GPS</Card.Title>
-                  <Card.Text>{carData.gps_imei ?? 'Belum diatur'}</Card.Text>
+                  <Card.Text>{carData.gps_imei ?? "Belum diatur"}</Card.Text>
                 </div>
-                <div><Button variant="dark" onClick={() => setShowModalTrack(!showModalTrack)}>Lacak</Button></div>
+                <div>
+                  <Button
+                    variant="dark"
+                    onClick={() => setShowModalTrack(!showModalTrack)}
+                  >
+                    Lacak
+                  </Button>
+                </div>
               </div>
             </Card.Body>
           </Card>
@@ -545,7 +786,16 @@ const CarHistory = () => {
     props: {
       car_data: { transaction: transactionData },
     },
-  } = usePage<PageProps<{ car_data: Database['CarData'] & { transaction: Array<Database['Transaction'] & { user: Database['User'] }> } }>>();
+  } =
+    usePage<
+      PageProps<{
+        car_data: Database["CarData"] & {
+          transaction: Array<
+            Database["Transaction"] & { user: Database["User"] }
+          >;
+        };
+      }>
+    >();
 
   return (
     <div>
@@ -554,7 +804,10 @@ const CarHistory = () => {
           <Card key={trans.id} className="mb-0">
             <Card.Header className="bg-white d-flex justify-content-between align-items-center">
               <div className="gap-3 d-flex align-items-center">
-                <div className="overflow-hidden rounded-circle" style={{ width: '40px', height: '40px' }}>
+                <div
+                  className="overflow-hidden rounded-circle"
+                  style={{ width: "40px", height: "40px" }}
+                >
                   <img
                     src={trans.user.avatar}
                     alt={trans.user.name}
@@ -564,10 +817,21 @@ const CarHistory = () => {
                 </div>
                 <div>
                   <p className="mb-0 fw-semibold">{trans.user.name}</p>
-                  <p className="mb-0 text-muted small">{dayjs(trans.created_at).format('LLLL')}</p>
+                  <p className="mb-0 text-muted small">
+                    {dayjs(trans.created_at).format("LLLL")}
+                  </p>
                 </div>
               </div>
-              <Badge as="div" bg={getRentalStatusColor(trans.rental_status as unknown as RentalStatusEnum)}>{getRentalStatusLabel(trans.rental_status as unknown as RentalStatusEnum)}</Badge>
+              <Badge
+                as="div"
+                bg={getRentalStatusColor(
+                  trans.rental_status as unknown as RentalStatusEnum
+                )}
+              >
+                {getRentalStatusLabel(
+                  trans.rental_status as unknown as RentalStatusEnum
+                )}
+              </Badge>
             </Card.Header>
 
             <Card.Body>
@@ -576,9 +840,21 @@ const CarHistory = () => {
                   <div className="gap-2 d-flex">
                     <FaCalendar size={16} className="mt-1 text-muted" />
                     <div>
-                      <p className="mb-0 text-muted small fw-medium">Periode Sewa</p>
-                      <p className="mb-0 small">{dayjs(trans.pickup_date).format('DD MMMM YYYY')} - {dayjs(trans.return_date).format('DD MMMM YYYY')}</p>
-                      <p className="mb-0 text-muted small">Durasi sewa {dayjs(trans.return_date).diff(dayjs(trans.pickup_date), 'day')} hari</p>
+                      <p className="mb-0 text-muted small fw-medium">
+                        Periode Sewa
+                      </p>
+                      <p className="mb-0 small">
+                        {dayjs(trans.pickup_date).format("DD MMMM YYYY")} -{" "}
+                        {dayjs(trans.return_date).format("DD MMMM YYYY")}
+                      </p>
+                      <p className="mb-0 text-muted small">
+                        Durasi sewa{" "}
+                        {dayjs(trans.return_date).diff(
+                          dayjs(trans.pickup_date),
+                          "day"
+                        )}{" "}
+                        hari
+                      </p>
                     </div>
                   </div>
                 </Col>
@@ -595,8 +871,12 @@ const CarHistory = () => {
                   <div className="gap-2 d-flex">
                     <FaUser size={16} className="mt-1 text-muted" />
                     <div>
-                      <p className="mb-0 text-muted small fw-medium">Pengemudi</p>
-                      <p className="mb-0 small">{trans.with_driver ? 'Ya' : 'Tidak'}</p>
+                      <p className="mb-0 text-muted small fw-medium">
+                        Pengemudi
+                      </p>
+                      <p className="mb-0 small">
+                        {trans.with_driver ? "Ya" : "Tidak"}
+                      </p>
                     </div>
                   </div>
                 </Col>
@@ -606,9 +886,15 @@ const CarHistory = () => {
             <Card.Footer className="bg-white d-flex justify-content-between align-items-center">
               <div>
                 <p className="mb-0 small fw-medium">Total Pembayaran</p>
-                <p className="mb-0 fw-bold">{currencyFormat(trans.total_pay)}</p>
+                <p className="mb-0 fw-bold">
+                  {currencyFormat(trans.total_pay)}
+                </p>
               </div>
-              <Button variant="light" size="sm" className="gap-1 d-flex align-items-center">
+              <Button
+                variant="light"
+                size="sm"
+                className="gap-1 d-flex align-items-center"
+              >
                 Detail
                 <FaChevronRight size={16} />
               </Button>
@@ -657,13 +943,17 @@ export default function Show({ car_data }: ShowProps) {
                   <Nav.Link eventKey="spesifikasi">Spesifikasi</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="registrasi">Registrasi Kendaraan</Nav.Link>
+                  <Nav.Link eventKey="registrasi">
+                    Registrasi Kendaraan
+                  </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
                   <Nav.Link eventKey="riwayat">Riwayat Sewa</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="komentar">Komentar dan Penilaian</Nav.Link>
+                  <Nav.Link eventKey="komentar">
+                    Komentar dan Penilaian
+                  </Nav.Link>
                 </Nav.Item>
               </Nav>
             </Card.Header>

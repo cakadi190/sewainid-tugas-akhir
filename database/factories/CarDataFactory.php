@@ -30,7 +30,7 @@ class CarDataFactory extends Factory
      */
     public function definition(): array
     {
-        $carLicensePlateGenerator = new LicensePlateNumberGenerator();
+        $carLicensePlateGenerator = new LicensePlateNumberGenerator;
         $frameNumber = IndonesianVinGenerator::generateVin();
         $engineNumber = IndonesianVinGenerator::generateVin();
 
@@ -64,4 +64,3 @@ class CarDataFactory extends Factory
         ];
     }
 }
-

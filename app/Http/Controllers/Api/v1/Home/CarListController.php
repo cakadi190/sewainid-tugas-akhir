@@ -15,13 +15,11 @@ class CarListController extends Controller
 {
     public function __construct(
         protected readonly CarData $_carData
-    ) {
-    }
+    ) {}
 
     /**
      * Get list of popular car data
      *
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function popularCars(Request $request)
@@ -39,7 +37,7 @@ class CarListController extends Controller
             ->limit(6)
             ->get();
 
-        $formattedCars = $cars->map(fn(CarData $car) => [
+        $formattedCars = $cars->map(fn (CarData $car) => [
             'id' => $car->id,
             'car_name' => $car->car_name,
             'brand' => $car->brand,
@@ -58,42 +56,42 @@ class CarListController extends Controller
             'model' => $car->model,
             'average_rating' => floatval($car->review_avg_rating),
             'total_reviews' => floatval($car->review_count),
-            'preview_image' => $car->getMedia('gallery')->map(fn(Media $media) => $media->getUrl())->toArray(),
+            'preview_image' => $car->getMedia('gallery')->map(fn (Media $media) => $media->getUrl())->toArray(),
         ]);
 
         return response()->json([
             'status' => 200,
             'message' => 'success',
-            'data' => $formattedCars
+            'data' => $formattedCars,
         ]);
     }
 
     /**
      * Get all cars with filtering and pagination
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function allCars(CarListRequest $request)
     {
-        Log::info("All Request Context", $request->all());
+        Log::info('All Request Context', $request->all());
 
         $pickupDate = $request->input('pickup_date');
         $returnDate = $request->input('return_date');
         $perPage = $request->input('per_page', 9);
         $query = $this->_carData->query();
 
-        $query->when($request->filled('brand'), fn($q) => $q->where('brand', $request->input('brand')))
-            ->when($request->filled('model'), fn($q) => $q->where('model', $request->input('model')))
-            ->when($request->filled('year_from'), fn($q) => $q->where('year_of_manufacture', '>=', $request->input('year_from')))
-            ->when($request->filled('year_to'), fn($q) => $q->where('year_of_manufacture', '<=', $request->input('year_to')))
-            ->when($request->filled('fuel_type'), fn($q) => $q->where('fuel_type', $request->input('fuel_type')))
-            ->when($request->filled('transmission'), fn($q) => $q->where('transmission', $request->input('transmission')))
-            ->when($request->filled('status'), fn($q) => $q->where('status', $request->input('status'))) // This is fine since we're passing a single value
-            ->when($request->filled('condition'), fn($q) => $q->where('condition', $request->input('condition')))
-            ->when($request->filled('price_min'), fn($q) => $q->where('rent_price', '>=', $request->input('price_min')))
-            ->when($request->filled('price_max'), fn($q) => $q->where('rent_price', '<=', $request->input('price_max')))
-            ->when($request->filled('seats'), fn($q) => $q->where('seats', $request->input('seats')))
+        $query->when($request->filled('brand'), fn ($q) => $q->where('brand', $request->input('brand')))
+            ->when($request->filled('model'), fn ($q) => $q->where('model', $request->input('model')))
+            ->when($request->filled('year_from'), fn ($q) => $q->where('year_of_manufacture', '>=', $request->input('year_from')))
+            ->when($request->filled('year_to'), fn ($q) => $q->where('year_of_manufacture', '<=', $request->input('year_to')))
+            ->when($request->filled('fuel_type'), fn ($q) => $q->where('fuel_type', $request->input('fuel_type')))
+            ->when($request->filled('transmission'), fn ($q) => $q->where('transmission', $request->input('transmission')))
+            ->when($request->filled('status'), fn ($q) => $q->where('status', $request->input('status'))) // This is fine since we're passing a single value
+            ->when($request->filled('condition'), fn ($q) => $q->where('condition', $request->input('condition')))
+            ->when($request->filled('price_min'), fn ($q) => $q->where('rent_price', '>=', $request->input('price_min')))
+            ->when($request->filled('price_max'), fn ($q) => $q->where('rent_price', '<=', $request->input('price_max')))
+            ->when($request->filled('seats'), fn ($q) => $q->where('seats', $request->input('seats')))
             ->when($request->filled('search'), function ($q) use ($request, $pickupDate, $returnDate) {
                 $q->where(function ($q) use ($request) {
                     $q->where('car_name', 'like', '%' . $request->input('search') . '%')
@@ -102,7 +100,7 @@ class CarListController extends Controller
                 });
 
                 // Only add date filtering if both pickup and return dates are provided
-                if (!empty($pickupDate) && !empty($returnDate)) {
+                if (! empty($pickupDate) && ! empty($returnDate)) {
                     $q->whereDoesntHave('transaction', function ($q) use ($pickupDate, $returnDate) {
                         $q->whereNotIn('status', ['cancelled', 'completed'])
                             ->where(function ($q) use ($pickupDate, $returnDate) {
@@ -122,7 +120,7 @@ class CarListController extends Controller
 
         $cars = $query->paginate($perPage);
 
-        $formattedCars = $cars->map(fn(CarData $car) => [
+        $formattedCars = $cars->map(fn (CarData $car) => [
             'id' => $car->id,
             'car_name' => $car->car_name,
             'brand' => $car->brand,
@@ -148,7 +146,7 @@ class CarListController extends Controller
             'baby_seat' => $car->baby_seat,
             'average_rating' => floatval($car->review_avg_rating),
             'total_reviews' => floatval($car->review_count),
-            'preview_image' => $car->getMedia('gallery')->map(fn(Media $media) => $media->getUrl())->toArray(),
+            'preview_image' => $car->getMedia('gallery')->map(fn (Media $media) => $media->getUrl())->toArray(),
         ]);
 
         return response()->json([

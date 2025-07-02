@@ -1,29 +1,75 @@
-import { compactCurrencyFormat, currencyFormat, mileageFormat, speedFormat } from "@/Helpers/number";
+import ImageGallery from "@/Components/ImageGallery";
+import dayjs from "@/Helpers/dayjs";
+import {
+  CarConditionEnum,
+  CarModelEnum,
+  CarStatusEnum,
+  CarTransmissionEnum,
+  FuelEnum,
+} from "@/Helpers/enum";
+import {
+  getCarConditionLabel,
+  getCarFuelTypeLabel,
+  getCarModelLabel,
+  getCarStatusColor,
+  getCarStatusIcon,
+  getCarStatusLabel,
+  getCarTransmissionLabel,
+} from "@/Helpers/EnumHelper";
+import {
+  compactCurrencyFormat,
+  currencyFormat,
+  mileageFormat,
+  speedFormat,
+} from "@/Helpers/number";
+import { calculateRent } from "@/Helpers/rent";
+import { parseAntiXss } from "@/Helpers/string";
+import { GridContainer, GridItem } from "@/InternalBorderGrid";
 import AuthenticatedUser from "@/Layouts/AuthenticatedLayout";
 import Database from "@/types/database";
-import { Head, router, useForm } from "@inertiajs/react";
-import { Badge, Button, Card, Col, Form, InputGroup, ListGroup, Nav, Row, Tab } from "react-bootstrap";
-import { FaCalendar, FaClock, FaGasPump, FaTag } from "react-icons/fa6";
-import dayjs from "@/Helpers/dayjs";
-import { parseAntiXss } from "@/Helpers/string";
 import { MediaLibrary } from "@/types/medialibrary";
-import ImageGallery from "@/Components/ImageGallery";
-import { GridContainer, GridItem } from "@/InternalBorderGrid";
-import { PiBabyCarriage, PiCarProfileDuotone, PiLock, PiMusicNote, PiPalette, PiSeat, PiShield, PiSnowflake, PiSpeedometer, PiTag, PiTire } from "react-icons/pi";
-import { getCarConditionLabel, getCarFuelTypeLabel, getCarModelLabel, getCarStatusColor, getCarStatusIcon, getCarStatusLabel, getCarTransmissionLabel } from "@/Helpers/EnumHelper";
-import { GiGearStickPattern } from "react-icons/gi";
-import Flatpickr from "react-flatpickr";
+import { Head, router, useForm } from "@inertiajs/react";
 import { Indonesian } from "flatpickr/dist/l10n/id";
-import { twMerge } from "tailwind-merge";
-import { CarConditionEnum, CarModelEnum, CarStatusEnum, CarTransmissionEnum, FuelEnum } from "@/Helpers/enum";
-import HeaderArmadaDetail from "./Partials/HeaderArmadaDetail";
-import { FaTimes } from "react-icons/fa";
-import { calculateRent } from "@/Helpers/rent";
-import withReactContent from "sweetalert2-react-content";
-import Swal from "sweetalert2";
 import { FC, useCallback } from "react";
+import {
+  Badge,
+  Button,
+  Card,
+  Col,
+  Form,
+  InputGroup,
+  ListGroup,
+  Nav,
+  Row,
+  Tab,
+} from "react-bootstrap";
+import Flatpickr from "react-flatpickr";
+import { FaTimes } from "react-icons/fa";
+import { FaCalendar, FaClock, FaGasPump, FaTag } from "react-icons/fa6";
+import { GiGearStickPattern } from "react-icons/gi";
+import {
+  PiBabyCarriage,
+  PiCarProfileDuotone,
+  PiLock,
+  PiMusicNote,
+  PiPalette,
+  PiSeat,
+  PiShield,
+  PiSnowflake,
+  PiSpeedometer,
+  PiTag,
+  PiTire,
+} from "react-icons/pi";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import { twMerge } from "tailwind-merge";
+import HeaderArmadaDetail from "./Partials/HeaderArmadaDetail";
 
-const InfoCard: React.FC<{ icon: React.ReactNode, title: string, value: string }> = ({ icon, title, value }) => {
+const InfoCard: React.FC<{
+  icon: React.ReactNode;
+  title: string;
+  value: string;
+}> = ({ icon, title, value }) => {
   return (
     <GridItem>
       {icon}
@@ -34,12 +80,15 @@ const InfoCard: React.FC<{ icon: React.ReactNode, title: string, value: string }
 };
 
 interface ReviewUser {
-  review: Database['Review'] & {
-    user: Database['User']
-  }[]
+  review: Database["Review"] &
+    {
+      user: Database["User"];
+    }[];
 }
 
-const CarInfoCards: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
+const CarInfoCards: React.FC<{ carData: Database["CarData"] }> = ({
+  carData,
+}) => {
   return (
     <div className="mt-4">
       {/* Tampilan untuk ukuran layar extra small hingga large */}
@@ -97,18 +146,25 @@ const CarInfoCards: React.FC<{ carData: Database['CarData'] }> = ({ carData }) =
   );
 };
 
-const PriceCard: React.FC<{ label: string, price: number }> = ({ label, price }) => {
+const PriceCard: React.FC<{ label: string; price: number }> = ({
+  label,
+  price,
+}) => {
   return (
     <Col md="4">
       <Card body className="text-center bg-light">
-        <Card.Title className="mb-0 fw-bold">{compactCurrencyFormat(price)}</Card.Title>
+        <Card.Title className="mb-0 fw-bold">
+          {compactCurrencyFormat(price)}
+        </Card.Title>
         <Card.Text className="mb-0">{label}</Card.Text>
       </Card>
     </Col>
   );
 };
 
-const PricingInfo: React.FC<{ carData: Database['CarData'] }> = ({ carData }) => {
+const PricingInfo: React.FC<{ carData: Database["CarData"] }> = ({
+  carData,
+}) => {
   return (
     <Card body>
       <div className="mb-3 d-flex justify-content-between">
@@ -124,17 +180,28 @@ const PricingInfo: React.FC<{ carData: Database['CarData'] }> = ({ carData }) =>
   );
 };
 
-const CarMainDetails: React.FC<{ carData: Database['CarData'] & { media?: MediaLibrary[] } }> = ({ carData }) => {
+const CarMainDetails: React.FC<{
+  carData: Database["CarData"] & { media?: MediaLibrary[] };
+}> = ({ carData }) => {
   return (
     <Card body className="rounded-4">
-      {(carData.media && carData.media?.length > 0) &&
-        <ImageGallery readOnly initialData={carData.media as unknown as MediaLibrary[]} />}
+      {carData.media && carData.media?.length > 0 && (
+        <ImageGallery
+          readOnly
+          initialData={carData.media as unknown as MediaLibrary[]}
+        />
+      )}
 
       <CarInfoCards carData={carData} />
 
       <Card body className="mb-4">
         <strong>Deskripsi</strong>
-        <p className="mt-2 mb-0" dangerouslySetInnerHTML={{ __html: parseAntiXss(carData.description || '-') }} />
+        <p
+          className="mt-2 mb-0"
+          dangerouslySetInnerHTML={{
+            __html: parseAntiXss(carData.description || "-"),
+          }}
+        />
       </Card>
 
       <PricingInfo carData={carData} />
@@ -142,8 +209,11 @@ const CarMainDetails: React.FC<{ carData: Database['CarData'] & { media?: MediaL
   );
 };
 
-const CarStatus: React.FC<{ carData: Database['CarData']; disabledCalendar?: string[] }> = ({ carData, disabledCalendar = [] }) => {
-  const lastUsage = dayjs().diff('2025-04-01', 'day');
+const CarStatus: React.FC<{
+  carData: Database["CarData"];
+  disabledCalendar?: string[];
+}> = ({ carData, disabledCalendar = [] }) => {
+  const lastUsage = dayjs().diff("2025-04-01", "day");
 
   const { data, post, processing, setData } = useForm<{
     pickup_date: string | null;
@@ -159,22 +229,24 @@ const CarStatus: React.FC<{ carData: Database['CarData']; disabledCalendar?: str
 
   const onSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    post(route('v1.home.checkout.addOrUpdate'), {
+    post(route("v1.home.checkout.addOrUpdate"), {
       onError: (errors: any) => {
-        const textMessage = Object.values(errors).join(', ');
+        const textMessage = Object.values(errors).join(", ");
 
-        withReactContent(Swal).fire({
-          title: 'Kesalahan!',
-          text: textMessage,
-          icon: 'error',
-        }).then(() => {
-          if (textMessage.includes('ERR_ALREADY_HAVE_ORDER')) {
-            router.visit('/checkout');
-          }
-        })
-      }
+        withReactContent(Swal)
+          .fire({
+            title: "Kesalahan!",
+            text: textMessage,
+            icon: "error",
+          })
+          .then(() => {
+            if (textMessage.includes("ERR_ALREADY_HAVE_ORDER")) {
+              router.visit("/checkout");
+            }
+          });
+      },
     });
-  }
+  };
 
   let flatpickrInstance: any = null;
 
@@ -190,34 +262,42 @@ const CarStatus: React.FC<{ carData: Database['CarData']; disabledCalendar?: str
     }
   };
 
-  const handleDateRangeChange = useCallback((selectedDates: Date[]) => {
-    if (selectedDates?.length) {
-      const [startDate, returnDate] = selectedDates;
-      setData('pickup_date', startDate?.toISOString() || null);
-      setData('return_date', returnDate?.toISOString() || null);
-    } else {
-      setData('pickup_date', null);
-      setData('return_date', null);
-    }
-  }, [setData]);
+  const handleDateRangeChange = useCallback(
+    (selectedDates: Date[]) => {
+      if (selectedDates?.length) {
+        const [startDate, returnDate] = selectedDates;
+        setData("pickup_date", startDate?.toISOString() || null);
+        setData("return_date", returnDate?.toISOString() || null);
+      } else {
+        setData("pickup_date", null);
+        setData("return_date", null);
+      }
+    },
+    [setData]
+  );
 
-  const { duration, carRentTotal, tax, driverRentTotal, subtotal, total } = calculateRent({
-    pickDate: data.pickup_date || null,
-    returnDate: data.return_date || null,
-    rentPrice: carData.rent_price,
-    withDriver: data.with_driver,
-  });
+  const { duration, carRentTotal, tax, driverRentTotal, subtotal, total } =
+    calculateRent({
+      pickDate: data.pickup_date || null,
+      returnDate: data.return_date || null,
+      rentPrice: carData.rent_price,
+      withDriver: data.with_driver,
+    });
 
   return (
-    <Card body className="rounded-4" style={{ position: 'sticky', top: '5rem' }}>
+    <Card
+      body
+      className="rounded-4"
+      style={{ position: "sticky", top: "5rem" }}
+    >
       <InputGroup>
         <Form.FloatingLabel label="Tanggal Pengambilan dan Pengembalian">
           <Flatpickr
             options={{
-              mode: 'range',
+              mode: "range",
               locale: Indonesian,
-              dateFormat: 'Y-m-d',
-              minDate: 'today',
+              dateFormat: "Y-m-d",
+              minDate: "today",
               closeOnSelect: true,
               disable: disabledCalendar ?? [],
               onClose: function (selectedDates, dateStr, instance) {
@@ -225,7 +305,7 @@ const CarStatus: React.FC<{ carData: Database['CarData']; disabledCalendar?: str
                   const singleDate = selectedDates[0];
                   instance.setDate([singleDate, singleDate], true);
                 }
-              }
+              },
             }}
             className="form-control"
             onChange={handleDateRangeChange}
@@ -236,7 +316,11 @@ const CarStatus: React.FC<{ carData: Database['CarData']; disabledCalendar?: str
           />
         </Form.FloatingLabel>
         {(data.pickup_date || data.return_date) && (
-          <Button variant="outline-secondary" onClick={clearSelector} id="button-addon2">
+          <Button
+            variant="outline-secondary"
+            onClick={clearSelector}
+            id="button-addon2"
+          >
             <FaTimes />
           </Button>
         )}
@@ -249,9 +333,11 @@ const CarStatus: React.FC<{ carData: Database['CarData']; disabledCalendar?: str
           className="flex-grow flex-shrink-0"
           label="Dengan Driver"
           checked={data.with_driver}
-          onChange={(e) => setData('with_driver', e.target.checked)}
+          onChange={(e) => setData("with_driver", e.target.checked)}
         />
-        <div className="text-end">Tambahan biaya driver: {currencyFormat(250000)}</div>
+        <div className="text-end">
+          Tambahan biaya driver: {currencyFormat(250000)}
+        </div>
       </Form.Group>
 
       {duration > 0 && (
@@ -264,12 +350,16 @@ const CarStatus: React.FC<{ carData: Database['CarData']; disabledCalendar?: str
               </ListGroup.Item>
               <ListGroup.Item className="px-0 d-flex justify-content-between">
                 <div className="text-muted">Harga Sewa</div>
-                <div className="fw-bold">{compactCurrencyFormat(carRentTotal)} / {duration} Hari</div>
+                <div className="fw-bold">
+                  {compactCurrencyFormat(carRentTotal)} / {duration} Hari
+                </div>
               </ListGroup.Item>
               {data.with_driver && (
                 <ListGroup.Item className="px-0 d-flex justify-content-between">
                   <div className="text-muted">Harga Sewa Driver</div>
-                  <div className="fw-bold">{compactCurrencyFormat(driverRentTotal)} / {duration} Hari</div>
+                  <div className="fw-bold">
+                    {compactCurrencyFormat(driverRentTotal)} / {duration} Hari
+                  </div>
                 </ListGroup.Item>
               )}
               <ListGroup.Item className="px-0 d-flex justify-content-between">
@@ -287,46 +377,62 @@ const CarStatus: React.FC<{ carData: Database['CarData']; disabledCalendar?: str
             </ListGroup>
           </Card>
 
-          <Button onClick={onSubmit} disabled={processing} className="w-100" size="lg">Pinjam Sekarang!</Button>
+          <Button
+            onClick={onSubmit}
+            disabled={processing}
+            className="w-100"
+            size="lg"
+          >
+            Pinjam Sekarang!
+          </Button>
         </>
       )}
-
 
       <div className="py-4 my-4 border-top justify-content-between align-items-center d-flex border-bottom">
         <Card.Title className="mb-0">Status Kendaraan</Card.Title>
         <div className="gap-2 d-flex align-items-center">
-          <div className={'text-' + getCarStatusColor(carData.status as CarStatusEnum)}>
+          <div
+            className={
+              "text-" + getCarStatusColor(carData.status as CarStatusEnum)
+            }
+          >
             {getCarStatusIcon(carData.status as CarStatusEnum)}
           </div>
-          <Card.Title className="mb-0">{getCarStatusLabel(carData.status as CarStatusEnum)}</Card.Title>
+          <Card.Title className="mb-0">
+            {getCarStatusLabel(carData.status as CarStatusEnum)}
+          </Card.Title>
         </div>
       </div>
 
       <div className="gap-2 d-flex flex-column">
         <div className="d-flex justify-content-between">
           <div className="text-muted">Posisi Saat Ini</div>
-          <div className="fw-bold">{(() => {
-            switch (carData.status) {
-              case CarStatusEnum.BORROWED:
-                return 'Dipinjam';
-              case CarStatusEnum.READY:
-                return 'Diam Di Garasi';
-              case CarStatusEnum.SOLD:
-                return 'Sudah Dijual';
-              case CarStatusEnum.MISSING:
-                return 'Sedang Dicari';
-              case CarStatusEnum.REPAIR:
-                return 'Di Bengkel';
-              case CarStatusEnum.CRASH:
-                return 'Diam Di Garasi';
-              default:
-                return '-';
-            }
-          })()}</div>
+          <div className="fw-bold">
+            {(() => {
+              switch (carData.status) {
+                case CarStatusEnum.BORROWED:
+                  return "Dipinjam";
+                case CarStatusEnum.READY:
+                  return "Diam Di Garasi";
+                case CarStatusEnum.SOLD:
+                  return "Sudah Dijual";
+                case CarStatusEnum.MISSING:
+                  return "Sedang Dicari";
+                case CarStatusEnum.REPAIR:
+                  return "Di Bengkel";
+                case CarStatusEnum.CRASH:
+                  return "Diam Di Garasi";
+                default:
+                  return "-";
+              }
+            })()}
+          </div>
         </div>
         <div className="d-flex justify-content-between">
           <div className="text-muted">Kondisi Kendaraan</div>
-          <div className="fw-bold">{getCarConditionLabel(carData.condition as CarConditionEnum)}</div>
+          <div className="fw-bold">
+            {getCarConditionLabel(carData.condition as CarConditionEnum)}
+          </div>
         </div>
         <div className="d-flex justify-content-between">
           <div className="text-muted">Terakhir Digunakan</div>
@@ -337,7 +443,7 @@ const CarStatus: React.FC<{ carData: Database['CarData']; disabledCalendar?: str
   );
 };
 
-const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
+const CarSpecification = ({ carData }: { carData: Database["CarData"] }) => {
   return (
     <>
       <h4 className="mb-1 fw-bold">Spesifikasi Kendaraan</h4>
@@ -359,7 +465,9 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <PiTag size={24} />
               <div>
                 <h6 className="mb-0 fw-bold">Model</h6>
-                <p className="mb-0">{getCarModelLabel(carData.model as unknown as CarModelEnum)}</p>
+                <p className="mb-0">
+                  {getCarModelLabel(carData.model as unknown as CarModelEnum)}
+                </p>
               </div>
             </div>
           </GridItem>
@@ -368,7 +476,11 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <GiGearStickPattern size={24} />
               <div>
                 <h6 className="mb-0 fw-bold">Transmisi</h6>
-                <p className="mb-0">{getCarTransmissionLabel(carData.transmission as unknown as CarTransmissionEnum)}</p>
+                <p className="mb-0">
+                  {getCarTransmissionLabel(
+                    carData.transmission as unknown as CarTransmissionEnum
+                  )}
+                </p>
               </div>
             </div>
           </GridItem>
@@ -434,7 +546,15 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <Card.Body className="flex-row gap-2 align-items-center d-flex">
                 <PiSnowflake size={24} />
                 <strong className="mb-0 fw-bold">Air Conditioner (AC)</strong>
-                <Badge className={twMerge("ms-auto border", carData.ac ? 'text-white' : 'text-dark')} bg={carData.ac ? 'dark' : 'white'}>{carData.ac ? 'Ada' : 'Tidak Ada'}</Badge>
+                <Badge
+                  className={twMerge(
+                    "ms-auto border",
+                    carData.ac ? "text-white" : "text-dark"
+                  )}
+                  bg={carData.ac ? "dark" : "white"}
+                >
+                  {carData.ac ? "Ada" : "Tidak Ada"}
+                </Badge>
               </Card.Body>
             </Card>
           </Col>
@@ -443,7 +563,15 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <Card.Body className="flex-row gap-2 align-items-center d-flex">
                 <PiMusicNote size={24} />
                 <strong className="mb-0 fw-bold">Audio Entertainment</strong>
-                <Badge className={twMerge("ms-auto border", carData.audio ? 'text-white' : 'text-dark')} bg={carData.audio ? 'dark' : 'white'}>{carData.audio ? 'Ada' : 'Tidak Ada'}</Badge>
+                <Badge
+                  className={twMerge(
+                    "ms-auto border",
+                    carData.audio ? "text-white" : "text-dark"
+                  )}
+                  bg={carData.audio ? "dark" : "white"}
+                >
+                  {carData.audio ? "Ada" : "Tidak Ada"}
+                </Badge>
               </Card.Body>
             </Card>
           </Col>
@@ -452,7 +580,15 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <Card.Body className="flex-row gap-2 align-items-center d-flex">
                 <PiShield size={24} />
                 <strong className="mb-0 fw-bold">ABS</strong>
-                <Badge className={twMerge("ms-auto border", carData.abs ? 'text-white' : 'text-dark')} bg={carData.abs ? 'dark' : 'white'}>{carData.abs ? 'Ada' : 'Tidak Ada'}</Badge>
+                <Badge
+                  className={twMerge(
+                    "ms-auto border",
+                    carData.abs ? "text-white" : "text-dark"
+                  )}
+                  bg={carData.abs ? "dark" : "white"}
+                >
+                  {carData.abs ? "Ada" : "Tidak Ada"}
+                </Badge>
               </Card.Body>
             </Card>
           </Col>
@@ -461,7 +597,15 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <Card.Body className="flex-row gap-2 align-items-center d-flex">
                 <PiLock size={24} />
                 <strong className="mb-0 fw-bold">Child-Lock</strong>
-                <Badge className={twMerge("ms-auto border", carData.child_lock ? 'text-white' : 'text-dark')} bg={carData.child_lock ? 'dark' : 'white'}>{carData.child_lock ? 'Ada' : 'Tidak Ada'}</Badge>
+                <Badge
+                  className={twMerge(
+                    "ms-auto border",
+                    carData.child_lock ? "text-white" : "text-dark"
+                  )}
+                  bg={carData.child_lock ? "dark" : "white"}
+                >
+                  {carData.child_lock ? "Ada" : "Tidak Ada"}
+                </Badge>
               </Card.Body>
             </Card>
           </Col>
@@ -470,7 +614,15 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <Card.Body className="flex-row gap-2 align-items-center d-flex">
                 <PiTire size={24} />
                 <strong className="mb-0 fw-bold">Traction Control</strong>
-                <Badge className={twMerge("ms-auto border", carData.traction_control ? 'text-white' : 'text-dark')} bg={carData.traction_control ? 'dark' : 'white'}>{carData.traction_control ? 'Ada' : 'Tidak Ada'}</Badge>
+                <Badge
+                  className={twMerge(
+                    "ms-auto border",
+                    carData.traction_control ? "text-white" : "text-dark"
+                  )}
+                  bg={carData.traction_control ? "dark" : "white"}
+                >
+                  {carData.traction_control ? "Ada" : "Tidak Ada"}
+                </Badge>
               </Card.Body>
             </Card>
           </Col>
@@ -479,7 +631,15 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <Card.Body className="flex-row gap-2 align-items-center d-flex">
                 <PiBabyCarriage size={24} />
                 <strong className="mb-0 fw-bold">Kursi Bayi</strong>
-                <Badge className={twMerge("ms-auto border", carData.baby_seat ? 'text-white' : 'text-dark')} bg={carData.baby_seat ? 'dark' : 'white'}>{carData.baby_seat ? 'Ada' : 'Tidak Ada'}</Badge>
+                <Badge
+                  className={twMerge(
+                    "ms-auto border",
+                    carData.baby_seat ? "text-white" : "text-dark"
+                  )}
+                  bg={carData.baby_seat ? "dark" : "white"}
+                >
+                  {carData.baby_seat ? "Ada" : "Tidak Ada"}
+                </Badge>
               </Card.Body>
             </Card>
           </Col>
@@ -495,13 +655,15 @@ const CarComments: FC<ReviewUser> = ({ review }) => {
       <h4 className="mb-1 fw-bold">Tanggapan Pengguna</h4>
       <p>Semua tanggapan dan komentar dari pengguna terhadap armada ini.</p>
 
-      {review.length > 1 ? review.map(() => (
-        <></>
-      )) : (
+      {review.length > 1 ? (
+        review.map(() => <></>)
+      ) : (
         <div className="py-4 text-center">
           <h1 className="display-3 fw-bold">404</h1>
           <h2>Tidak ada tanggapan</h2>
-          <p className="mb-0">Belum ada tanggapan dan komentar dari pengguna.</p>
+          <p className="mb-0">
+            Belum ada tanggapan dan komentar dari pengguna.
+          </p>
         </div>
       )}
     </div>
@@ -509,7 +671,7 @@ const CarComments: FC<ReviewUser> = ({ review }) => {
 };
 
 interface ShowProps {
-  car_data: Database['CarData'] & ReviewUser;
+  car_data: Database["CarData"] & ReviewUser;
   disabledCalendar?: string[];
 }
 

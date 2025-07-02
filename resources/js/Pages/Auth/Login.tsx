@@ -1,10 +1,10 @@
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
-import { Form, Button, Alert, Spinner } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
-import SeparatorText from '@/Components/SeparatorText';
+import SeparatorText from "@/Components/SeparatorText";
+import GuestLayout from "@/Layouts/GuestLayout";
+import { faSignInAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Head, Link, useForm } from "@inertiajs/react";
+import { FormEventHandler } from "react";
+import { Alert, Button, Form, Spinner } from "react-bootstrap";
 
 export default function Login({
   status,
@@ -14,16 +14,16 @@ export default function Login({
   canResetPassword: boolean;
 }) {
   const { data, setData, post, processing, errors, reset } = useForm({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
     remember: false,
   });
 
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
 
-    post(route('login'), {
-      onFinish: () => reset('password'),
+    post(route("login"), {
+      onFinish: () => reset("password"),
     });
   };
 
@@ -31,17 +31,14 @@ export default function Login({
     <GuestLayout>
       <Head title="Masuk" />
 
-      {status && (
-        <Alert variant='success'>
-          {status}
-        </Alert>
-      )}
+      {status && <Alert variant="success">{status}</Alert>}
 
       <div className="mb-4 text-center">
-        <h1 className='h4 fw-bold'>Selamat Datang</h1>
+        <h1 className="h4 fw-bold">Selamat Datang</h1>
         <p>
           Kami sangat senang Anda berada di sini. Untuk memulai pengalaman Anda,
-          silakan masuk ke akun Anda sebelum melanjutkan untuk mengelola pesanan anda.
+          silakan masuk ke akun Anda sebelum melanjutkan untuk mengelola pesanan
+          anda.
         </p>
       </div>
 
@@ -55,7 +52,7 @@ export default function Login({
             value={data.email}
             autoComplete="username"
             isInvalid={!!errors.email}
-            onChange={(e) => setData('email', e.target.value)}
+            onChange={(e) => setData("email", e.target.value)}
           />
           <label htmlFor="floatingInputCustom">Alamat Email</label>
           {errors.email && (
@@ -72,11 +69,13 @@ export default function Login({
             value={data.password}
             autoComplete="current-password"
             isInvalid={!!errors.password}
-            onChange={(e) => setData('password', e.target.value)}
+            onChange={(e) => setData("password", e.target.value)}
           />
           <label htmlFor="floatingPasswordCustom">Kata Sandi</label>
           {errors.password && (
-            <div className="mt-2 invalid-feedback d-block">{errors.password}</div>
+            <div className="mt-2 invalid-feedback d-block">
+              {errors.password}
+            </div>
           )}
         </Form.Floating>
 
@@ -86,12 +85,12 @@ export default function Login({
             label="Ingat saya"
             id="remember-me"
             checked={data.remember}
-            onChange={(e) => setData('remember', e.target.checked)}
+            onChange={(e) => setData("remember", e.target.checked)}
           />
 
           {canResetPassword && (
             <Link
-              href={route('password.request')}
+              href={route("password.request")}
               className="text-sm text-muted text-decoration-underline"
             >
               Lupa kata sandi?
@@ -100,8 +99,15 @@ export default function Login({
         </div>
 
         <div className="gap-2 d-grid">
-          <Button size='lg' className="gap-2 justify-content-center d-flex align-items-center" type="submit" disabled={processing}>
-            {processing ? <Spinner size='sm' /> : (
+          <Button
+            size="lg"
+            className="gap-2 justify-content-center d-flex align-items-center"
+            type="submit"
+            disabled={processing}
+          >
+            {processing ? (
+              <Spinner size="sm" />
+            ) : (
               <>
                 <FontAwesomeIcon icon={faSignInAlt} />
                 <span>Masuk</span>
@@ -109,14 +115,20 @@ export default function Login({
             )}
           </Button>
 
-          <SeparatorText label="Atau" wrapperClassName='mb-5 mt-3' />
+          <SeparatorText label="Atau" wrapperClassName="mb-5 mt-3" />
 
-          <a className="btn btn-danger btn-lg" href={route("auth.social.redirect", "google")}>Masuk dengan Google</a>
+          <a
+            className="btn btn-danger btn-lg"
+            href={route("auth.social.redirect", "google")}
+          >
+            Masuk dengan Google
+          </a>
 
-          <Link className="btn btn-link" href="/register">Mendaftar Akun Baru</Link>
+          <Link className="btn btn-link" href="/register">
+            Mendaftar Akun Baru
+          </Link>
         </div>
       </form>
     </GuestLayout>
   );
 }
-

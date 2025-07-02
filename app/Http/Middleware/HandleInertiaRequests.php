@@ -48,8 +48,7 @@ class HandleInertiaRequests extends Middleware
                 'url' => $request->url(),
                 'current' => Route::current(),
                 'name' => Route::currentRouteName(),
-            ]
+            ],
         ];
     }
 }
-

@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $user_id
  * @property int|null $car_data_id
  * @property string|null $transaction_id
+ *
  * @method static \Database\Factories\UsageNoteDataFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData newQuery()
@@ -31,6 +32,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UsageNoteData whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class UsageNoteData extends Model
@@ -69,4 +71,3 @@ class UsageNoteData extends Model
         return collect(value: UsageNoteTypeEnum::cases())->pluck('value');
     }
 }
-

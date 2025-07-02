@@ -1,27 +1,27 @@
-import '../css/app.scss';
-import 'leaflet/dist/leaflet.css';
-import 'react-perfect-scrollbar/dist/css/styles.css';
 import "flatpickr/dist/themes/material_blue.css";
-import './bootstrap';
+import "leaflet/dist/leaflet.css";
+import "react-perfect-scrollbar/dist/css/styles.css";
+import "../css/app.scss";
+import "./bootstrap";
 
-import { createInertiaApp } from '@inertiajs/react';
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { createRoot } from 'react-dom/client';
+import { createInertiaApp } from "@inertiajs/react";
+import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
+import { createRoot } from "react-dom/client";
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || "Laravel";
 
 createInertiaApp({
-  title: (title) => title ? `${title} &bull; ${appName}` : appName,
+  title: (title) => (title ? `${title} &bull; ${appName}` : appName),
   resolve: (name) =>
     resolvePageComponent(
       `./Pages/${name}.tsx`,
-      import.meta.glob('./Pages/**/*.tsx'),
+      import.meta.glob("./Pages/**/*.tsx")
     ),
   setup({ el, App, props }) {
     const root = createRoot(el);
     root.render(<App {...props} />);
   },
   progress: {
-    color: '#378dfc',
+    color: "#378dfc",
   },
 });

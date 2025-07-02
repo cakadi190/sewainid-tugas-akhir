@@ -8,8 +8,6 @@ namespace App\Enums;
  * This enumeration represents the different statuses a car can have within the system.
  * Each status is associated with a specific label and a corresponding Bootstrap color
  * class for frontend styling.
- *
- * @package App\Enums
  */
 enum CarStatusEnum: string
 {

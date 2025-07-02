@@ -35,4 +35,3 @@ enum UsageNoteTypeEnum: string
         };
     }
 }
-

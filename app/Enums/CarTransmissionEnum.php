@@ -10,7 +10,7 @@ enum CarTransmissionEnum: string
 
     public function label()
     {
-        return match($this) {
+        return match ($this) {
             self::MT => 'Transmisi Manual',
             self::AT => 'Transmisi Otomatis',
             self::SMT => 'Transmisi Semi-Manual',
@@ -19,7 +19,7 @@ enum CarTransmissionEnum: string
 
     public function color()
     {
-        return match($this) {
+        return match ($this) {
             self::MT => 'primary',
             self::AT => 'secondary',
             self::SMT => 'success',

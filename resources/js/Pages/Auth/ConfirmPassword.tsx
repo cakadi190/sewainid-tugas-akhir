@@ -1,18 +1,18 @@
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, useForm } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import GuestLayout from "@/Layouts/GuestLayout";
+import { Head, useForm } from "@inertiajs/react";
+import { FormEventHandler } from "react";
+import { Button, Form } from "react-bootstrap";
 
 export default function ConfirmPassword() {
   const { data, setData, post, processing, errors, reset } = useForm({
-    password: '',
+    password: "",
   });
 
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
 
-    post(route('password.confirm'), {
-      onFinish: () => reset('password'),
+    post(route("password.confirm"), {
+      onFinish: () => reset("password"),
     });
   };
 
@@ -23,7 +23,8 @@ export default function ConfirmPassword() {
       <div className="mb-4 text-center">
         <h1 className="h4">Konfirmasi Kata Sandi</h1>
         <p className="text-sm text-gray-600">
-          Ini adalah area yang aman dari aplikasi. Silakan konfirmasi kata sandi Anda sebelum melanjutkan.
+          Ini adalah area yang aman dari aplikasi. Silakan konfirmasi kata sandi
+          Anda sebelum melanjutkan.
         </p>
       </div>
 
@@ -37,11 +38,13 @@ export default function ConfirmPassword() {
             value={data.password}
             autoComplete="current-password"
             isInvalid={!!errors.password}
-            onChange={(e) => setData('password', e.target.value)}
+            onChange={(e) => setData("password", e.target.value)}
           />
           <label htmlFor="floatingPasswordCustom">Password</label>
           {errors.password && (
-            <div className="mt-2 invalid-feedback d-block">{errors.password}</div>
+            <div className="mt-2 invalid-feedback d-block">
+              {errors.password}
+            </div>
           )}
         </Form.Floating>
 

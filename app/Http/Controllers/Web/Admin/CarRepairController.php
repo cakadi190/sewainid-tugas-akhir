@@ -10,7 +10,6 @@ class CarRepairController extends Controller
     /**
      * Showing page of car repair data
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Inertia\Response
      */
     public function __invoke(Request $request)

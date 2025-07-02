@@ -23,8 +23,6 @@ class CarDataController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\CarData  $car_data
-     * @param  \Illuminate\Http\Request  $request
      * @return \Inertia\Response
      */
     public function show(CarData $car_data, Request $request)

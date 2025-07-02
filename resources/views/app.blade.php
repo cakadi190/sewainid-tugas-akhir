@@ -14,8 +14,8 @@
         rel="stylesheet">
 
     @isset($schemas)
-    @if(is_array($schemas))
-    @foreach($schemas as $schema)
+    @if (is_array($schemas))
+    @foreach ($schemas as $schema)
     <script type="application/ld+json">
         {!! json_encode($schema, JSON_PRETTY_PRINT) !!}
     </script>

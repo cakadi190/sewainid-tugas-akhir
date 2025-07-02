@@ -65,4 +65,3 @@ class StoreCarRepairNoteDataRequest extends FormRequest
         ];
     }
 }
-

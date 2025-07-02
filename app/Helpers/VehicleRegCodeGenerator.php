@@ -20,36 +20,42 @@ class VehicleRegCodeGenerator
 {
     /**
      * Kode wilayah (2 karakter)
-     *
-     * @var string
      */
     protected string $regionCode;
 
     /**
      * Tahun pendaftaran kendaraan (4 digit)
-     *
-     * @var int
      */
     protected int $year;
 
     /**
      * Panjang kode unik (5 karakter)
-     *
-     * @var int
      */
     protected int $uniqueLength;
 
     /**
      * Konstruktor untuk menginisialisasi objek generator.
      *
-     * @param string $regionCode Kode wilayah (2 karakter)
-     * @param int $uniqueLength Panjang kode unik (5 karakter)
+     * @param  string  $regionCode  Kode wilayah (2 karakter)
+     * @param  int  $uniqueLength  Panjang kode unik (5 karakter)
      */
     public function __construct(string $regionCode = 'B', int $uniqueLength = 5)
     {
         $this->regionCode = strtoupper($regionCode);
         $this->year = (int) date('Y');
         $this->uniqueLength = $uniqueLength;
+    }
+
+    /**
+     * Menghasilkan kode registrasi kendaraan yang lengkap dan sesuai dengan format yang ditentukan.
+     *
+     * @return string Kode registrasi kendaraan yang dihasilkan
+     */
+    public function generate(): string
+    {
+        $uniqueCode = $this->generateUniqueCode();
+
+        return "{$this->regionCode}-{$this->year}-{$uniqueCode}";
     }
 
     /**
@@ -64,17 +70,7 @@ class VehicleRegCodeGenerator
         for ($i = 0; $i < $this->uniqueLength; $i++) {
             $code .= $characters[rand(0, strlen($characters) - 1)];
         }
-        return $code;
-    }
 
-    /**
-     * Menghasilkan kode registrasi kendaraan yang lengkap dan sesuai dengan format yang ditentukan.
-     *
-     * @return string Kode registrasi kendaraan yang dihasilkan
-     */
-    public function generate(): string
-    {
-        $uniqueCode = $this->generateUniqueCode();
-        return "{$this->regionCode}-{$this->year}-{$uniqueCode}";
+        return $code;
     }
 }

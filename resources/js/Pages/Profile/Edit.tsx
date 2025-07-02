@@ -1,12 +1,12 @@
-import { PageProps } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
-import DeleteUserForm from './Partials/DeleteUserForm';
-import UpdatePasswordForm from './Partials/UpdatePasswordForm';
-import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
-import { Card, Tab, Tabs } from 'react-bootstrap';
-import MainLayout from '@/Layouts/MainLayout';
-import ImageHeader from '@/Assets/Images/Cover-Dashboard.jpg';
-import GlobalHeader from '@/Components/GlobalPartial/HeaderComponent';
+import ImageHeader from "@/Assets/Images/Cover-Dashboard.jpg";
+import GlobalHeader from "@/Components/GlobalPartial/HeaderComponent";
+import MainLayout from "@/Layouts/MainLayout";
+import { PageProps } from "@/types";
+import { Head, usePage } from "@inertiajs/react";
+import { Card, Tab, Tabs } from "react-bootstrap";
+import DeleteUserForm from "./Partials/DeleteUserForm";
+import UpdatePasswordForm from "./Partials/UpdatePasswordForm";
+import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationForm";
 
 /**
  * Komponen ini digunakan untuk mengedit profil pengguna.
@@ -25,18 +25,20 @@ export default function Edit({
 
   return (
     <MainLayout
-      isAdmin={auth.user.role === 'admin'}
-      header={auth.user.role === 'user' && (
-        <GlobalHeader
-          title="Beranda Dasbor"
-          description="Selamat datang di dasbor! Disinilah Anda dapat melihat informasi tentang permintaan, riwayat, dan melihat tagihan sewa mobil Anda."
-          backgroundImage={ImageHeader}
-          breadcrumbItems={[
-            { label: 'Beranda', url: route('home') },
-            { label: 'Beranda Dasbor' },
-          ]}
-        />
-      )}
+      isAdmin={auth.user.role === "admin"}
+      header={
+        auth.user.role === "user" && (
+          <GlobalHeader
+            title="Beranda Dasbor"
+            description="Selamat datang di dasbor! Disinilah Anda dapat melihat informasi tentang permintaan, riwayat, dan melihat tagihan sewa mobil Anda."
+            backgroundImage={ImageHeader}
+            breadcrumbItems={[
+              { label: "Beranda", url: route("home") },
+              { label: "Beranda Dasbor" },
+            ]}
+          />
+        )
+      }
     >
       <Head title="Profil Saya" />
 
@@ -44,7 +46,7 @@ export default function Edit({
         <Card className="mb-4">
           <Card.Body>
             <Tabs defaultActiveKey="profile" id="profile-tabs" className="mb-3">
-              {auth.user.role !== 'admin' && (
+              {auth.user.role !== "admin" && (
                 <Tab eventKey="profile" title="Profil">
                   <UpdateProfileInformationForm
                     mustVerifyEmail={mustVerifyEmail}
@@ -65,4 +67,3 @@ export default function Edit({
     </MainLayout>
   );
 }
-

@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
- *
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -15,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $car_data_id
  * @property int $rating Rating antara angka 1 s/d 10
  * @property string|null $description
+ *
  * @method static \Database\Factories\ReviewFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Review newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Review newQuery()
@@ -26,6 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Review whereRating($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Review whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Review whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class Review extends Model

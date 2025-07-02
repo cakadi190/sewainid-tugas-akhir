@@ -2,6 +2,8 @@
 
 namespace App\Interfaces;
 
+use Exception;
+
 /**
  * Interface for Indonesian License Plate Number Generator
  *
@@ -20,8 +22,8 @@ namespace App\Interfaces;
  * - AB 123 DE (Yogyakarta)
  * - L 1 XX (East Java)
  *
- * @package App\Interfaces
  * @version 2.1.0
+ *
  * @since 1.0.0
  */
 interface LicensePlateNumberGenerator
@@ -33,14 +35,14 @@ interface LicensePlateNumberGenerator
      * If a region is specified, the generated number will use that region's code.
      * If no region is specified, a random region will be selected.
      *
-     * @param string|null $region The name of the region/province (e.g., "DKI Jakarta", "East Java")
+     * @param  string|null  $region  The name of the region/province (e.g., "DKI Jakarta", "East Java")
      * @return string A valid license plate number in the format: "CODE NUMBER LETTERS"
-     * @throws \Exception If the specified region is invalid or not found
+     *
+     * @throws Exception If the specified region is invalid or not found
      *
      * @example
      * // Generate a random plate number for any region
      * generateLicensePlate(); // Returns "B 1234 ABC"
-     *
      * @example
      * // Generate a plate number for a specific region
      * generateLicensePlate("DKI Jakarta"); // Returns "B 5678 XY"
@@ -69,14 +71,14 @@ interface LicensePlateNumberGenerator
      * Some regions may have multiple valid codes due to historical reasons
      * or administrative divisions.
      *
-     * @param string $region The name of the region/province
+     * @param  string  $region  The name of the region/province
      * @return array|null Array of valid codes for the region, or null if region not found
-     * @throws \Exception If the region parameter is empty or invalid
+     *
+     * @throws Exception If the region parameter is empty or invalid
      *
      * @example
      * // Get codes for Jakarta
      * getRegionCode("DKI Jakarta"); // Returns ["B"]
-     *
      * @example
      * // Get codes for East Java
      * getRegionCode("East Java"); // Returns ["L", "M", "N", "P", "S", "W", "AG", "AE"]

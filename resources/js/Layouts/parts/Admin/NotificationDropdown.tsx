@@ -1,10 +1,10 @@
-import React, { FC, useState, useEffect } from 'react';
-import { NavDropdown } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faCheck, faSpinner } from '@fortawesome/free-solid-svg-icons';
-import styled from '@emotion/styled';
-import { Link } from '@inertiajs/react';
-import axios from 'axios';
+import styled from "@emotion/styled";
+import { faBell, faCheck, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link } from "@inertiajs/react";
+import axios from "axios";
+import { FC, useEffect, useState } from "react";
+import { NavDropdown } from "react-bootstrap";
 
 // Styled Components
 const NotificationDropdownStyled = styled(NavDropdown)`
@@ -112,7 +112,7 @@ const NotificationItem = styled(Link)<{ isRead?: boolean }>`
   cursor: pointer;
   display: block;
   transition: background-color 0.2s ease;
-  background-color: ${({ isRead }) => isRead ? '#ffffff' : '#f8f9ff'};
+  background-color: ${({ isRead }) => (isRead ? "#ffffff" : "#f8f9ff")};
 
   &:hover {
     background-color: #f1f3f4;
@@ -303,7 +303,7 @@ const formatTimeAgo = (dateString: string): string => {
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
   if (diffInSeconds < 60) {
-    return 'Baru saja';
+    return "Baru saja";
   } else if (diffInSeconds < 3600) {
     const minutes = Math.floor(diffInSeconds / 60);
     return `${minutes} menit lalu`;
@@ -318,14 +318,14 @@ const formatTimeAgo = (dateString: string): string => {
 
 const getNotificationTitle = (type: string): string => {
   switch (type) {
-    case 'App\\Notifications\\InvoiceCreatedToAdmin':
-      return 'Pesanan Baru';
-    case 'App\\Notifications\\PaymentReceived':
-      return 'Pembayaran Diterima';
-    case 'App\\Notifications\\SystemMaintenance':
-      return 'Pemeliharaan Sistem';
+    case "App\\Notifications\\InvoiceCreatedToAdmin":
+      return "Pesanan Baru";
+    case "App\\Notifications\\PaymentReceived":
+      return "Pembayaran Diterima";
+    case "App\\Notifications\\SystemMaintenance":
+      return "Pemeliharaan Sistem";
     default:
-      return 'Notifikasi';
+      return "Notifikasi";
   }
 };
 
@@ -341,13 +341,13 @@ const NotificationDropdown: FC = () => {
       setError(null);
 
       const response = await axios.get<NotificationResponse>(
-        route('v1.global.notifications.index')
+        route("v1.global.notifications.index")
       );
 
       setNotifications(response.data.data);
     } catch (err) {
-      console.error('Error fetching notifications:', err);
-      setError('Gagal memuat notifikasi');
+      console.error("Error fetching notifications:", err);
+      setError("Gagal memuat notifikasi");
     } finally {
       setLoading(false);
     }
@@ -358,17 +358,17 @@ const NotificationDropdown: FC = () => {
       setMarkingAllRead(true);
 
       // Assuming you have an endpoint to mark all as read
-      await axios.post(route('v1.global.notifications.read-all'));
+      await axios.post(route("v1.global.notifications.read-all"));
 
       // Update local state
-      setNotifications(prev =>
-        prev.map(notification => ({
+      setNotifications((prev) =>
+        prev.map((notification) => ({
           ...notification,
-          read_at: new Date().toISOString()
+          read_at: new Date().toISOString(),
         }))
       );
     } catch (err) {
-      console.error('Error marking all as read:', err);
+      console.error("Error marking all as read:", err);
     } finally {
       setMarkingAllRead(false);
     }
@@ -378,11 +378,13 @@ const NotificationDropdown: FC = () => {
     try {
       // Mark as read if not already read
       if (!notification.read_at) {
-        await axios.post(route('v1.global.notifications.mark-read', { id: notification.id }));
+        await axios.post(
+          route("v1.global.notifications.mark-read", { id: notification.id })
+        );
 
         // Update local state
-        setNotifications(prev =>
-          prev.map(n =>
+        setNotifications((prev) =>
+          prev.map((n) =>
             n.id === notification.id
               ? { ...n, read_at: new Date().toISOString() }
               : n
@@ -395,7 +397,7 @@ const NotificationDropdown: FC = () => {
         window.location.href = notification.data.url;
       }
     } catch (err) {
-      console.error('Error handling notification click:', err);
+      console.error("Error handling notification click:", err);
     }
   };
 
@@ -403,7 +405,7 @@ const NotificationDropdown: FC = () => {
     fetchNotifications();
   }, []);
 
-  const unreadCount = notifications.filter(n => !n.read_at).length;
+  const unreadCount = notifications.filter((n) => !n.read_at).length;
 
   return (
     <NotificationDropdownStyled
@@ -412,7 +414,7 @@ const NotificationDropdown: FC = () => {
           <FontAwesomeIcon icon={faBell} />
           {unreadCount > 0 && (
             <NotificationBadge>
-              {unreadCount > 9 ? '9+' : unreadCount}
+              {unreadCount > 9 ? "9+" : unreadCount}
             </NotificationBadge>
           )}
         </NotificationIconWrapper>
@@ -423,10 +425,7 @@ const NotificationDropdown: FC = () => {
       <NotificationHeader>
         <NotificationTitle>Notifikasi</NotificationTitle>
         {unreadCount > 0 && (
-          <MarkAllReadButton
-            onClick={markAllAsRead}
-            disabled={markingAllRead}
-          >
+          <MarkAllReadButton onClick={markAllAsRead} disabled={markingAllRead}>
             <FontAwesomeIcon
               icon={markingAllRead ? faSpinner : faCheck}
               spin={markingAllRead}
@@ -442,18 +441,17 @@ const NotificationDropdown: FC = () => {
           Memuat notifikasi...
         </LoadingState>
       ) : error ? (
-        <EmptyState>
-          {error}
-        </EmptyState>
+        <EmptyState>{error}</EmptyState>
       ) : notifications.length === 0 ? (
-        <EmptyState>
-          Tidak ada notifikasi
-        </EmptyState>
+        <EmptyState>Tidak ada notifikasi</EmptyState>
       ) : (
         <>
           {notifications.map((notification) => (
             <NotificationItem
-              href={route('v1.global.notifications.referTo', { id: notification.id, url: notification.data.url })}
+              href={route("v1.global.notifications.referTo", {
+                id: notification.id,
+                url: notification.data.url,
+              })}
               key={notification.id}
               isRead={!!notification.read_at}
               onClick={() => handleNotificationClick(notification)}
@@ -472,7 +470,7 @@ const NotificationDropdown: FC = () => {
             </NotificationItem>
           ))}
 
-          <ViewAllButton href={'/dashboard/notifications'}>
+          <ViewAllButton href={"/dashboard/notifications"}>
             Lihat Semuanya
           </ViewAllButton>
         </>

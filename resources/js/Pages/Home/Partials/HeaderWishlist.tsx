@@ -1,6 +1,6 @@
-import { Link } from '@inertiajs/react';
-import styled from '@emotion/styled';
 import ImageHeader from '@/Assets/Images/Cover-Dashboard.jpg';
+import styled from '@emotion/styled';
+import { Link } from '@inertiajs/react';
 import { Breadcrumb, Col, Container, Row } from "react-bootstrap";
 
 const HeaderWishlistStyled = styled.header`

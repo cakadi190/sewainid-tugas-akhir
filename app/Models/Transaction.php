@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 
 /**
  * Transaction Model
@@ -34,7 +33,9 @@ use Illuminate\Support\Str;
  * @property int|null $user_id
  * @property int|null $car_data_id
  * @property-read \App\Models\CarData|null $carData
+ * @property-read \App\Models\TransactionConfirmation|null $transactionConfirmation
  * @property-read \App\Models\User|null $user
+ *
  * @method static \Database\Factories\TransactionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction newQuery()
@@ -58,6 +59,7 @@ use Illuminate\Support\Str;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereWithDriver($value)
+ *
  * @mixin \Eloquent
  */
 class Transaction extends Model
@@ -66,18 +68,18 @@ class Transaction extends Model
     use HasFactory;
 
     /**
-     * The key type of the model.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
-
-    /**
      * Indicates if the IDs are auto-incrementing.
      *
      * @var bool
      */
     public $incrementing = false;
+
+    /**
+     * The key type of the model.
+     *
+     * @var string
+     */
+    protected $keyType = 'string';
 
     /**
      * The attributes that are mass assignable.
@@ -102,6 +104,8 @@ class Transaction extends Model
         'latitude',
         'user_id',
         'car_data_id',
+        'driver_id',
+        'conductor_id',
     ];
 
     /**
@@ -115,8 +119,9 @@ class Transaction extends Model
         'pickup_date' => 'datetime',
         'return_date' => 'datetime',
         'with_driver' => 'boolean',
+        'rental_status' => RentalStatusEnum::class,
+        'status' => TransactionStatusEnum::class,
     ];
-
     /**
      * Retrieve a collection of all possible transaction statuses.
      *
@@ -139,8 +144,6 @@ class Transaction extends Model
 
     /**
      * The car data that this transaction belongs to.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function carData(): BelongsTo
     {
@@ -149,8 +152,6 @@ class Transaction extends Model
 
     /**
      * The user that this transaction belongs to.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user(): BelongsTo
     {
@@ -158,12 +159,26 @@ class Transaction extends Model
     }
 
     /**
+     * The driver assigned to this confirmation.
+     */
+    public function driver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'driver_id');
+    }
+
+    /**
+     * The conductor assigned to this confirmation.
+     */
+    public function conductor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'conductor_id');
+    }
+
+    /**
      * The transaction confirmation that belongs to this transaction.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function transactionConfirmation(): HasOne
     {
-        return $this->hasOne(TransactionConfirmation::class);
+        return $this->hasOne(TransactionConfirmation::class, 'transaction_id', 'id');
     }
 }

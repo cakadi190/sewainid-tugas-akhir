@@ -10,8 +10,8 @@ use Illuminate\Support\Str;
  * This class implements the logic to generate random car engine numbers.
  * The generated number is a string of 10 characters.
  *
- * @package CarEngineNumberGenerator
  * @author Your Name
+ *
  * @version 1.0.0
  */
 class CarEngineNumberGenerator
@@ -21,7 +21,8 @@ class CarEngineNumberGenerator
      *
      * @return string Generated car engine number
      */
-    public static function generateEngineNumber(): string {
+    public static function generateEngineNumber(): string
+    {
         return Str::random(10);
     }
 }

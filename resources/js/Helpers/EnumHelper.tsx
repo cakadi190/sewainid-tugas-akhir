@@ -52,8 +52,8 @@ const carConditionIcons: { [key in CarConditionEnum]: JSX.Element } = {
  * Mapping of RentalStatusEnum values to human-readable labels in Indonesian
  */
 const rentalStatusLabels: { [key in RentalStatusEnum]: string } = {
-  [RentalStatusEnum.DRAFT]: 'Draf',
-  [RentalStatusEnum.PENDING]: 'Menunggu',
+  [RentalStatusEnum.DRAFT]: 'Menunggu Pembayaran',
+  [RentalStatusEnum.PENDING]: 'Menunggu Jadwal',
   [RentalStatusEnum.IN_PROGRESS]: 'Sedang Berlangsung',
   [RentalStatusEnum.COMPLETED]: 'Selesai',
   [RentalStatusEnum.CANCELED]: 'Dibatalkan',
@@ -63,7 +63,7 @@ const rentalStatusLabels: { [key in RentalStatusEnum]: string } = {
  * Mapping of RentalStatusEnum values to Bootstrap 5 color classes
  */
 const rentalStatusColors: { [key in RentalStatusEnum]: string } = {
-  [RentalStatusEnum.DRAFT]: 'secondary',
+  [RentalStatusEnum.DRAFT]: 'info',
   [RentalStatusEnum.PENDING]: 'warning',
   [RentalStatusEnum.IN_PROGRESS]: 'primary',
   [RentalStatusEnum.COMPLETED]: 'success',

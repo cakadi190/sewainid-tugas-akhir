@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int|null $car_data_id
  * @property-read \App\Models\CarData|null $carData
  * @property-read \App\Models\User|null $user
+ *
  * @method static \Database\Factories\WishlistFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist newQuery()
@@ -25,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Wishlist whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class Wishlist extends Model
@@ -44,8 +46,6 @@ class Wishlist extends Model
 
     /**
      * Get the user that owns the Wishlist
-     *
-     * @return BelongsTo
      */
     public function user(): BelongsTo
     {
@@ -54,12 +54,9 @@ class Wishlist extends Model
 
     /**
      * Get the carData that owns the Wishlist
-     *
-     * @return BelongsTo
      */
     public function carData(): BelongsTo
     {
         return $this->belongsTo(CarData::class);
     }
 }
-

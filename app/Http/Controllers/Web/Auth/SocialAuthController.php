@@ -21,9 +21,6 @@ class SocialAuthController extends Controller
 
     /**
      * Redirect the user to the authentication page.
-     *
-     * @param string $provider
-     * @return SymfonyRedirectResponse
      */
     public function redirect(string $provider = 'google'): SymfonyRedirectResponse
     {
@@ -34,9 +31,6 @@ class SocialAuthController extends Controller
 
     /**
      * Handle the incoming request after authentication.
-     *
-     * @param string $provider
-     * @return RedirectResponse
      */
     public function callback(string $provider = 'google'): RedirectResponse
     {
@@ -51,7 +45,7 @@ class SocialAuthController extends Controller
             'avatar' => $socialAccount->getAvatar(),
         ];
 
-        if (!$exists) {
+        if (! $exists) {
             $userData['email_verified_at'] = now();
             $userData['password'] = bcrypt(Str::random(16));
         }
@@ -69,13 +63,10 @@ class SocialAuthController extends Controller
 
     /**
      * Validates if the given provider is allowed.
-     *
-     * @param string $provider
-     * @return void
      */
     protected function validateProvider(string $provider): void
     {
-        if (!in_array($provider, $this->allowedProviders)) {
+        if (! in_array($provider, $this->allowedProviders)) {
             abort(403, 'Hanya autentikasi ' . implode(', ', $this->allowedProviders) . ' yang diizinkan!');
         }
     }

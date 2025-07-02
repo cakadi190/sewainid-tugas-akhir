@@ -1,32 +1,32 @@
-import PasswordMeter from '@/Components/PasswordMeter';
-import SeparatorText from '@/Components/SeparatorText';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler, useState } from 'react';
-import { Form, Button, Spinner, Row, Col } from 'react-bootstrap';
+import PasswordMeter from "@/Components/PasswordMeter";
+import SeparatorText from "@/Components/SeparatorText";
+import GuestLayout from "@/Layouts/GuestLayout";
+import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Head, Link, useForm } from "@inertiajs/react";
+import { FormEventHandler } from "react";
+import { Button, Col, Form, Row, Spinner } from "react-bootstrap";
 
 export default function Register() {
   const { data, setData, post, processing, errors, reset } = useForm({
-    name: '',
-    gender: '',
-    pbirth: '',
-    dbirth: '',
-    email: '',
-    password: '',
-    nik: '',
-    kk: '',
-    sim: '',
-    password_confirmation: '',
+    name: "",
+    gender: "",
+    pbirth: "",
+    dbirth: "",
+    email: "",
+    password: "",
+    nik: "",
+    kk: "",
+    sim: "",
+    password_confirmation: "",
     accept_terms_condition: false,
   });
 
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
 
-    post(route('register'), {
-      onFinish: () => reset('password', 'password_confirmation'),
+    post(route("register"), {
+      onFinish: () => reset("password", "password_confirmation"),
     });
   };
 
@@ -43,10 +43,15 @@ export default function Register() {
       </div>
 
       <div className="d-grid">
-        <a className="btn btn-danger btn-lg" href={route("auth.social.redirect", "google")}>Daftar dengan Google</a>
+        <a
+          className="btn btn-danger btn-lg"
+          href={route("auth.social.redirect", "google")}
+        >
+          Daftar dengan Google
+        </a>
       </div>
 
-      <SeparatorText label="Atau" wrapperClassName='mb-5 mt-3' />
+      <SeparatorText label="Atau" wrapperClassName="mb-5 mt-3" />
 
       <form onSubmit={submit}>
         {/* Step 1 - Personal Details */}
@@ -59,7 +64,7 @@ export default function Register() {
               placeholder="Nama"
               autoComplete="name"
               isInvalid={!!errors.name}
-              onChange={(e) => setData('name', e.target.value)}
+              onChange={(e) => setData("name", e.target.value)}
               required
             />
             <label htmlFor="name">Nama</label>
@@ -79,12 +84,14 @@ export default function Register() {
                 placeholder="Tanggal Lahir"
                 autoComplete="pbirth"
                 isInvalid={!!errors.pbirth}
-                onChange={(e) => setData('pbirth', e.target.value)}
+                onChange={(e) => setData("pbirth", e.target.value)}
                 required
               />
               <label htmlFor="pbirth">Tempat Lahir</label>
               {errors.pbirth && (
-                <div className="mt-2 invalid-feedback d-block">{errors.pbirth}</div>
+                <div className="mt-2 invalid-feedback d-block">
+                  {errors.pbirth}
+                </div>
               )}
             </Form.Floating>
           </Col>
@@ -98,13 +105,15 @@ export default function Register() {
                 placeholder="Tanggal Lahir"
                 autoComplete="dbirth"
                 isInvalid={!!errors.dbirth}
-                onChange={(e) => setData('dbirth', e.target.value)}
+                onChange={(e) => setData("dbirth", e.target.value)}
                 required
                 type="date"
               />
               <label htmlFor="dbirth">Tanggal Lahir</label>
               {errors.dbirth && (
-                <div className="mt-2 invalid-feedback d-block">{errors.dbirth}</div>
+                <div className="mt-2 invalid-feedback d-block">
+                  {errors.dbirth}
+                </div>
               )}
             </Form.Floating>
           </Col>
@@ -118,7 +127,7 @@ export default function Register() {
               value={data.gender}
               autoComplete="gender"
               isInvalid={!!errors.gender}
-              onChange={(e) => setData('gender', e.target.value)}
+              onChange={(e) => setData("gender", e.target.value)}
               required
             >
               <option value="">Pilih Salah Satu</option>
@@ -127,7 +136,9 @@ export default function Register() {
             </Form.Select>
             <label htmlFor="gender">Jenis Kelamin</label>
             {errors.gender && (
-              <div className="mt-2 invalid-feedback d-block">{errors.gender}</div>
+              <div className="mt-2 invalid-feedback d-block">
+                {errors.gender}
+              </div>
             )}
           </Form.Floating>
         </div>
@@ -142,7 +153,7 @@ export default function Register() {
               placeholder="NIK"
               autoComplete="nik"
               isInvalid={!!errors.nik}
-              onChange={(e) => setData('nik', e.target.value)}
+              onChange={(e) => setData("nik", e.target.value)}
               required
             />
             <label htmlFor="nik">NIK Anda</label>
@@ -163,7 +174,7 @@ export default function Register() {
               placeholder="Nomor Kartu Keluarga"
               autoComplete="kk"
               isInvalid={!!errors.kk}
-              onChange={(e) => setData('kk', e.target.value)}
+              onChange={(e) => setData("kk", e.target.value)}
               required
             />
             <label htmlFor="kk">Nomor KK Anda</label>
@@ -184,7 +195,7 @@ export default function Register() {
               placeholder="Nomor SIM Anda"
               autoComplete="sim"
               isInvalid={!!errors.sim}
-              onChange={(e) => setData('sim', e.target.value)}
+              onChange={(e) => setData("sim", e.target.value)}
               required
             />
             <label htmlFor="sim">Nomor SIM Anda</label>
@@ -207,12 +218,14 @@ export default function Register() {
               placeholder="Email"
               autoComplete="username"
               isInvalid={!!errors.email}
-              onChange={(e) => setData('email', e.target.value)}
+              onChange={(e) => setData("email", e.target.value)}
               required
             />
             <label htmlFor="email">Email</label>
             {errors.email && (
-              <div className="mt-2 invalid-feedback d-block">{errors.email}</div>
+              <div className="mt-2 invalid-feedback d-block">
+                {errors.email}
+              </div>
             )}
           </Form.Floating>
         </div>
@@ -227,12 +240,14 @@ export default function Register() {
               placeholder="Kata Sandi"
               autoComplete="new-password"
               isInvalid={!!errors.password}
-              onChange={(e) => setData('password', e.target.value)}
+              onChange={(e) => setData("password", e.target.value)}
               required
             />
             <label htmlFor="password">Kata Sandi</label>
             {errors.password && (
-              <div className="mt-2 invalid-feedback d-block">{errors.password}</div>
+              <div className="mt-2 invalid-feedback d-block">
+                {errors.password}
+              </div>
             )}
           </Form.Floating>
 
@@ -248,17 +263,25 @@ export default function Register() {
               value={data.password_confirmation}
               placeholder="Konfirmasi Kata Sandi"
               autoComplete="new-password"
-              isInvalid={!!errors.password_confirmation || data.password_confirmation !== data.password}
-              onChange={(e) => setData('password_confirmation', e.target.value)}
+              isInvalid={
+                !!errors.password_confirmation ||
+                data.password_confirmation !== data.password
+              }
+              onChange={(e) => setData("password_confirmation", e.target.value)}
               required
             />
             <label htmlFor="password_confirmation">Konfirmasi Kata Sandi</label>
             {errors.password_confirmation && (
-              <div className="mt-2 invalid-feedback d-block">{errors.password_confirmation}</div>
+              <div className="mt-2 invalid-feedback d-block">
+                {errors.password_confirmation}
+              </div>
             )}
-            {data.password_confirmation !== data.password && data.password_confirmation && (
-              <div className="mt-2 invalid-feedback d-block">Kata sandi anda tidak cocok!</div>
-            )}
+            {data.password_confirmation !== data.password &&
+              data.password_confirmation && (
+                <div className="mt-2 invalid-feedback d-block">
+                  Kata sandi anda tidak cocok!
+                </div>
+              )}
           </Form.Floating>
         </div>
 
@@ -267,13 +290,15 @@ export default function Register() {
             type="checkbox"
             label={
               <span>
-                Saya setuju dengan{' '}
+                Saya setuju dengan{" "}
                 <Link href="/terms">syarat dan ketentuan</Link>
               </span>
             }
             id="accept_terms_condition"
             checked={data.accept_terms_condition}
-            onChange={(e) => setData('accept_terms_condition', e.target.checked)}
+            onChange={(e) =>
+              setData("accept_terms_condition", e.target.checked)
+            }
             required
           />
         </div>
@@ -295,7 +320,7 @@ export default function Register() {
             )}
           </Button>
 
-          <Link href={route('login')} className="btn btn-link">
+          <Link href={route("login")} className="btn btn-link">
             Sudah terdaftar?
           </Link>
         </div>

@@ -17,8 +17,7 @@ class TransactionReminderNotification extends Notification implements ShouldQueu
      */
     public function __construct(
         protected readonly Transaction $transaction
-    ) {
-    }
+    ) {}
 
     /**
      * Get the notification's delivery channels.
@@ -39,7 +38,7 @@ class TransactionReminderNotification extends Notification implements ShouldQueu
             ->subject('Kamu Gapapa Kan? 🥺')
             ->greeting("Hai {$this->transaction->user->name},")
             ->line("Kami lihat tagihan #{$this->transaction->id} kamu belum dibayar nih. Kamu gapapa kan? Atau mungkin jaringannya lagi gangguan?")
-            ->line("Kalau ada kendala, jangan sungkan hubungi kami ya. Tapi kalau memang lupa, kamu bisa klik tombol di bawah ini buat langsung lanjut pembayaran.")
+            ->line('Kalau ada kendala, jangan sungkan hubungi kami ya. Tapi kalau memang lupa, kamu bisa klik tombol di bawah ini buat langsung lanjut pembayaran.')
             ->action('Bayar Sekarang', route('dashboard.transaction.show', $this->transaction->id))
             ->salutation('Tetap semangat dan terima kasih selalu 🙏');
     }

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\v1\Global;
 
 use App\Http\Controllers\Controller;
-use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
@@ -28,6 +28,7 @@ class NotificationController extends Controller
     public function readAll()
     {
         Auth::user()->unreadNotifications()->update(['read_at' => now()]);
+
         return back();
     }
 
@@ -36,7 +37,6 @@ class NotificationController extends Controller
      *
      * Marks the specified notification as read, then redirects to the referer URL.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function referTo(Request $request)

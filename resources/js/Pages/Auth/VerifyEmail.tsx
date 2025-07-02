@@ -1,17 +1,16 @@
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
-import { Button, Alert, Row, Col, Spinner } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
-import SeparatorText from '@/Components/SeparatorText';
+import GuestLayout from "@/Layouts/GuestLayout";
+import { faSignInAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Head, Link, useForm } from "@inertiajs/react";
+import { FormEventHandler } from "react";
+import { Alert, Button, Col, Row, Spinner } from "react-bootstrap";
 
 export default function VerifikasiEmail({ status }: { status?: string }) {
   const { post, processing } = useForm({});
 
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
-    post(route('verification.send'));
+    post(route("verification.send"));
   };
 
   return (
@@ -27,21 +26,23 @@ export default function VerifikasiEmail({ status }: { status?: string }) {
             tersebut, kami dengan senang hati akan mengirimkan yang baru.
           </div>
 
-          {status === 'verification-link-sent' && (
+          {status === "verification-link-sent" && (
             <Alert variant="success" className="mb-3">
-              Tautan verifikasi baru telah dikirimkan ke alamat email
-              yang Anda berikan saat pendaftaran.
+              Tautan verifikasi baru telah dikirimkan ke alamat email yang Anda
+              berikan saat pendaftaran.
             </Alert>
           )}
 
-          <form onSubmit={submit} className='w-full'>
+          <form onSubmit={submit} className="w-full">
             <div className="w-full mt-4 d-grid">
               <Button
                 type="submit"
                 disabled={processing}
                 className="w-full gap-2 justify-content-center d-flex align-items-center me-2"
               >
-                {processing ? <Spinner size='sm' /> : (
+                {processing ? (
+                  <Spinner size="sm" />
+                ) : (
                   <>
                     <FontAwesomeIcon icon={faSignInAlt} />
                     <span>Kirim Ulang</span>
@@ -50,7 +51,7 @@ export default function VerifikasiEmail({ status }: { status?: string }) {
               </Button>
 
               <Link
-                href={route('logout')}
+                href={route("logout")}
                 method="post"
                 as="button"
                 className="w-full btn btn-link"

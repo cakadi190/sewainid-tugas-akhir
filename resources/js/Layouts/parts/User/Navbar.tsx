@@ -1,14 +1,14 @@
-import { useState, useEffect, FC } from "react";
-import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
-import { Link, router, usePage } from "@inertiajs/react";
 import ApplicationLogo from "@/Components/ApplicationLogo";
-import { FaHeart, FaBell } from "react-icons/fa6";
-import { PageProps } from "@/types";
-import styled from "@emotion/styled";
-import Database from "@/types/database";
 import { RoleUser } from "@/Helpers/enum";
-import withReactContent from "sweetalert2-react-content";
+import { PageProps } from "@/types";
+import Database from "@/types/database";
+import styled from "@emotion/styled";
+import { Link, router, usePage } from "@inertiajs/react";
+import { FC, useEffect, useState } from "react";
+import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import { FaBell } from "react-icons/fa6";
 import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 interface ScrolledProps {
   scrolled: boolean;
@@ -34,12 +34,12 @@ const NavItemNotification = styled(NavDropdown.Item)`
   align-items: center;
 
   small {
-    opacity: .5;
+    opacity: 0.5;
   }
 `;
 
 const NavHeaderNotification = styled.div`
-  padding: .5rem 1rem;
+  padding: 0.5rem 1rem;
   display: flex;
   align-items: center;
   border-bottom: 1px solid var(--bs-dropdown-divider-bg);
@@ -70,13 +70,15 @@ const MainNavItems: FC<ScrolledProps> = ({ scrolled }) => {
   return (
     <Nav className="me-auto">
       {navItems.map((item, index) => {
-        const isActive = url.startsWith(item.href) &&
-          (item.href !== "/" || url === "/");
+        const isActive =
+          url.startsWith(item.href) && (item.href !== "/" || url === "/");
 
         return (
           <Link
             key={index}
-            className={`nav-link fw-medium ${textClass} ${isActive ? 'active fw-bold' : ''}`}
+            className={`nav-link fw-medium ${textClass} ${
+              isActive ? "active fw-bold" : ""
+            }`}
             href={item.href}
           >
             {item.label}
@@ -90,9 +92,13 @@ const MainNavItems: FC<ScrolledProps> = ({ scrolled }) => {
 const NotificationDropdown: FC<ScrolledProps> = ({ scrolled }) => {
   const textClass = scrolled ? "" : "text-light";
   const notifications: NotificationType[] = [
-    { id: 1, message: "Pembayaran Anda telah dikonfirmasi", time: "5 menit yang lalu" },
+    {
+      id: 1,
+      message: "Pembayaran Anda telah dikonfirmasi",
+      time: "5 menit yang lalu",
+    },
     { id: 2, message: "Kendaraan siap diambil", time: "1 jam yang lalu" },
-    { id: 3, message: "Promo akhir pekan tersedia!", time: "3 jam yang lalu" }
+    { id: 3, message: "Promo akhir pekan tersedia!", time: "3 jam yang lalu" },
   ];
 
   return (
@@ -107,8 +113,11 @@ const NotificationDropdown: FC<ScrolledProps> = ({ scrolled }) => {
       </NavHeaderNotification>
       {notifications.length > 0 ? (
         <>
-          {notifications.map(notification => (
-            <NavItemNotification key={notification.id} className="notification-item">
+          {notifications.map((notification) => (
+            <NavItemNotification
+              key={notification.id}
+              className="notification-item"
+            >
               <div className="d-flex flex-column">
                 <span>{notification.message}</span>
                 <small>{notification.time}</small>
@@ -131,40 +140,51 @@ const UserDropdown: FC<UserDropdownProps> = ({ user, scrolled }) => {
   const { url } = usePage();
 
   const userItems: NavItem[] = [
-    { label: "Dasbor", href: user.role === RoleUser.ADMIN ? "/administrator" : "/dashboard" },
-    { label: "Pesanan", href: route('checkout') },
-    { label: "Keinginan", href: route('wishlist') },
-    { label: "Riwayat Sewa", href: route('dashboard.transaction.index') },
+    {
+      label: "Dasbor",
+      href: user.role === RoleUser.ADMIN ? "/administrator" : "/dashboard",
+    },
+    { label: "Pesanan", href: route("checkout") },
+    { label: "Keinginan", href: route("wishlist") },
+    { label: "Riwayat Sewa", href: route("dashboard.transaction.index") },
     { label: "Profil", href: "/profile" },
   ];
 
   const confirmLogout = () => {
-    withReactContent(Swal).fire({
-      title: "Keluar",
-      text: "Anda yakin ingin keluar? Pastikan Anda telah menyimpan semua perubahan yang anda lakukan saat ini.",
-      icon: "warning",
-      showCancelButton: true,
-      reverseButtons: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#838383",
-      confirmButtonText: "Keluar",
-      cancelButtonText: "Batal",
-    }).then((result) => {
-      if (result.value) {
-        router.post(route('logout'));
-      }
-    })
+    withReactContent(Swal)
+      .fire({
+        title: "Keluar",
+        text: "Anda yakin ingin keluar? Pastikan Anda telah menyimpan semua perubahan yang anda lakukan saat ini.",
+        icon: "warning",
+        showCancelButton: true,
+        reverseButtons: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#838383",
+        confirmButtonText: "Keluar",
+        cancelButtonText: "Batal",
+      })
+      .then((result) => {
+        if (result.value) {
+          router.post(route("logout"));
+        }
+      });
   };
 
   return (
     <NavDropdown
       title={
         <div className="d-inline-flex align-items-center">
-          <div className="bg-primary rounded-circle d-flex justify-content-center align-items-center me-2"
-            style={{ width: "32px", height: "32px" }}>
-            <span className="text-white">{user.name.charAt(0).toUpperCase()}</span>
+          <div
+            className="bg-primary rounded-circle d-flex justify-content-center align-items-center me-2"
+            style={{ width: "32px", height: "32px" }}
+          >
+            <span className="text-white">
+              {user.name.charAt(0).toUpperCase()}
+            </span>
           </div>
-          <span className={scrolled ? "text-dark" : "text-light"}>{user.name}</span>
+          <span className={scrolled ? "text-dark" : "text-light"}>
+            {user.name}
+          </span>
         </div>
       }
       id="user-dropdown"
@@ -177,17 +197,14 @@ const UserDropdown: FC<UserDropdownProps> = ({ user, scrolled }) => {
             key={index}
             as={Link}
             href={item.href}
-            className={isActive ? 'active fw-bold' : ''}
+            className={isActive ? "active fw-bold" : ""}
           >
             {item.label}
           </NavDropdown.Item>
         );
       })}
       <NavDropdown.Divider />
-      <NavbarLogout
-        className="dropdown-item"
-        onClick={confirmLogout}
-      >
+      <NavbarLogout className="dropdown-item" onClick={confirmLogout}>
         Keluar Sesi
       </NavbarLogout>
     </NavDropdown>
@@ -201,13 +218,17 @@ const AuthButtons: FC<ScrolledProps> = ({ scrolled }) => {
   return (
     <>
       <Link
-        className={`nav-link fw-medium me-2 ${textClass} ${url === "/login" ? 'active fw-bold' : ''}`}
+        className={`nav-link fw-medium me-2 ${textClass} ${
+          url === "/login" ? "active fw-bold" : ""
+        }`}
         href="/login"
       >
         Masuk
       </Link>
       <Link
-        className={`px-4 btn ${url === "/register" ? 'btn-secondary' : 'btn-primary'} rounded-pill`}
+        className={`px-4 btn ${
+          url === "/register" ? "btn-secondary" : "btn-primary"
+        } rounded-pill`}
         href="/register"
       >
         Daftar
@@ -241,13 +262,15 @@ const NavbarUserMain: FC = () => {
       variant={scrolled ? "light" : "dark"}
       expand="lg"
       fixed="top"
-      style={{ transition: 'all .2s ease' }}
+      style={{ transition: "all .2s ease" }}
       className={`${scrolled ? "shadow py-2" : "py-3"}`}
     >
       <Container>
         <Link className="navbar-brand d-flex align-items-center" href="/">
           <ApplicationLogo fill={scrolled ? "#000" : "#fff"} height={36} />
-          <span className={`ms-2 fw-bold ${scrolled ? "text-dark" : "text-white"}`}>
+          <span
+            className={`ms-2 fw-bold ${scrolled ? "text-dark" : "text-white"}`}
+          >
             Sewain by Kodinus
           </span>
         </Link>
@@ -270,6 +293,6 @@ const NavbarUserMain: FC = () => {
       </Container>
     </Navbar>
   );
-}
+};
 
 export default NavbarUserMain;

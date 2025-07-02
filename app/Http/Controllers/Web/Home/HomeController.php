@@ -4,14 +4,12 @@ namespace App\Http\Controllers\Web\Home;
 
 use App\Http\Controllers\Controller;
 use App\Models\CarData;
-use Inertia\Inertia;
 
 class HomeController extends Controller
 {
     public function __construct(
         protected readonly CarData $_carData
-    ) {
-    }
+    ) {}
 
     /**
      * Showing the home page
@@ -67,11 +65,10 @@ class HomeController extends Controller
         $carThumbnail = $carData?->getMedia('gallery')->first();
         $forbiddenDate = $carData?->getUnavailableDate();
 
-        if (!$carData || !session()->has('order')) {
+        if (! $carData || ! session()->has('order')) {
             return redirect()->route('home');
         }
 
         return inertia('Home/Checkout', compact('carData', 'order', 'carThumbnail', 'forbiddenDate'));
     }
 }
-

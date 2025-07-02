@@ -1,21 +1,52 @@
-import { AuthenticatedAdmin } from "@/Layouts/AuthenticatedLayout";
-import { Head, Link, router } from "@inertiajs/react";
-import { Badge, Breadcrumb, BreadcrumbItem, Button, Card, Col, ListGroup, ListGroupItem, Row } from "react-bootstrap";
-import Database, { User, CarData, Transaction, Media } from "@/types/database";
-import { CarModelEnum, CarTransmissionEnum, TransactionStatusEnum } from "@/Helpers/enum";
 import dayjs from "@/Helpers/dayjs";
+import {
+  CarModelEnum,
+  CarTransmissionEnum,
+  TransactionStatusEnum,
+} from "@/Helpers/enum";
+import {
+  getCarModelLabel,
+  getCarTransmissionLabel,
+  getTransactionStatusColor,
+  getTransactionStatusLabel,
+} from "@/Helpers/EnumHelper";
 import { currencyFormat, speedFormat } from "@/Helpers/number";
-import { getCarModelLabel, getCarTransmissionLabel, getTransactionStatusColor, getTransactionStatusLabel } from "@/Helpers/EnumHelper";
+import { GridContainer, GridItem } from "@/InternalBorderGrid";
+import { AuthenticatedAdmin } from "@/Layouts/AuthenticatedLayout";
+import Database, { CarData, Media, Transaction, User } from "@/types/database";
+import { Head, Link, router } from "@inertiajs/react";
 import { Mail, Phone, Pin } from "lucide-react";
+import { useCallback } from "react";
+import {
+  Badge,
+  Breadcrumb,
+  BreadcrumbItem,
+  Button,
+  Card,
+  Col,
+  ListGroup,
+  ListGroupItem,
+  Row,
+} from "react-bootstrap";
 import { FaCheckCircle, FaDownload, FaEnvelope } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
-import { PiBabyCarriage, PiCarProfileDuotone, PiLock, PiMusicNote, PiPalette, PiSeat, PiShield, PiSnowflake, PiSpeedometer, PiTag, PiTire } from "react-icons/pi";
-import { twMerge } from "tailwind-merge";
-import { GridContainer, GridItem } from "@/InternalBorderGrid";
 import { GiGearStickPattern } from "react-icons/gi";
-import { useCallback } from "react";
-import withReactContent from "sweetalert2-react-content";
+import {
+  PiBabyCarriage,
+  PiCarProfileDuotone,
+  PiLock,
+  PiMusicNote,
+  PiPalette,
+  PiSeat,
+  PiShield,
+  PiSnowflake,
+  PiSpeedometer,
+  PiTag,
+  PiTire,
+} from "react-icons/pi";
 import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import { twMerge } from "tailwind-merge";
 
 interface OrderItem {
   sku: string | null;
@@ -66,24 +97,26 @@ interface BookingWithRelations extends Transaction {
     media: Media[];
     transaction: (Transaction & { user: User })[];
   };
-  transaction_confirmation: Database['TransactionConfirmation'] & { user: User };
+  transaction_confirmation: Database["TransactionConfirmation"] & {
+    user: User;
+  };
 }
 
 const FILE_UPLOAD_CONFIG = {
   maxSize: 5 * 1024 * 1024,
-  allowedTypes: ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'],
-  allowedExtensions: 'JPG, PNG, PDF'
+  allowedTypes: ["image/jpeg", "image/jpg", "image/png", "application/pdf"],
+  allowedExtensions: "JPG, PNG, PDF",
 } as const;
 
 const SWAL_STYLES = {
-  confirm: '#28a745',
-  danger: '#d33',
-  cancel: '#333'
+  confirm: "#28a745",
+  danger: "#d33",
+  cancel: "#333",
 } as const;
 
 const SwalInit = withReactContent(Swal);
 
-const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
+const CarSpecification = ({ carData }: { carData: Database["CarData"] }) => {
   return (
     <>
       <div className="pb-4 mb-4 border-bottom">
@@ -102,7 +135,9 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <PiTag size={24} />
               <div>
                 <h6 className="mb-0 fw-bold">Model</h6>
-                <p className="mb-0">{getCarModelLabel(carData.model as unknown as CarModelEnum)}</p>
+                <p className="mb-0">
+                  {getCarModelLabel(carData.model as unknown as CarModelEnum)}
+                </p>
               </div>
             </div>
           </GridItem>
@@ -111,7 +146,11 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <GiGearStickPattern size={24} />
               <div>
                 <h6 className="mb-0 fw-bold">Transmisi</h6>
-                <p className="mb-0">{getCarTransmissionLabel(carData.transmission as unknown as CarTransmissionEnum)}</p>
+                <p className="mb-0">
+                  {getCarTransmissionLabel(
+                    carData.transmission as unknown as CarTransmissionEnum
+                  )}
+                </p>
               </div>
             </div>
           </GridItem>
@@ -177,7 +216,15 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <Card.Body className="flex-row gap-2 align-items-center d-flex">
                 <PiSnowflake size={24} />
                 <strong className="mb-0 fw-bold">Air Conditioner (AC)</strong>
-                <Badge className={twMerge("ms-auto border", carData.ac ? 'text-white' : 'text-dark')} bg={carData.ac ? 'dark' : 'white'}>{carData.ac ? 'Ada' : 'Tidak Ada'}</Badge>
+                <Badge
+                  className={twMerge(
+                    "ms-auto border",
+                    carData.ac ? "text-white" : "text-dark"
+                  )}
+                  bg={carData.ac ? "dark" : "white"}
+                >
+                  {carData.ac ? "Ada" : "Tidak Ada"}
+                </Badge>
               </Card.Body>
             </Card>
           </Col>
@@ -186,7 +233,15 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <Card.Body className="flex-row gap-2 align-items-center d-flex">
                 <PiMusicNote size={24} />
                 <strong className="mb-0 fw-bold">Audio Entertainment</strong>
-                <Badge className={twMerge("ms-auto border", carData.audio ? 'text-white' : 'text-dark')} bg={carData.audio ? 'dark' : 'white'}>{carData.audio ? 'Ada' : 'Tidak Ada'}</Badge>
+                <Badge
+                  className={twMerge(
+                    "ms-auto border",
+                    carData.audio ? "text-white" : "text-dark"
+                  )}
+                  bg={carData.audio ? "dark" : "white"}
+                >
+                  {carData.audio ? "Ada" : "Tidak Ada"}
+                </Badge>
               </Card.Body>
             </Card>
           </Col>
@@ -195,7 +250,15 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <Card.Body className="flex-row gap-2 align-items-center d-flex">
                 <PiShield size={24} />
                 <strong className="mb-0 fw-bold">ABS</strong>
-                <Badge className={twMerge("ms-auto border", carData.abs ? 'text-white' : 'text-dark')} bg={carData.abs ? 'dark' : 'white'}>{carData.abs ? 'Ada' : 'Tidak Ada'}</Badge>
+                <Badge
+                  className={twMerge(
+                    "ms-auto border",
+                    carData.abs ? "text-white" : "text-dark"
+                  )}
+                  bg={carData.abs ? "dark" : "white"}
+                >
+                  {carData.abs ? "Ada" : "Tidak Ada"}
+                </Badge>
               </Card.Body>
             </Card>
           </Col>
@@ -204,7 +267,15 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <Card.Body className="flex-row gap-2 align-items-center d-flex">
                 <PiLock size={24} />
                 <strong className="mb-0 fw-bold">Child-Lock</strong>
-                <Badge className={twMerge("ms-auto border", carData.child_lock ? 'text-white' : 'text-dark')} bg={carData.child_lock ? 'dark' : 'white'}>{carData.child_lock ? 'Ada' : 'Tidak Ada'}</Badge>
+                <Badge
+                  className={twMerge(
+                    "ms-auto border",
+                    carData.child_lock ? "text-white" : "text-dark"
+                  )}
+                  bg={carData.child_lock ? "dark" : "white"}
+                >
+                  {carData.child_lock ? "Ada" : "Tidak Ada"}
+                </Badge>
               </Card.Body>
             </Card>
           </Col>
@@ -213,7 +284,15 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <Card.Body className="flex-row gap-2 align-items-center d-flex">
                 <PiTire size={24} />
                 <strong className="mb-0 fw-bold">Traction Control</strong>
-                <Badge className={twMerge("ms-auto border", carData.traction_control ? 'text-white' : 'text-dark')} bg={carData.traction_control ? 'dark' : 'white'}>{carData.traction_control ? 'Ada' : 'Tidak Ada'}</Badge>
+                <Badge
+                  className={twMerge(
+                    "ms-auto border",
+                    carData.traction_control ? "text-white" : "text-dark"
+                  )}
+                  bg={carData.traction_control ? "dark" : "white"}
+                >
+                  {carData.traction_control ? "Ada" : "Tidak Ada"}
+                </Badge>
               </Card.Body>
             </Card>
           </Col>
@@ -222,7 +301,15 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
               <Card.Body className="flex-row gap-2 align-items-center d-flex">
                 <PiBabyCarriage size={24} />
                 <strong className="mb-0 fw-bold">Kursi Bayi</strong>
-                <Badge className={twMerge("ms-auto border", carData.baby_seat ? 'text-white' : 'text-dark')} bg={carData.baby_seat ? 'dark' : 'white'}>{carData.baby_seat ? 'Ada' : 'Tidak Ada'}</Badge>
+                <Badge
+                  className={twMerge(
+                    "ms-auto border",
+                    carData.baby_seat ? "text-white" : "text-dark"
+                  )}
+                  bg={carData.baby_seat ? "dark" : "white"}
+                >
+                  {carData.baby_seat ? "Ada" : "Tidak Ada"}
+                </Badge>
               </Card.Body>
             </Card>
           </Col>
@@ -232,77 +319,95 @@ const CarSpecification = ({ carData }: { carData: Database['CarData'] }) => {
   );
 };
 
-export default function Show({ transaction, transactionDetail }: {
+export default function Show({
+  transaction,
+  transactionDetail,
+}: {
   transaction: BookingWithRelations;
   transactionDetail?: TripayDetail;
 }) {
   const validateFile = useCallback((file: File | null): string | null => {
-    if (!file) return 'Silakan pilih file terlebih dahulu';
+    if (!file) return "Silakan pilih file terlebih dahulu";
 
     if (file.size > FILE_UPLOAD_CONFIG.maxSize) {
-      return 'Ukuran file tidak boleh lebih dari 5MB';
+      return "Ukuran file tidak boleh lebih dari 5MB";
     }
 
-    if (!FILE_UPLOAD_CONFIG.allowedTypes.includes(file.type as "image/jpeg" | "image/jpg" | "image/png" | "application/pdf")) {
+    if (
+      !FILE_UPLOAD_CONFIG.allowedTypes.includes(
+        file.type as
+          | "image/jpeg"
+          | "image/jpg"
+          | "image/png"
+          | "application/pdf"
+      )
+    ) {
       return `Format file tidak didukung. Gunakan ${FILE_UPLOAD_CONFIG.allowedExtensions}`;
     }
 
     return null;
   }, []);
 
-  const updateTransaction = useCallback((id: string, status: TransactionStatusEnum, file?: File) => {
-    const formData = new FormData();
-    formData.append('status', status);
-    formData.append('action', 'updateTransactionStatus');
-    formData.append('_method', 'PUT');
+  const updateTransaction = useCallback(
+    (id: string, status: TransactionStatusEnum, file?: File) => {
+      const formData = new FormData();
+      formData.append("status", status);
+      formData.append("action", "updateTransactionStatus");
+      formData.append("_method", "PUT");
 
-    if (file) {
-      formData.append('payment_proof', file);
-    }
-
-    router.post(route('v1.admin.transaction.update', id), formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      onSuccess: () => {
-        SwalInit.fire({
-          title: 'Berhasil!',
-          text: 'Status transaksi berhasil diperbarui',
-          icon: 'success',
-          timer: 2000,
-          showConfirmButton: false
-        });
-      },
-      onError: () => {
-        SwalInit.fire({
-          title: 'Gagal!',
-          text: 'Terjadi kesalahan saat memperbarui status',
-          icon: 'error',
-          confirmButtonText: 'OK'
-        });
-      },
-    });
-  }, []);
-
-  const updateTransactionWithFile = useCallback((id: string, status: TransactionStatusEnum, file: File) => {
-    SwalInit.fire({
-      title: 'Mengupload...',
-      text: 'Sedang memproses upload file dan update status',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-      didOpen: () => {
-        SwalInit.showLoading();
+      if (file) {
+        formData.append("payment_proof", file);
       }
-    });
 
-    updateTransaction(id, status, file);
-  }, [updateTransaction]);
+      router.post(route("v1.admin.transaction.update", id), formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        onSuccess: () => {
+          SwalInit.fire({
+            title: "Berhasil!",
+            text: "Status transaksi berhasil diperbarui",
+            icon: "success",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        },
+        onError: () => {
+          SwalInit.fire({
+            title: "Gagal!",
+            text: "Terjadi kesalahan saat memperbarui status",
+            icon: "error",
+            confirmButtonText: "OK",
+          });
+        },
+      });
+    },
+    []
+  );
 
-  const showFileUploadDialog = useCallback((id: string, status: TransactionStatusEnum) => {
-    SwalInit.fire({
-      title: 'Upload Bukti Pembayaran',
-      html: `
+  const updateTransactionWithFile = useCallback(
+    (id: string, status: TransactionStatusEnum, file: File) => {
+      SwalInit.fire({
+        title: "Mengupload...",
+        text: "Sedang memproses upload file dan update status",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          SwalInit.showLoading();
+        },
+      });
+
+      updateTransaction(id, status, file);
+    },
+    [updateTransaction]
+  );
+
+  const showFileUploadDialog = useCallback(
+    (id: string, status: TransactionStatusEnum) => {
+      SwalInit.fire({
+        title: "Upload Bukti Pembayaran",
+        html: `
           <div style="text-align: left;">
             <label for="file-upload" style="display: block; margin-bottom: 8px; font-weight: 500;">
               Pilih file bukti pembayaran:
@@ -318,74 +423,91 @@ export default function Show({ transaction, transactionDetail }: {
             </small>
           </div>
         `,
-      showCancelButton: true,
-      confirmButtonText: 'Upload & Update Status',
-      cancelButtonText: 'Batalkan',
-      confirmButtonColor: SWAL_STYLES.confirm,
-      cancelButtonColor: SWAL_STYLES.cancel,
-      preConfirm: () => {
-        const fileInput = document.getElementById('file-upload') as HTMLInputElement;
-        const file = fileInput?.files?.[0] || null;
+        showCancelButton: true,
+        confirmButtonText: "Upload & Update Status",
+        cancelButtonText: "Batalkan",
+        confirmButtonColor: SWAL_STYLES.confirm,
+        cancelButtonColor: SWAL_STYLES.cancel,
+        preConfirm: () => {
+          const fileInput = document.getElementById(
+            "file-upload"
+          ) as HTMLInputElement;
+          const file = fileInput?.files?.[0] || null;
 
-        const validationError = validateFile(file);
-        if (validationError) {
-          SwalInit.showValidationMessage(validationError);
-          return false;
+          const validationError = validateFile(file);
+          if (validationError) {
+            SwalInit.showValidationMessage(validationError);
+            return false;
+          }
+
+          return file;
+        },
+      }).then((result) => {
+        if (result.isConfirmed && result.value) {
+          updateTransactionWithFile(id, status, result.value);
         }
+      });
+    },
+    [validateFile, updateTransactionWithFile]
+  );
 
-        return file;
-      }
-    }).then((result) => {
-      if (result.isConfirmed && result.value) {
-        updateTransactionWithFile(id, status, result.value);
-      }
-    });
-  }, [validateFile, updateTransactionWithFile]);
-
-  const updateTransactionStatus = useCallback((
-    id: string,
-    status: TransactionStatusEnum,
-    hasTransactionConfirmation: boolean = false
-  ) => {
-    SwalInit.fire({
-      title: 'Apakah kamu yakin?',
-      html: `Apakah kamu yakin akan merubah status transaksi ini menjadi "<strong>${getTransactionStatusLabel(status)}</strong>"? Jika iya, maka aksi ini tidak dapat dikembalikan.`,
-      showCancelButton: true,
-      showConfirmButton: true,
-      reverseButtons: true,
-      icon: 'warning',
-      confirmButtonColor: SWAL_STYLES.danger,
-      cancelButtonColor: SWAL_STYLES.cancel,
-      confirmButtonText: 'Ubah Status',
-      cancelButtonText: 'Batalkan',
-    }).then(({ isConfirmed }) => {
-      if (isConfirmed) {
-        if (status === TransactionStatusEnum.PAID && !hasTransactionConfirmation) {
-          showFileUploadDialog(id, status);
-        } else {
-          updateTransaction(id, status);
+  const updateTransactionStatus = useCallback(
+    (
+      id: string,
+      status: TransactionStatusEnum,
+      hasTransactionConfirmation: boolean = false
+    ) => {
+      SwalInit.fire({
+        title: "Apakah kamu yakin?",
+        html: `Apakah kamu yakin akan merubah status transaksi ini menjadi "<strong>${getTransactionStatusLabel(
+          status
+        )}</strong>"? Jika iya, maka aksi ini tidak dapat dikembalikan.`,
+        showCancelButton: true,
+        showConfirmButton: true,
+        reverseButtons: true,
+        icon: "warning",
+        confirmButtonColor: SWAL_STYLES.danger,
+        cancelButtonColor: SWAL_STYLES.cancel,
+        confirmButtonText: "Ubah Status",
+        cancelButtonText: "Batalkan",
+      }).then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          if (
+            status === TransactionStatusEnum.PAID &&
+            !hasTransactionConfirmation
+          ) {
+            showFileUploadDialog(id, status);
+          } else {
+            updateTransaction(id, status);
+          }
         }
-      }
-    });
-  }, [showFileUploadDialog, updateTransaction]);
+      });
+    },
+    [showFileUploadDialog, updateTransaction]
+  );
 
-  const seeConfirmationData = useCallback((transactionConfirmation: Database['TransactionConfirmation']) => {
-    SwalInit.fire({
-      title: `Data Bukti Pembayaran #${transactionConfirmation.transaction_id}`,
-      html: `
+  const seeConfirmationData = useCallback(
+    (transactionConfirmation: Database["TransactionConfirmation"]) => {
+      SwalInit.fire({
+        title: `Data Bukti Pembayaran #${transactionConfirmation.transaction_id}`,
+        html: `
           <div class="form-group mb-3 d-flex w-100 flex-column justify-content-start align-items-start">
             <label for="transaction_receipt" class="fw-bold mb-1">Diunggah Pada</label>
-            <div>${dayjs(transactionConfirmation.created_at).locale('id').format('LLLL')}</div>
+            <div>${dayjs(transactionConfirmation.created_at)
+              .locale("id")
+              .format("LLLL")}</div>
           </div>
           <div class="form-group mb-3 d-flex w-100 flex-column justify-content-start align-items-start">
             <label for="transaction_receipt" class="fw-bold mb-1">Bukti Pembayaran</label>
             <img src="${`/storage/${transactionConfirmation.transaction_receipt}`}" alt="Bukti Pembayaran" class="w-100" />
           </div>
         `,
-      confirmButtonText: 'Tutup',
-      confirmButtonColor: SWAL_STYLES.confirm
-    })
-  }, []);
+        confirmButtonText: "Tutup",
+        confirmButtonColor: SWAL_STYLES.confirm,
+      });
+    },
+    []
+  );
 
   return (
     <AuthenticatedAdmin
@@ -394,17 +516,27 @@ export default function Show({ transaction, transactionDetail }: {
           <div className="flex-column d-flex">
             <h3 className="h4 fw-semibold">Tagihan #{transaction.id}</h3>
             <Breadcrumb className="m-0" bsPrefix="m-0 breadcrumb">
-              <BreadcrumbItem linkAs={Link} href={route('administrator.home')}>
+              <BreadcrumbItem linkAs={Link} href={route("administrator.home")}>
                 Dasbor Beranda
               </BreadcrumbItem>
-              <BreadcrumbItem linkAs={Link} href={route('administrator.transaction.index')}>
+              <BreadcrumbItem
+                linkAs={Link}
+                href={route("administrator.transaction.index")}
+              >
                 Data Pemesanan
               </BreadcrumbItem>
               <BreadcrumbItem active>#{transaction.id}</BreadcrumbItem>
             </Breadcrumb>
           </div>
 
-          <div><Link href={route('administrator.transaction.show', transaction.id)} className="btn btn-primary">Perbarui</Link></div>
+          <div>
+            <Link
+              href={route("administrator.transaction.show", transaction.id)}
+              className="btn btn-primary"
+            >
+              Perbarui
+            </Link>
+          </div>
         </div>
       }
     >
@@ -416,11 +548,15 @@ export default function Show({ transaction, transactionDetail }: {
             <div className="d-flex flex-column align-items-center flex-lg-row justify-content-between">
               <div>
                 <h3 className="fw-bold">#{transaction.id}</h3>
-                <div className="mt-2">Dibuat pada {dayjs(transaction.created_at).format("LLLL")}</div>
+                <div className="mt-2">
+                  Dibuat pada {dayjs(transaction.created_at).format("LLLL")}
+                </div>
               </div>
               <div className="text-start text-lg-end">
                 <h4>{currencyFormat(transaction.total_pay)}</h4>
-                <Badge bg={getTransactionStatusColor(transaction.status)}>{getTransactionStatusLabel(transaction.status)}</Badge>
+                <Badge bg={getTransactionStatusColor(transaction.status)}>
+                  {getTransactionStatusLabel(transaction.status)}
+                </Badge>
               </div>
             </div>
           </Card>
@@ -430,7 +566,13 @@ export default function Show({ transaction, transactionDetail }: {
               <h5>Detail Pelanggan</h5>
 
               <div className="gap-3 pt-3 d-flex align-items-center">
-                <img src={transaction.user.avatar} alt={transaction.user.name} className="rounded-circle" width={96} height={96} />
+                <img
+                  src={transaction.user.avatar}
+                  alt={transaction.user.name}
+                  className="rounded-circle"
+                  width={96}
+                  height={96}
+                />
                 <div className="gap-2 d-flex flex-column">
                   <h4 className="mb-0 fw-bold">{transaction.user.name}</h4>
                   <div className="flex-wrap gap-2 d-flex align-items-center">
@@ -456,8 +598,13 @@ export default function Show({ transaction, transactionDetail }: {
 
               <ListGroup variant="flush">
                 {transactionDetail?.order_items?.map((item, index) => (
-                  <ListGroup.Item key={`${item.sku}-${index}`} className="px-0 d-flex justify-content-between">
-                    <span className="text-muted">{item.name} x {item.quantity}</span>
+                  <ListGroup.Item
+                    key={`${item.sku}-${index}`}
+                    className="px-0 d-flex justify-content-between"
+                  >
+                    <span className="text-muted">
+                      {item.name} x {item.quantity}
+                    </span>
                     <span>{currencyFormat(item.price * item.quantity)}</span>
                   </ListGroup.Item>
                 ))}
@@ -466,7 +613,9 @@ export default function Show({ transaction, transactionDetail }: {
           </Card>
 
           <Card body className="p-2 mb-3 rounded-4">
-            <h3>{transaction.car_data.brand} {transaction.car_data.car_name}</h3>
+            <h3>
+              {transaction.car_data.brand} {transaction.car_data.car_name}
+            </h3>
 
             <CarSpecification carData={transaction.car_data} />
           </Card>
@@ -482,7 +631,11 @@ export default function Show({ transaction, transactionDetail }: {
               </ListGroupItem>
               <ListGroupItem className="px-0 d-flex justify-content-between align-items-center">
                 <strong>Status</strong>
-                <span><Badge bg={getTransactionStatusColor(transaction.status)}>{getTransactionStatusLabel(transaction.status)}</Badge></span>
+                <span>
+                  <Badge bg={getTransactionStatusColor(transaction.status)}>
+                    {getTransactionStatusLabel(transaction.status)}
+                  </Badge>
+                </span>
               </ListGroupItem>
               <ListGroupItem className="px-0 d-flex justify-content-between align-items-center">
                 <strong>Total Tagihan</strong>
@@ -499,21 +652,51 @@ export default function Show({ transaction, transactionDetail }: {
             <h3 className="pb-2">Aksi</h3>
 
             <div className="gap-2 d-grid">
-              <Button className="gap-2 d-flex justify-content-center align-items-center" variant="light">
+              <Button
+                className="gap-2 d-flex justify-content-center align-items-center"
+                variant="light"
+              >
                 <FaDownload />
                 <span>Unduh Tagihan</span>
               </Button>
-              {transaction.status === 'UNPAID' && (
+              {transaction.status === "UNPAID" && (
                 <>
-                  <Link className="gap-2 d-flex justify-content-center align-items-center btn btn-light" href={route('v1.admin.transaction.send-reminder', transaction.id)} method="post" as="button">
+                  <Link
+                    className="gap-2 d-flex justify-content-center align-items-center btn btn-light"
+                    href={route(
+                      "v1.admin.transaction.send-reminder",
+                      transaction.id
+                    )}
+                    method="post"
+                    as="button"
+                  >
                     <FaEnvelope />
                     <span>Kirim Pengingat</span>
                   </Link>
-                  <Button onClick={() => updateTransactionStatus(transaction.id, TransactionStatusEnum.PAID, !!transaction.transaction_confirmation)} className="gap-2 d-flex justify-content-center align-items-center" variant="success">
+                  <Button
+                    onClick={() =>
+                      updateTransactionStatus(
+                        transaction.id,
+                        TransactionStatusEnum.PAID,
+                        !!transaction.transaction_confirmation
+                      )
+                    }
+                    className="gap-2 d-flex justify-content-center align-items-center"
+                    variant="success"
+                  >
                     <FaCheckCircle />
                     <span>Verifikasi Pesanan</span>
                   </Button>
-                  <Button onClick={() => updateTransactionStatus(transaction.id, TransactionStatusEnum.FAILED)} className="gap-2 d-flex justify-content-center align-items-center" variant="danger">
+                  <Button
+                    onClick={() =>
+                      updateTransactionStatus(
+                        transaction.id,
+                        TransactionStatusEnum.FAILED
+                      )
+                    }
+                    className="gap-2 d-flex justify-content-center align-items-center"
+                    variant="danger"
+                  >
                     <FaXmark />
                     <span>Batalkan Pesanan</span>
                   </Button>
@@ -525,11 +708,15 @@ export default function Show({ transaction, transactionDetail }: {
           {transaction.transaction_confirmation && (
             <Card body className="p-2 mb-3 rounded-4">
               <h3 className="pb-2">Bukti Pembayaran</h3>
-              <img src={`/storage/${transaction.transaction_confirmation.transaction_receipt}`} alt="Bukti Pembayaran" className="w-100" />
+              <img
+                src={`/storage/${transaction.transaction_confirmation.transaction_receipt}`}
+                alt="Bukti Pembayaran"
+                className="w-100"
+              />
             </Card>
           )}
         </Col>
       </Row>
     </AuthenticatedAdmin>
-  )
+  );
 }

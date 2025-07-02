@@ -1,6 +1,6 @@
-import { Link } from '@inertiajs/react';
-import styled from '@emotion/styled';
-import ImageHeader from '@/Assets/Images/Cover-Dashboard.jpg';
+import ImageHeader from "@/Assets/Images/Cover-Dashboard.jpg";
+import styled from "@emotion/styled";
+import { Link } from "@inertiajs/react";
 import { Breadcrumb, Col, Container, Row } from "react-bootstrap";
 
 const HeaderArmadaListStyled = styled.header`
@@ -14,7 +14,7 @@ const HeaderArmadaListStyled = styled.header`
   color: white;
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     width: 100%;
     height: 100%;
@@ -46,7 +46,7 @@ const HeaderArmadaListStyled = styled.header`
 
   h2.leading {
     font-size: 1.25rem;
-    opacity: .75;
+    opacity: 0.75;
     font-weight: normal;
     line-height: 1.5;
     margin-bottom: 1rem;
@@ -68,7 +68,7 @@ const HeaderArmadaListStyled = styled.header`
     .breadcrumb-item,
     .breadcrumb-item::before,
     .breadcrumb-item a {
-      color: rgba(var(--bs-white-rgb), .75);
+      color: rgba(var(--bs-white-rgb), 0.75);
     }
 
     .breadcrumb-item {
@@ -90,7 +90,7 @@ const HeaderArmadaList = () => {
 
             <Breadcrumb>
               <li className="breadcrumb-item">
-                <Link href={route('home')}>Beranda</Link>
+                <Link href={route("home")}>Beranda</Link>
               </li>
               <Breadcrumb.Item active>Daftar Armada</Breadcrumb.Item>
             </Breadcrumb>
@@ -102,4 +102,3 @@ const HeaderArmadaList = () => {
 };
 
 export default HeaderArmadaList;
-

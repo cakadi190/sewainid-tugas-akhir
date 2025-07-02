@@ -1,34 +1,39 @@
-import { windowIsWidthGreaterThan } from '@/Helpers/windowBreakpoint';
-import { useSidebar } from '@/Hooks/useSidebar';
-import { PageProps } from '@/types';
-import { faBarsStaggered, faClock, faUser } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link, usePage } from '@inertiajs/react';
-import { FC, useEffect, useState } from 'react';
-import { Navbar, Nav, Container, NavItem, NavDropdown } from 'react-bootstrap';
-import useWindowSize from '@/Hooks/useWindowSize';
-import LogoutConfirmationModal from '@/Components/Modal/LogoutModal';
-import styled from '@emotion/styled';
-import Gravatar from 'react-gravatar';
-import NotificationDropdown from './NotificationDropdown';
+import LogoutConfirmationModal from "@/Components/Modal/LogoutModal";
+import { windowIsWidthGreaterThan } from "@/Helpers/windowBreakpoint";
+import { useSidebar } from "@/Hooks/useSidebar";
+import useWindowSize from "@/Hooks/useWindowSize";
+import { PageProps } from "@/types";
+import styled from "@emotion/styled";
+import {
+  faBarsStaggered,
+  faClock
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link, usePage } from "@inertiajs/react";
+import { FC, useEffect, useState } from "react";
+import { Container, Nav, Navbar, NavDropdown, NavItem } from "react-bootstrap";
+import Gravatar from "react-gravatar";
+import NotificationDropdown from "./NotificationDropdown";
 
 const NavbarWrapperStyle = styled(Navbar, {
-  shouldForwardProp: (prop) => !['isToggled'].includes(prop),
-}) <{ isToggled: boolean; }>`
+  shouldForwardProp: (prop) => !["isToggled"].includes(prop),
+})<{ isToggled: boolean }>`
   position: fixed;
   min-height: 64px;
   margin-right: 1rem;
-  background: rgba(var(--bs-body-bg-rgb), .75);
+  background: rgba(var(--bs-body-bg-rgb), 0.75);
   backdrop-filter: blur(1rem);
   z-index: 1020;
   width: calc(100% - 20rem);
   left: 20rem;
   padding-top: 1.25rem;
   padding-bottom: 1.25rem;
-  transition: all .2s;
+  transition: all 0.2s;
   right: 0;
 
-  ${({ isToggled }) => !isToggled && `
+  ${({ isToggled }) =>
+    !isToggled &&
+    `
     width: 100%;
     left: 0;
   `}
@@ -37,7 +42,9 @@ const NavbarWrapperStyle = styled(Navbar, {
     left: 18rem;
     width: calc(100% - 18rem);
 
-    ${({ isToggled }) => !isToggled && `
+    ${({ isToggled }) =>
+      !isToggled &&
+      `
       margin-left: 0;
       left: 0;
       width: 100%;
@@ -73,8 +80,8 @@ const NavDropdownStyled = styled(NavDropdown)`
 const ClockItemStyle = styled(NavItem)`
   display: flex;
   align-items: center;
-  gap: .5rem;
-  font-family: 'JetBrains Mono', monospace;
+  gap: 0.5rem;
+  font-family: "JetBrains Mono", monospace;
 `;
 
 const ClockItem: FC = () => {
@@ -89,8 +96,8 @@ const ClockItem: FC = () => {
   }, []);
 
   const formatTime = (date: Date) => {
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
     return `${hours}:${minutes}`;
   };
 
@@ -103,7 +110,9 @@ const ClockItem: FC = () => {
 };
 
 const UserDropdown: FC = () => {
-  const { auth: { user } } = usePage<PageProps>().props;
+  const {
+    auth: { user },
+  } = usePage<PageProps>().props;
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const openModal = () => setShowModal(true);
@@ -116,11 +125,28 @@ const UserDropdown: FC = () => {
         id="basic-nav-dropdown"
         align="end"
       >
-        <NavDropdown.Item as={Link} href={route('profile.edit') + '#profile-update'}>Profilku</NavDropdown.Item>
-        <NavDropdown.Item as={Link} href={route('profile.edit') + '#password-update'}>Ganti Kata Sandi</NavDropdown.Item>
-        <NavDropdown.Item as={Link} href={route('profile.edit') + '#social-media-update'}>Akun Sosial Media</NavDropdown.Item>
+        <NavDropdown.Item
+          as={Link}
+          href={route("profile.edit") + "#profile-update"}
+        >
+          Profilku
+        </NavDropdown.Item>
+        <NavDropdown.Item
+          as={Link}
+          href={route("profile.edit") + "#password-update"}
+        >
+          Ganti Kata Sandi
+        </NavDropdown.Item>
+        <NavDropdown.Item
+          as={Link}
+          href={route("profile.edit") + "#social-media-update"}
+        >
+          Akun Sosial Media
+        </NavDropdown.Item>
         <NavDropdown.Divider />
-        <NavDropdown.Item onClick={openModal} href="#">Keluar Sesi</NavDropdown.Item>
+        <NavDropdown.Item onClick={openModal} href="#">
+          Keluar Sesi
+        </NavDropdown.Item>
       </NavDropdownStyled>
 
       <LogoutConfirmationModal show={showModal} onClose={closeModal} />
@@ -139,13 +165,13 @@ function MainAdminNav() {
           <Nav className="gap-2 me-auto align-items-center">
             {!isOpen && windowIsWidthGreaterThan(992, width) && (
               <Nav.Item>
-                <Nav.Link className='p-0 m-0 ps-1 pe-2' onClick={toggle}>
+                <Nav.Link className="p-0 m-0 ps-1 pe-2" onClick={toggle}>
                   <FontAwesomeIcon icon={faBarsStaggered} />
                 </Nav.Link>
               </Nav.Item>
             )}
 
-            <Nav.Link className='p-0 m-0 ps-1 pe-2 d-lg-none' onClick={toggle}>
+            <Nav.Link className="p-0 m-0 ps-1 pe-2 d-lg-none" onClick={toggle}>
               <FontAwesomeIcon icon={faBarsStaggered} />
             </Nav.Link>
 

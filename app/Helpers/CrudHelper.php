@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Interfaces\CrudHelper as CrudInterface;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -11,33 +12,31 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 /**
  * Class CrudHelper
  *
  * Helper untuk menjalankan operasi CRUD (Create, Read, Update, Delete)
  * dengan integrasi pada Eloquent Model.
- *
- * @package App\Helpers
  */
 class CrudHelper implements CrudInterface
 {
     /**
      * Create a new record in the model with optional file upload and callback support.
      *
-     * @param mixed $request The HTTP request with data for creation
-     * @param Model $model The model instance for data creation
-     * @param array|null $singleUploadTarget Keys for single file upload
-     * @param array|null $multipleUploadTarget Keys for multiple file upload
-     * @param callable|null $beforeCreating Optional callback to execute before creating the data
-     * @param callable|null $afterCreating Optional callback to execute after creating the data
-     * @return RedirectResponse
+     * @param  mixed  $request  The HTTP request with data for creation
+     * @param  Model  $model  The model instance for data creation
+     * @param  array|null  $singleUploadTarget  Keys for single file upload
+     * @param  array|null  $multipleUploadTarget  Keys for multiple file upload
+     * @param  callable|null  $beforeCreating  Optional callback to execute before creating the data
+     * @param  callable|null  $afterCreating  Optional callback to execute after creating the data
      */
     public function createData(
         mixed $request,
         Model $model,
-        array|null $singleUploadTarget = [],
-        array|null $multipleUploadTarget = [],
+        ?array $singleUploadTarget = [],
+        ?array $multipleUploadTarget = [],
         ?callable $beforeCreating = null,
         ?callable $afterCreating = null
     ): RedirectResponse {
@@ -54,8 +53,8 @@ class CrudHelper implements CrudInterface
 
             // Handle file uploads with MediaLibrary if required
             if ($singleUploadTarget || $multipleUploadTarget) {
-                if (!($model instanceof HasMedia)) {
-                    throw new \Exception('Model must implement HasMedia interface to use MediaLibrary');
+                if (! ($model instanceof HasMedia)) {
+                    throw new Exception('Model must implement HasMedia interface to use MediaLibrary');
                 }
 
                 $files = collect($request->allFiles());
@@ -73,7 +72,7 @@ class CrudHelper implements CrudInterface
                                         ->toMediaCollection($key);
                                 }
                             }
-                        } else if ($file->isValid()) {
+                        } elseif ($file->isValid()) {
                             $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
                             $createdModel->addMedia($file)
                                 ->usingFileName($fileName)
@@ -89,7 +88,7 @@ class CrudHelper implements CrudInterface
             }
 
             return redirect()->back()->with('success', 'Data berhasil ditambahkan!');
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             Log::error($th);
 
             return redirect()->back()
@@ -101,13 +100,13 @@ class CrudHelper implements CrudInterface
     /**
      * Retrieve a single data entry for a given model in JSON format.
      *
-     * @param Model $model The model instance to retrieve data for.
-     * @param Request|null $request Optional request object.
-     * @param array $singleUploadTarget Collection names for single upload targets.
-     * @param array|null $multipleUploadTarget Collection names for multiple upload targets.
+     * @param  Model  $model  The model instance to retrieve data for.
+     * @param  Request|null  $request  Optional request object.
+     * @param  array  $singleUploadTarget  Collection names for single upload targets.
+     * @param  array|null  $multipleUploadTarget  Collection names for multiple upload targets.
      * @return JsonResponse JSON response with the single data entry.
      */
-    public function singleData(Model $model, Request|null $request = null, array $singleUploadTarget = [], array|null $multipleUploadTarget = []): JsonResponse
+    public function singleData(Model $model, ?Request $request = null, array $singleUploadTarget = [], ?array $multipleUploadTarget = []): JsonResponse
     {
         $data = ($model instanceof HasMedia) ? $model->toArray() : $model;
 
@@ -122,33 +121,33 @@ class CrudHelper implements CrudInterface
             'data' => $data,
             'status' => 'success',
             'code' => Response::HTTP_OK,
-            'request' => returnConditionIfFalse(app()->environment('development'), $request->all())
+            'request' => returnConditionIfFalse(app()->environment('development'), $request->all()),
         ]);
     }
 
     /**
      * Update an existing data record with optional file upload and callback support.
      *
-     * @param mixed $request The HTTP request with data for update
-     * @param Model $model The model instance to be updated
-     * @param array|null $singleUploadTarget Keys for single file upload
-     * @param array|null $multipleUploadTarget Keys for multiple file upload
-     * @param callable|null $beforeUpdating Optional callback to execute before updating the data
-     * @param callable|null $afterUpdating Optional callback to execute after updating the data
-     * @return RedirectResponse
+     * @param  mixed  $request  The HTTP request with data for update
+     * @param  Model  $model  The model instance to be updated
+     * @param  array|null  $singleUploadTarget  Keys for single file upload
+     * @param  array|null  $multipleUploadTarget  Keys for multiple file upload
+     * @param  callable|null  $beforeUpdating  Optional callback to execute before updating the data
+     * @param  callable|null  $afterUpdating  Optional callback to execute after updating the data
      */
     public function editData(
         mixed $request,
         Model $model,
-        array|null $singleUploadTarget = [],
-        array|null $multipleUploadTarget = [],
+        ?array $singleUploadTarget = [],
+        ?array $multipleUploadTarget = [],
         ?callable $beforeUpdating = null,
         ?callable $afterUpdating = null
     ): RedirectResponse {
         try {
             if ($request->has('restore')) {
                 $model->restore();
-                return redirect()->back()->with('success', "Data berhasil dipulihkan!");
+
+                return redirect()->back()->with('success', 'Data berhasil dipulihkan!');
             }
 
             // Execute the beforeUpdating callback if provided
@@ -161,8 +160,8 @@ class CrudHelper implements CrudInterface
 
             // Handle file uploads with MediaLibrary if required
             if ($singleUploadTarget || $multipleUploadTarget) {
-                if (!($model instanceof HasMedia)) {
-                    throw new \Exception('Model must implement HasMedia interface to use MediaLibrary');
+                if (! ($model instanceof HasMedia)) {
+                    throw new Exception('Model must implement HasMedia interface to use MediaLibrary');
                 }
 
                 $files = collect($request->allFiles());
@@ -180,7 +179,7 @@ class CrudHelper implements CrudInterface
                                         ->toMediaCollection($key);
                                 }
                             }
-                        } else if ($file->isValid()) {
+                        } elseif ($file->isValid()) {
                             $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
                             $model->addMedia($file)
                                 ->usingFileName($fileName)
@@ -195,21 +194,21 @@ class CrudHelper implements CrudInterface
                 $afterUpdating($model);
             }
 
-            return redirect()->back()->with('success', "Data berhasil diperbarui!");
-        } catch (\Throwable $th) {
+            return redirect()->back()->with('success', 'Data berhasil diperbarui!');
+        } catch (Throwable $th) {
             Log::error($th);
 
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['error' => "Terjadi kesalahan saat memperbarui data. Silakan coba lagi!"]);
+                ->withErrors(['error' => 'Terjadi kesalahan saat memperbarui data. Silakan coba lagi!']);
         }
     }
 
     /**
      * Delete a data record for a given model.
      *
-     * @param Model $model The model instance to be deleted.
-     * @param mixed $request The HTTP request.
+     * @param  Model  $model  The model instance to be deleted.
+     * @param  mixed  $request  The HTTP request.
      * @return RedirectResponse Redirect response with success or error messages.
      */
     public function destroyData(Model $model, mixed $request): RedirectResponse
@@ -217,21 +216,23 @@ class CrudHelper implements CrudInterface
         try {
             if ($request->boolean('forceDelete')) {
                 $model->forceDelete();
-                return redirect()->back()->with('success', "Data berhasil dihapus permanen!");
-            } else if (in_array(\Illuminate\Database\Eloquent\SoftDeletes::class, class_uses($model))) {
+
+                return redirect()->back()->with('success', 'Data berhasil dihapus permanen!');
+            } elseif (in_array(\Illuminate\Database\Eloquent\SoftDeletes::class, class_uses($model))) {
                 $model->delete();
-                return redirect()->back()->with('success', "Data berhasil dihapus sementara!");
+
+                return redirect()->back()->with('success', 'Data berhasil dihapus sementara!');
             } else {
                 $model->delete();
-                return redirect()->back()->with('success', "Data berhasil dihapus!");
+
+                return redirect()->back()->with('success', 'Data berhasil dihapus!');
             }
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             Log::error($th);
 
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['error' => "Terjadi kesalahan saat menghapus data. Silakan coba lagi!"]);
+                ->withErrors(['error' => 'Terjadi kesalahan saat menghapus data. Silakan coba lagi!']);
         }
     }
 }
-

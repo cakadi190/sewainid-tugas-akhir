@@ -1,7 +1,7 @@
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, useForm } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import GuestLayout from "@/Layouts/GuestLayout";
+import { Head, useForm } from "@inertiajs/react";
+import { FormEventHandler } from "react";
+import { Button, Form } from "react-bootstrap";
 
 export default function ResetPassword({
   token,
@@ -13,15 +13,15 @@ export default function ResetPassword({
   const { data, setData, post, processing, errors, reset } = useForm({
     token: token,
     email: email,
-    password: '',
-    password_confirmation: '',
+    password: "",
+    password_confirmation: "",
   });
 
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
 
-    post(route('password.store'), {
-      onFinish: () => reset('password', 'password_confirmation'),
+    post(route("password.store"), {
+      onFinish: () => reset("password", "password_confirmation"),
     });
   };
 
@@ -40,11 +40,13 @@ export default function ResetPassword({
               placeholder="Email"
               autoComplete="username"
               isInvalid={!!errors.email}
-              onChange={(e) => setData('email', e.target.value)}
+              onChange={(e) => setData("email", e.target.value)}
             />
             <label htmlFor="email">Email</label>
             {errors.email && (
-              <div className="mt-2 invalid-feedback d-block">{errors.email}</div>
+              <div className="mt-2 invalid-feedback d-block">
+                {errors.email}
+              </div>
             )}
           </Form.Floating>
         </div>
@@ -59,11 +61,13 @@ export default function ResetPassword({
               placeholder="Password"
               autoComplete="new-password"
               isInvalid={!!errors.password}
-              onChange={(e) => setData('password', e.target.value)}
+              onChange={(e) => setData("password", e.target.value)}
             />
             <label htmlFor="password">Password</label>
             {errors.password && (
-              <div className="mt-2 invalid-feedback d-block">{errors.password}</div>
+              <div className="mt-2 invalid-feedback d-block">
+                {errors.password}
+              </div>
             )}
           </Form.Floating>
         </div>
@@ -78,11 +82,13 @@ export default function ResetPassword({
               placeholder="Confirm Password"
               autoComplete="new-password"
               isInvalid={!!errors.password_confirmation}
-              onChange={(e) => setData('password_confirmation', e.target.value)}
+              onChange={(e) => setData("password_confirmation", e.target.value)}
             />
             <label htmlFor="password_confirmation">Confirm Password</label>
             {errors.password_confirmation && (
-              <div className="mt-2 invalid-feedback d-block">{errors.password_confirmation}</div>
+              <div className="mt-2 invalid-feedback d-block">
+                {errors.password_confirmation}
+              </div>
             )}
           </Form.Floating>
         </div>

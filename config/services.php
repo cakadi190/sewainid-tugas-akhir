@@ -58,5 +58,5 @@ return [
 
     'fonnte' => [
         'token' => env('FONNTE_API_TOKEN'),
-    ]
+    ],
 ];

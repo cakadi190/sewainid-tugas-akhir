@@ -18,8 +18,7 @@ class InvoiceCreatedToUser extends Notification implements ShouldQueue
         protected readonly string $name,
         protected readonly string $idTrx,
         protected readonly string $amount
-    ) {
-    }
+    ) {}
 
     /**
      * Get the notification's delivery channels.
@@ -60,7 +59,7 @@ class InvoiceCreatedToUser extends Notification implements ShouldQueue
         return [
             'title' => "Tagihan Baru #{$this->idTrx}",
             'message' => "Ada tagihan sebesar {$formatCurrency}. Yuk dicek dan segera dibayar ya!",
-            'url' => route('dashboard.transaction.show', $this->idTrx)
+            'url' => route('dashboard.transaction.show', $this->idTrx),
         ];
     }
 }

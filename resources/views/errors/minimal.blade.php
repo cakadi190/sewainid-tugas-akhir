@@ -22,7 +22,7 @@
             <h1 class="mb-0 display-3">@yield('code')</h1>
             <p>@yield('message')</p>
 
-            @if(trim($__env->yieldContent('code')) === '404')
+            @if (trim($__env->yieldContent('code')) === '404')
                 <a href="{{ url('/') }}" class="btn btn-primary">Kembali</a>
             @endif
         </div>

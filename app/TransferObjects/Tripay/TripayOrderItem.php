@@ -5,7 +5,6 @@ namespace App\TransferObjects\Tripay;
 /**
  * Class TripayOrderItem
  *
- * @package App\TransferObjects\Tripay
  * @property-read string $sku
  * @property-read string $name
  * @property-read int $price
@@ -25,7 +24,5 @@ final class TripayOrderItem
         public readonly ?string $sku = null,
         public readonly ?string $product_url = null,
         public readonly ?string $image_url = null
-    ) {
-    }
+    ) {}
 }
-

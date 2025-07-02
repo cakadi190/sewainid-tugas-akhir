@@ -22,6 +22,7 @@ enum RoleUser: string
     case ADMIN = 'admin';
     case MONETARY = 'monetary';
     case DRIVER = 'driver';
+    case CONDUCTOR = 'conductor';
     case USER = 'user';
 
     /**
@@ -31,10 +32,11 @@ enum RoleUser: string
      */
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ADMIN => 'Administrator',
             self::MONETARY => 'Keuangan',
             self::DRIVER => 'Pengemudi',
+            self::CONDUCTOR => 'Kondektur',
             self::USER => 'Pengguna',
         };
     }
@@ -46,10 +48,11 @@ enum RoleUser: string
      */
     public function color(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ADMIN => 'danger',
             self::MONETARY => 'info',
             self::DRIVER => 'warning',
+            self::CONDUCTOR => 'dark',
             self::USER => 'success',
         };
     }

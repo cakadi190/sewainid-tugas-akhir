@@ -2,7 +2,6 @@
 
 namespace App\Notifications;
 
-use App\Models\Transaction;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -18,8 +17,7 @@ class InvoiceCreatedToAdmin extends Notification implements ShouldQueue
     public function __construct(
         protected readonly string $idTrx,
         protected readonly string $adminName
-    ) {
-    }
+    ) {}
 
     /**
      * Get the notification's delivery channels.
@@ -37,10 +35,10 @@ class InvoiceCreatedToAdmin extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->subject('Ada Pesanan Baru Nih!')
-                    ->greeting("Hallo {$this->adminName}")
-                    ->line('Halo Admin, ada pesanan baru nih! Coba kamu cek ke panel admin supaya tau rincian pesanannya.')
-                    ->action('Cek di sini', route('administrator.booking.index', ['search' => $this->idTrx]));
+            ->subject('Ada Pesanan Baru Nih!')
+            ->greeting("Hallo {$this->adminName}")
+            ->line('Halo Admin, ada pesanan baru nih! Coba kamu cek ke panel admin supaya tau rincian pesanannya.')
+            ->action('Cek di sini', route('administrator.booking', ['search' => $this->idTrx]));
     }
 
     /**
@@ -52,7 +50,7 @@ class InvoiceCreatedToAdmin extends Notification implements ShouldQueue
     {
         return [
             'title' => 'Ada Pesanan Baru Nih!',
-            'url' => route('administrator.booking.index', ['search' => $this->idTrx]),
+            'url' => route('administrator.booking', ['search' => $this->idTrx]),
             'message' => 'Ada pesanan baru untuk dicek!',
         ];
     }

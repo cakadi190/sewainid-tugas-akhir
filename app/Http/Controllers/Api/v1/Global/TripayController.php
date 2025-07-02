@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1\Global;
 
 use App\Http\Controllers\Controller;
 use App\Services\TripayServices;
+use Exception;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -11,26 +12,24 @@ class TripayController extends Controller
 {
     public function __construct(
         protected readonly TripayServices $_tripay
-    ) {
-    }
+    ) {}
 
     /**
      * Retrieve payment channels from the Tripay API and optionally filter them by a search term.
      *
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Support\Collection
      */
     public function getChannels(Request $request)
     {
         try {
             return $this->_tripay->getChannels($request->filled('search') ? $request->search : null);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $statusCode = $e->getCode() === 0 ? Response::HTTP_INTERNAL_SERVER_ERROR : $e->getCode();
 
             return response()->json([
                 'title' => 'Sorry! Something Was Wrong Here!',
                 'message' => $e->getMessage(),
-                'code' => $statusCode
+                'code' => $statusCode,
             ], $statusCode);
         }
     }

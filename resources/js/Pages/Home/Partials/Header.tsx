@@ -1,15 +1,23 @@
-import { Link, router } from '@inertiajs/react';
-import styled from '@emotion/styled';
-import ImageHeader from '@/Assets/Images/Cover-Home.jpg';
-import { Button, Card, Col, Container, FloatingLabel, Form, Row } from "react-bootstrap";
-import { useEffect, useState } from "react";
+import ImageHeader from "@/Assets/Images/Cover-Home.jpg";
 import Flexbox from "@/Components/Flexbox";
-import { FaCar } from "react-icons/fa6";
-import Flatpickr from "react-flatpickr";
-import { FaThumbsUp } from 'react-icons/fa';
-import { CarModelEnum } from '@/Helpers/enum';
-import { getCarModelLabel } from '@/Helpers/EnumHelper';
+import { CarModelEnum } from "@/Helpers/enum";
+import { getCarModelLabel } from "@/Helpers/EnumHelper";
+import styled from "@emotion/styled";
+import { Link, router } from "@inertiajs/react";
 import { Indonesian } from "flatpickr/dist/l10n/id";
+import { useEffect, useState } from "react";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  FloatingLabel,
+  Form,
+  Row,
+} from "react-bootstrap";
+import Flatpickr from "react-flatpickr";
+import { FaThumbsUp } from "react-icons/fa";
+import { FaCar } from "react-icons/fa6";
 
 const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
@@ -24,7 +32,7 @@ const HeaderHomeStyled = styled.header`
   color: white;
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     width: 100%;
     height: 100%;
@@ -56,7 +64,7 @@ const HeaderHomeStyled = styled.header`
 
   h2.leading {
     font-size: 1.25rem;
-    opacity: .75;
+    opacity: 0.75;
     font-weight: normal;
     line-height: 1.5;
 
@@ -72,15 +80,15 @@ const HeaderHomeStyled = styled.header`
 
 const HeadingBadge = styled.div`
   border-radius: 5rem;
-  padding: .5rem 1rem;
+  padding: 0.5rem 1rem;
   background: var(--bs-white);
   color: var(--bs-dark);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: .5rem;
+  gap: 0.5rem;
   margin-bottom: 1rem;
-  padding-inline-start: .5rem;
+  padding-inline-start: 0.5rem;
   padding-inline-end: 1.25rem;
   width: fit-content;
 
@@ -118,7 +126,11 @@ const HeaderHome = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    router.get(route('armada.index'), { model: vehicleCategory, pickupDate, returnDate });
+    router.get(route("armada.index"), {
+      model: vehicleCategory,
+      pickupDate,
+      returnDate,
+    });
   };
 
   return (
@@ -135,7 +147,8 @@ const HeaderHome = () => {
 
             <h1>Rental Mobil Terbaik untuk Perjalanan Anda</h1>
             <h2 className="leading">
-              Temukan berbagai kualitas mobil sewa dengan harga terjangkau untuk kebutuhan perjalanan Anda.
+              Temukan berbagai kualitas mobil sewa dengan harga terjangkau untuk
+              kebutuhan perjalanan Anda.
             </h2>
           </Col>
           <Col md={12} className="pt-4 mb-n5">
@@ -143,10 +156,12 @@ const HeaderHome = () => {
               <Flexbox justify="space-between" align="center">
                 <div>
                   <h3 className="mb-0 fw-bold h5">Cari Armada</h3>
-                  <p className="mb-0">Temukan Armada yang sesuai dengan kebutuhan Anda</p>
+                  <p className="mb-0">
+                    Temukan Armada yang sesuai dengan kebutuhan Anda
+                  </p>
                 </div>
 
-                <Link href={'/armada'}>Cari Armada Lainnya</Link>
+                <Link href={"/armada"}>Cari Armada Lainnya</Link>
               </Flexbox>
 
               <Form onSubmit={handleSubmit} className="mt-3">
@@ -158,7 +173,9 @@ const HeaderHome = () => {
                         onChange={(e) => setVehicleCategory(e.target.value)}
                         required
                       >
-                        <option value="" disabled selected>Pilih Kategori Mobil</option>
+                        <option value="" disabled selected>
+                          Pilih Kategori Mobil
+                        </option>
                         {Object.values(CarModelEnum).map((model) => (
                           <option key={model} value={model}>
                             {getCarModelLabel(model)}
@@ -175,7 +192,7 @@ const HeaderHome = () => {
                         options={{
                           locale: Indonesian,
                           dateFormat: "Y-m-d",
-                          minDate: "today"
+                          minDate: "today",
                         }}
                         value={pickupDate}
                         onChange={([date]) => setPickupDate(formatDate(date))}
@@ -190,7 +207,7 @@ const HeaderHome = () => {
                         options={{
                           locale: Indonesian,
                           dateFormat: "Y-m-d",
-                          minDate: pickupDate
+                          minDate: pickupDate,
                         }}
                         value={returnDate}
                         onChange={([date]) => setReturnDate(formatDate(date))}
@@ -217,4 +234,3 @@ const HeaderHome = () => {
 };
 
 export default HeaderHome;
-

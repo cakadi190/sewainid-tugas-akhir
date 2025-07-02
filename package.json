@@ -66,6 +66,8 @@
     "react-leaflet": "^4.2.1",
     "react-leaflet-cluster": "^2.1.0",
     "react-perfect-scrollbar": "^1.5.8",
+    "react-schemaorg": "^2.0.0",
+    "schema-dts": "^1.1.5",
     "sweetalert2": "^11.22.0",
     "sweetalert2-react-content": "^5.1.0",
     "swiper": "^11.2.8",

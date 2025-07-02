@@ -27,4 +27,3 @@ class CarRepairNoteDataFactory extends Factory
         ];
     }
 }
-

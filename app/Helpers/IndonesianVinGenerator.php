@@ -11,8 +11,6 @@ namespace App\Helpers;
  * - WMI (World Manufacturer Identifier) - 3 karakter pertama, mewakili kode produsen kendaraan.
  * - VDS (Vehicle Descriptor Section) - 6 karakter berikutnya, mewakili fitur kendaraan.
  * - VIS (Vehicle Identifier Section) - 8 karakter terakhir, mewakili tahun produksi dan nomor seri unik.
- *
- * @package App\Helpers
  */
 class IndonesianVinGenerator
 {

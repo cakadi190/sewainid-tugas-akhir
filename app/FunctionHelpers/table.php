@@ -2,11 +2,11 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-if (!function_exists('convertPluralToSingular')) {
+if (! function_exists('convertPluralToSingular')) {
     /**
      * Mengubah nama tabel dari bentuk jamak ke bentuk tunggal.
      *
-     * @param string $word Nama tabel dalam bentuk jamak yang akan diubah ke bentuk tunggal.
+     * @param  string  $word  Nama tabel dalam bentuk jamak yang akan diubah ke bentuk tunggal.
      * @return string Mengembalikan nama tabel dalam bentuk tunggal.
      */
     function convertPluralToSingular(string $word): string
@@ -24,16 +24,17 @@ if (!function_exists('convertPluralToSingular')) {
                     return preg_replace($pattern, $replacement, $matches[0]);
                 }
             }
+
             return $matches[0];
         }, $word);
     }
 }
 
-if (!function_exists('generateForeignKeyString')) {
+if (! function_exists('generateForeignKeyString')) {
     /**
      * Generate foreign key string based on the model class name.
      *
-     * @param string $modelClass Class of the model.
+     * @param  string  $modelClass  Class of the model.
      * @return string Foreign key name.
      */
     function generateForeignKeyString(string $modelClass): string

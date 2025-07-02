@@ -13,8 +13,8 @@ enum RentalStatusEnum: string
     public function label(): string
     {
         return match ($this) {
-            self::DRAFT => 'Draf',
-            self::PENDING => 'Menunggu',
+            self::DRAFT => 'Menunggu Pembayaran',
+            self::PENDING => 'Menunggu Jadwal',
             self::IN_PROGRESS => 'Sedang Berlangsung',
             self::COMPLETED => 'Selesai',
             self::CANCELED => 'Dibatalkan',

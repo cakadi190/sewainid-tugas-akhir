@@ -1,9 +1,9 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import styled from '@emotion/styled';
-import ImageBg from '@/Assets/Images/Cover-Login.jpg';
-import { Link } from '@inertiajs/react';
-import { PropsWithChildren } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import ImageBg from "@/Assets/Images/Cover-Login.jpg";
+import ApplicationLogo from "@/Components/ApplicationLogo";
+import styled from "@emotion/styled";
+import { Link } from "@inertiajs/react";
+import { PropsWithChildren } from "react";
+import { Col, Container, Row } from "react-bootstrap";
 
 /**
  * Komponen ColBackground digunakan untuk mengatur gaya background untuk kolom.
@@ -26,11 +26,21 @@ export default function Guest({ children }: PropsWithChildren) {
   return (
     <Container fluid className="bg-white min-vh-100">
       <Row className="min-vh-100">
-        <ColBackground xs={0} md={4} className="p-0 bg-primary d-none d-md-block" />
+        <ColBackground
+          xs={0}
+          md={4}
+          className="p-0 bg-primary d-none d-md-block"
+        />
         <Col xs={12} md={8} className="p-0">
           <Row className="py-4 mx-0 min-vh-100">
-            <Col xs={12} className="px-4 d-flex flex-column justify-content-center">
-              <div className="w-100" style={{ maxWidth: '480px', margin: '0 auto' }}>
+            <Col
+              xs={12}
+              className="px-4 d-flex flex-column justify-content-center"
+            >
+              <div
+                className="w-100"
+                style={{ maxWidth: "480px", margin: "0 auto" }}
+              >
                 <div className="mb-4 text-center">
                   <Link href="/">
                     <ApplicationLogo height={64} />

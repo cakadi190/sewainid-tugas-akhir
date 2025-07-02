@@ -1,7 +1,6 @@
-import { Button, Form, Alert } from 'react-bootstrap';
 import { useForm } from '@inertiajs/react';
 import { FormEventHandler, useRef } from 'react';
-import { FloatingLabel } from 'react-bootstrap';
+import { Alert, Button, FloatingLabel, Form } from 'react-bootstrap';
 
 export default function UpdatePasswordForm({
   className = '',

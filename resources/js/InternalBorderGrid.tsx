@@ -3,15 +3,26 @@ import React, { createContext, useContext } from "react";
 
 interface GridContextType {
   cols: number;
-  textAlign: 'left' | 'center' | 'right';
+  textAlign: "left" | "center" | "right";
 }
 
-const GridContext = createContext<GridContextType>({ cols: 3, textAlign: 'left' });
+const GridContext = createContext<GridContextType>({
+  cols: 3,
+  textAlign: "left",
+});
 
-export const GridContainer: React.FC<{ cols?: number; children: React.ReactNode; textAlign?: 'left' | 'center' | 'right' } & React.HTMLAttributes<HTMLDivElement>> = ({ cols = 3, children, textAlign = 'left', ...props }) => {
+export const GridContainer: React.FC<
+  {
+    cols?: number;
+    children: React.ReactNode;
+    textAlign?: "left" | "center" | "right";
+  } & React.HTMLAttributes<HTMLDivElement>
+> = ({ cols = 3, children, textAlign = "left", ...props }) => {
   return (
     <GridContext.Provider value={{ cols, textAlign }}>
-      <StyledGridContainer {...props} cols={cols}>{children}</StyledGridContainer>
+      <StyledGridContainer {...props} cols={cols}>
+        {children}
+      </StyledGridContainer>
     </GridContext.Provider>
   );
 };
@@ -21,11 +32,15 @@ const StyledGridContainer = styled.div<{ cols: number }>`
   grid-template-columns: 1fr;
 
   @media (min-width: 992px) {
-    grid-template-columns: repeat(${props => props.cols}, 1fr);
+    grid-template-columns: repeat(${(props) => props.cols}, 1fr);
   }
 `;
 
-export const GridItem: React.FC<{ children: React.ReactNode; index?: number; total?: number }> = ({ children }) => {
+export const GridItem: React.FC<{
+  children: React.ReactNode;
+  index?: number;
+  total?: number;
+}> = ({ children }) => {
   const { cols, textAlign } = useContext(GridContext);
 
   const StyledItem = styled.div`
@@ -51,7 +66,5 @@ export const GridItem: React.FC<{ children: React.ReactNode; index?: number; tot
     }
   `;
 
-
   return <StyledItem>{children}</StyledItem>;
 };
-
