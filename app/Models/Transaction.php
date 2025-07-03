@@ -14,8 +14,8 @@ use Illuminate\Support\Collection;
  * Transaction Model
  *
  * @property string $id
- * @property string $status
- * @property string $rental_status
+ * @property TransactionStatusEnum $status
+ * @property RentalStatusEnum $rental_status
  * @property \Illuminate\Support\Carbon|null $confirmed_at
  * @property string|null $payment_channel
  * @property string|null $payment_references
@@ -31,8 +31,12 @@ use Illuminate\Support\Collection;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int|null $user_id
+ * @property int|null $driver_id
+ * @property int|null $conductor_id
  * @property int|null $car_data_id
  * @property-read \App\Models\CarData|null $carData
+ * @property-read \App\Models\User|null $conductor
+ * @property-read \App\Models\User|null $driver
  * @property-read \App\Models\TransactionConfirmation|null $transactionConfirmation
  * @property-read \App\Models\User|null $user
  *
@@ -41,8 +45,10 @@ use Illuminate\Support\Collection;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereCarDataId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereConductorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereConfirmedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereDriverId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereExpiredAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereLatitude($value)

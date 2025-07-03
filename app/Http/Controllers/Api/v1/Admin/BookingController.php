@@ -26,7 +26,7 @@ class BookingController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = $this->_transaction->with([
+        $query = $this->_transaction->latest()->with([
             'transactionConfirmation' => fn ($query) => $query->select(['id', 'transaction_id', 'created_at', 'transaction_receipt']),
             'carData' => fn ($query) => $query->select(['id', 'brand', 'car_name']),
             'driver' => fn ($query) => $query->select(['id', 'name', 'phone']),

@@ -40,9 +40,15 @@ use Illuminate\Support\Collection;
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transactions
  * @property-read int|null $transactions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transactionsAsConductor
+ * @property-read int|null $transactions_as_conductor_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transactionsAsDriver
+ * @property-read int|null $transactions_as_driver_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Wishlist> $wishlists
  * @property-read int|null $wishlists_count
  *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User conductorIsFree()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User driverIsFree()
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()

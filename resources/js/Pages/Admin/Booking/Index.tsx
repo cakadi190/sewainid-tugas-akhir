@@ -275,11 +275,14 @@ export default function Index() {
         data: "rental_status",
         name: "rental_status",
         title: "Status Sewa",
-        render: (value: RentalStatusEnum) => (
-          <Badge bg={getRentalStatusColor(value)}>
-            {getRentalStatusLabel(value)}
-          </Badge>
-        ),
+        render: (value: RentalStatusEnum, row: Database["Transaction"]) =>
+          row.status !== TransactionStatusEnum.PAID ? (
+            <Badge bg="dark">Dibatalkan</Badge>
+          ) : (
+            <Badge bg={getRentalStatusColor(value)}>
+              {getRentalStatusLabel(value)}
+            </Badge>
+          ),
       },
       {
         data: "created_at",

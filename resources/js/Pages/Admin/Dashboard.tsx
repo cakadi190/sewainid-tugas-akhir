@@ -1,19 +1,44 @@
 import dayjs from "@/Helpers/dayjs";
+import { getRentalStatusColor, getRentalStatusLabel } from "@/Helpers/EnumHelper";
 import { currencyFormat } from "@/Helpers/number";
 import { AuthenticatedAdmin } from "@/Layouts/AuthenticatedLayout";
+import Database from "@/types/database";
 import {
   faArrowRight,
   faCar,
   faCarOn,
   faStar,
   faUsers,
-  IconDefinition
+  IconDefinition,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Head, Link } from "@inertiajs/react";
 import { FC } from "react";
 import { Badge, Card, Col, Row } from "react-bootstrap";
 import { FaCheckCircle } from "react-icons/fa";
+import RevenueOverview from "@/Components/RevenueOverview";
+
+type UnifiedTransactionData = Database['Transaction'] & {
+  user: Database['User'];
+  car_data: Pick<Database['CarData'], 'id' | 'car_name' | 'brand'>
+}
+
+interface RevenueData {
+  monthlyData: Array<{
+    month: string;
+    revenue: number;
+    transactions: number;
+  }>;
+  currentMonthRevenue: number;
+  previousMonthRevenue: number;
+  growthPercentage: number;
+  topCars: Array<{
+    name: string;
+    revenue: number;
+    bookings: number;
+  }>;
+  totalRevenue: number;
+}
 
 const DashboardCard: FC<{
   title: string;
@@ -45,33 +70,42 @@ const DashboardCard: FC<{
   );
 };
 
-const SummaryCards = () => {
+const SummaryCards = ({
+  summary,
+}: {
+  summary: {
+    carsTotal: number;
+    rentActive: number;
+    users: number;
+    ratingAvg: number;
+  };
+}) => {
   return (
     <Row className="py-2 pt-4">
       <DashboardCard
         title="Total Kendaraan"
-        value={0}
+        value={summary.carsTotal}
         icon={faCar}
         color="primary"
         link={route("administrator.car-data.index")}
       />
       <DashboardCard
         title="Pinjaman Aktif"
-        value={0}
+        value={summary.rentActive}
         icon={faCarOn}
         color="info"
         link="#"
       />
       <DashboardCard
         title="Pengguna"
-        value={0}
+        value={summary.users}
         icon={faUsers}
         color="success"
         link="#"
       />
       <DashboardCard
         title="Rata-Rata Penilaian"
-        value={0}
+        value={summary.ratingAvg || 0}
         icon={faStar}
         color="warning"
         link="#"
@@ -80,33 +114,12 @@ const SummaryCards = () => {
   );
 };
 
-function RecentTransactions() {
-  const transactions = [
-    {
-      id: "TX-1234",
-      user: "John Doe",
-      car: "Toyota Camry",
-      status: "Active",
-      date: "2023-05-01",
-      amount: "1740000",
-    },
-    {
-      id: "TX-1235",
-      user: "Jane Smith",
-      car: "Honda Civic",
-      status: "Completed",
-      date: "2023-04-29",
-      amount: "1377500",
-    },
-    {
-      id: "TX-1236",
-      user: "Robert Johnson",
-      car: "Ford Mustang",
-      status: "Active",
-      date: "2023-04-28",
-      amount: "2665000",
-    },
-  ];
+function RecentTransactions({
+  recentTransactions: transactions,
+}: {
+  recentTransactions: UnifiedTransactionData[];
+}) {
+  console.log(transactions)
 
   return (
     <div className="gap-3 flex-column transaction-list d-flex">
@@ -120,23 +133,23 @@ function RecentTransactions() {
               <FaCheckCircle size={24} />
             </div>
             <div>
-              <p className="mb-0 fw-medium">{transaction.user}</p>
-              <p className="mb-0 small text-muted">{transaction.car}</p>
+              <p className="mb-0 fw-medium">{transaction.user.name}</p>
+              <p className="mb-0 small text-muted">{transaction.car_data.brand} {transaction.car_data.car_name}</p>
             </div>
           </div>
           <div className="ms-auto text-end">
             <div className="fw-medium">
-              {currencyFormat(parseInt(transaction.amount))}
+              {currencyFormat(transaction.total_pay)}
             </div>
             <div className="gap-1 d-flex align-items-center small">
               <Badge
-                bg={transaction.status === "Active" ? "success" : "secondary"}
+                bg={getRentalStatusColor(transaction.rental_status)}
                 className="rounded-pill"
               >
-                {transaction.status}
+                {getRentalStatusLabel(transaction.rental_status)}
               </Badge>
               <span className="text-muted">
-                {dayjs(transaction.date).format("DD MMM YYYY")}
+                {dayjs(transaction.created_at).format("DD MMM YYYY")}
               </span>
             </div>
           </div>
@@ -146,24 +159,23 @@ function RecentTransactions() {
   );
 }
 
-const SummaryOverview = () => {
+const RecentTransactionsCard = ({
+  recentTransactions,
+}: {
+  recentTransactions: UnifiedTransactionData[];
+}) => {
   return (
     <Row className="mb-4">
-      <Col md="7">
-        <Card body className="rounded-4">
-          <h5>Revenue Overview</h5>
-        </Card>
-      </Col>
-      <Col md="5">
+      <Col md="12">
         <Card className="h-100 rounded-4">
-          <Card.Header className="pt-3 bg-white rounded-4 border-bottom-0">
-            <Card.Title className="mb-0">Recent Transactions</Card.Title>
+          <Card.Header className="px-4 pt-4 bg-white rounded-4 border-bottom-0">
+            <Card.Title className="mb-1 h5">Recent Transactions</Card.Title>
             <Card.Subtitle className="mt-1 text-muted">
               Latest rental transactions
             </Card.Subtitle>
           </Card.Header>
-          <Card.Body>
-            <RecentTransactions />
+          <Card.Body className="px-4 pb-4">
+            <RecentTransactions recentTransactions={recentTransactions} />
           </Card.Body>
         </Card>
       </Col>
@@ -171,13 +183,27 @@ const SummaryOverview = () => {
   );
 };
 
-export default function Dashboard() {
+export default function Dashboard({
+  summary,
+  revenueOverview,
+  recentTransactions,
+}: {
+  summary: {
+    carsTotal: number;
+    rentActive: number;
+    users: number;
+    ratingAvg: number;
+  };
+  revenueOverview: RevenueData;
+  recentTransactions: UnifiedTransactionData[];
+}) {
   return (
     <AuthenticatedAdmin header={<h2 className="mb-0 h4 text-dark">Beranda</h2>}>
       <Head title="Beranda Admin" />
 
-      <SummaryCards />
-      <SummaryOverview />
+      <SummaryCards summary={summary} />
+      <RevenueOverview revenueData={revenueOverview} />
+      <RecentTransactionsCard recentTransactions={recentTransactions} />
     </AuthenticatedAdmin>
   );
 }
