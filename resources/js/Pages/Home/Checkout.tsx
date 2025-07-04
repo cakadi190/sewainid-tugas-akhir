@@ -388,8 +388,6 @@ const CheckoutProvider = ({
     setTimeout(() => {
       post(route("v1.home.checkout.checkout"), {
         onSuccess: (data: any) => {
-          console.log(data);
-          // Navigate to order confirmation page
         },
         onError: (error: any) => {
           console.error("Checkout error:", error);

@@ -185,13 +185,12 @@ const RevenueOverview: React.FC<RevenueOverviewProps> = ({ revenueData }) => {
   return (
     <Row className="mb-4">
       <Col md="8">
-        <Card className="h-100 rounded-4">
+        <Card className="overflow-hidden h-100 rounded-4">
           <Card.Header className="px-4 pt-4 bg-white border-bottom-0">
             <div className="d-flex justify-content-between align-items-start">
               <div>
                 <Card.Title className="mb-1 h5">Ikhtisar Pendapatan</Card.Title>
                 <Card.Subtitle className="text-muted small">
-                  {/* Monthly revenue trend for the last 12 months */}
                   Pendapatan bulanan untuk 12 bulan terakhir
                 </Card.Subtitle>
               </div>
@@ -227,7 +226,7 @@ const RevenueOverview: React.FC<RevenueOverviewProps> = ({ revenueData }) => {
       </Col>
 
       <Col md="4">
-        <Card className="h-100 rounded-4">
+        <Card className="overflow-hidden h-100 rounded-4">
           <Card.Header className="px-4 pt-4 bg-white border-bottom-0">
             <Card.Title className="mb-1 h6">Top Cars</Card.Title>
             <Card.Subtitle className="text-muted small">

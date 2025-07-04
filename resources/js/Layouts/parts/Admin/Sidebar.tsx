@@ -22,7 +22,6 @@ import React, { FC, useState } from "react";
 import { Button } from "react-bootstrap";
 import PerfectScrollbar from "react-perfect-scrollbar";
 
-// Types
 type MenuList = {
   label: string;
   href?: string;

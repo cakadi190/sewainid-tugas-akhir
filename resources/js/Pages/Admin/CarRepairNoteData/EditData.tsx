@@ -99,7 +99,6 @@ export default function EditData({
     post(route("v1.admin.car-repair.update", id), {
       forceFormData: true,
       onSuccess(result: any) {
-        console.log(result);
         reset();
         onClose();
         onSuccessAction?.();

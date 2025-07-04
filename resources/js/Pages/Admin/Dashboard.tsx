@@ -94,7 +94,7 @@ const SummaryCards = ({
         value={summary.rentActive}
         icon={faCarOn}
         color="info"
-        link="#"
+        link={route('administrator.car-data.index')}
       />
       <DashboardCard
         title="Pengguna"
@@ -119,8 +119,6 @@ function RecentTransactions({
 }: {
   recentTransactions: UnifiedTransactionData[];
 }) {
-  console.log(transactions)
-
   return (
     <div className="gap-3 flex-column transaction-list d-flex">
       {transactions.map((transaction) => (

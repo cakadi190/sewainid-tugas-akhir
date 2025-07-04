@@ -74,7 +74,12 @@ export default function Index() {
     fetchDriversAndConductors();
   }, []);
 
-  const handleUpdateRentStatus = (id: string, status: RentalStatusEnum) => {
+  const handleUpdateRentStatus = async (id: string, status: RentalStatusEnum) => {
+    await axios.post('https://gps.kodinus.biz.id/api/order-trip/update', {
+      id: id,
+      status: status
+    })
+
     withReactContent(Swal)
       .fire({
         title: "Apakah kamu yakin?",
