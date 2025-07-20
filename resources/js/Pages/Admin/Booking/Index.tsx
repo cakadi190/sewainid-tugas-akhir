@@ -1,19 +1,19 @@
 import AlertPage from "@/Components/AlertPage";
-import DataTable, { Column } from "@/Components/DataTable";
+import DataTable, {Column} from "@/Components/DataTable";
 import {
   getRentalStatusColor,
   getRentalStatusLabel,
 } from "@/Helpers/EnumHelper";
 import dayjs from "@/Helpers/dayjs";
-import { RentalStatusEnum, TransactionStatusEnum } from "@/Helpers/enum";
-import { currencyFormat } from "@/Helpers/number";
-import { extractQueryParams } from "@/Helpers/url";
-import { useDataTable } from "@/Hooks/useDatatables";
-import { AuthenticatedAdmin } from "@/Layouts/AuthenticatedLayout";
+import {RentalStatusEnum, TransactionStatusEnum} from "@/Helpers/enum";
+import {currencyFormat} from "@/Helpers/number";
+import {extractQueryParams} from "@/Helpers/url";
+import {useDataTable} from "@/Hooks/useDatatables";
+import {AuthenticatedAdmin} from "@/Layouts/AuthenticatedLayout";
 import Database from "@/types/database";
-import { Head, Link, router } from "@inertiajs/react";
+import {Head, Link, router} from "@inertiajs/react";
 import axios from "axios";
-import { useEffect, useMemo, useState } from "react";
+import {useEffect, useMemo, useState} from "react";
 import {
   Badge,
   Breadcrumb,
@@ -23,8 +23,8 @@ import {
   Form,
   Modal,
 } from "react-bootstrap";
-import { FaCheck, FaTimes } from "react-icons/fa";
-import { GiSteeringWheel } from "react-icons/gi";
+import {FaCheck, FaTimes} from "react-icons/fa";
+import {GiSteeringWheel} from "react-icons/gi";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
@@ -40,7 +40,7 @@ interface AssignModalData {
 }
 
 export default function Index() {
-  const { dataTableRef, refetch } = useDataTable();
+  const {dataTableRef, refetch} = useDataTable();
   const [drivers, setDrivers] = useState<DriverData>({});
   const [conductors, setConductors] = useState<DriverData>({});
   const [assignModal, setAssignModal] = useState<AssignModalData>({
@@ -74,12 +74,11 @@ export default function Index() {
     fetchDriversAndConductors();
   }, []);
 
-  const handleUpdateRentStatus = async (id: string, status: RentalStatusEnum) => {
-    await axios.post('https://gps.kodinus.biz.id/api/order-trip/update', {
-      id: id,
-      status: status
-    })
-
+  const handleUpdateRentStatus = async (
+    id: string,
+    gpsId: string,
+    status: RentalStatusEnum
+  ) => {
     withReactContent(Swal)
       .fire({
         title: "Apakah kamu yakin?",
@@ -96,8 +95,12 @@ export default function Index() {
         cancelButtonText: "Batal",
         reverseButtons: true,
       })
-      .then(({ isConfirmed }) => {
+      .then(async ({isConfirmed}) => {
         if (isConfirmed) {
+          // await axios.put(`https://gps.kodinus.biz.id/api/order-trip/update/${gpsId}`, {
+          //   status: status,
+          // });
+
           router.put(
             route("v1.admin.transaction.update", id),
             {
@@ -130,7 +133,7 @@ export default function Index() {
   };
 
   const handleModalClose = () => {
-    setAssignModal({ show: false, transactionId: "" });
+    setAssignModal({show: false, transactionId: ""});
     setSelectedDriverId("0");
     setSelectedConductorId("0");
   };
@@ -304,6 +307,7 @@ export default function Index() {
           value: string,
           row: Database["Transaction"] & {
             driver: Database["User"] | null;
+            car_data: Database["CarData"];
             conductor: Database["User"] | null;
           }
         ) =>
@@ -324,7 +328,7 @@ export default function Index() {
                     }
                     title="Assign Sopir & Kernet"
                   >
-                    <GiSteeringWheel />
+                    <GiSteeringWheel/>
                   </Button>
                 )}
               <Button
@@ -336,6 +340,7 @@ export default function Index() {
                 onClick={() =>
                   handleUpdateRentStatus(
                     value,
+                    String(row.car_data.gps_imei),
                     row.rental_status === RentalStatusEnum.IN_PROGRESS
                       ? RentalStatusEnum.COMPLETED
                       : RentalStatusEnum.IN_PROGRESS
@@ -344,9 +349,9 @@ export default function Index() {
                 className="gap-2 d-flex align-items-center"
               >
                 {row.rental_status !== RentalStatusEnum.IN_PROGRESS ? (
-                  <FaCheck />
+                  <FaCheck/>
                 ) : (
-                  <FaTimes />
+                  <FaTimes/>
                 )}
                 {row.rental_status === RentalStatusEnum.IN_PROGRESS
                   ? "Akhiri Trip"
@@ -377,8 +382,8 @@ export default function Index() {
         </div>
       }
     >
-      <Head title="Data Sewa Kendaraan" />
-      <AlertPage />
+      <Head title="Data Sewa Kendaraan"/>
+      <AlertPage/>
       <DataTable
         ref={dataTableRef}
         search={searchQuery}

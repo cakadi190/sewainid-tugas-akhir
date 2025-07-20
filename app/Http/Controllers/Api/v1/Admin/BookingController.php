@@ -28,7 +28,7 @@ class BookingController extends Controller
     {
         $query = $this->_transaction->latest()->with([
             'transactionConfirmation' => fn ($query) => $query->select(['id', 'transaction_id', 'created_at', 'transaction_receipt']),
-            'carData' => fn ($query) => $query->select(['id', 'brand', 'car_name']),
+            'carData' => fn ($query) => $query->select(['id', 'brand', 'car_name', 'gps_imei']),
             'driver' => fn ($query) => $query->select(['id', 'name', 'phone']),
             'conductor' => fn ($query) => $query->select(['id', 'name', 'phone']),
         ]);
